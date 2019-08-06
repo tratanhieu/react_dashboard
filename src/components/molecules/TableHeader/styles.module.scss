@@ -1,0 +1,9 @@
+@import '../../../colors.scss';
+
+.root {
+    border: 1px solid $whisper_color;
+    border-radius: 6px;
+    background-color: $primary_color;
+    color: $white_color;
+    font-weight: 600;
+}
