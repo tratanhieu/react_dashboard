@@ -4,17 +4,13 @@ import {
     Grid,
     Segment,
     Dimmer,
-    Loader,
-    Pagination,
+    Checkbox,
+    Label,
     Header,
     Button,
     Dropdown, Divider
 } from 'semantic-ui-react'
-import TableHeader from '../../molecules/TableHeader';
-import TableBody from '../../molecules/TableBody';
-import TableRow from '../../molecules/TableRow';
-import TableColumn from '../../molecules/TableColumn';
-import TablePagination from '../../molecules/TablePagination';
+import ProductTypeTable from '../../organisms/tables/ProductTypeTable';
 
 const stateOptions = [
     {
@@ -29,9 +25,83 @@ const stateOptions = [
     }
 ];
 
+const header = [
+    {
+        width: 5,
+        name: "Tên loại sản phẩm"
+    },
+    {
+        width: 3,
+        name: "Trạng thái"
+    }
+]
+
+const productTypes = [
+    {
+        name: 'Nước lọc',
+        status: 'ACTIVE'
+    },
+    {
+        name: 'Nước ngọt',
+        status: 'IN_ACTIVE'
+    },
+    {
+        name: 'Nước lọc',
+        status: 'ACTIVE'
+    }
+]
+
 export default class Main extends Component {
+    constructor(props) {
+        super(props)
+        this.child = React.createRef();
+    }
     state = {
-        open: false
+        open: false,
+        checkAll: false
+    }
+
+    handleCheckAll() {
+        this.setState({ checkAll: !this.state.checkAll });
+
+        const checkboxItems = document.querySelectorAll(
+            `div[data-checkbox='checkboxItem'] input[type='checkbox']:${
+            this.state.checkAll ? `checked` : `not(:checked)`}`
+        );
+        checkboxItems.forEach(item => item.click());
+    }
+
+    handleItemCheck(e, checkbox) {
+        this.child.current.handleItemCheck(e, checkbox)
+    }
+
+    handleExecute() {
+        const checkboxItems = this._getAllCheckedItem();
+        console.log("Total " + checkboxItems.length);
+    }
+
+    _checkCheckAll() {
+        const checkboxItems = document.querySelectorAll(
+            `div[data-checkbox='checkboxItem'] input[type='checkbox']`
+        ).length;
+
+        const checkboxItemsChecked = document.querySelectorAll(
+            `div[data-checkbox='checkboxItem'] input[type='checkbox']:checked`
+        ).length + 1;
+
+        return checkboxItems === checkboxItemsChecked;
+    }
+
+    _getAllCheckedItem() {
+        let data = [];
+        const checkboxItems = document.querySelectorAll(
+            `div[data-checkbox='checkboxItem'] input[type='checkbox']:checked`
+        );
+
+        if (checkboxItems) {
+            checkboxItems.forEach(item => data.push(item.value));
+        }
+        return data;
     }
 
     render() {
@@ -42,123 +112,22 @@ export default class Main extends Component {
                 </Form>
                 <Segment>
                     <Grid columns="equal" padded="vertically">
-                    <Grid.Row>
-                        <Grid.Column verticalAlign="middle">
-                        <Header>Danh sách</Header>
-                        </Grid.Column>
-                        <Grid.Column>
-                        <Button icon primary floated="right" labelPosition="left">
-                            <Icon name="plus" />
-                            Thêm mới
-                        </Button>
-                        </Grid.Column>
-                    </Grid.Row>
-                    <Divider />
-                    <Grid.Row>
-                        <Grid.Column verticalAlign="middle" width={16}>
-                        <Dropdown
-                            placeholder="State"
-                            search
-                            selection
-                            options={stateOptions}
-                            floated="left"
-                        />
-                        &nbsp;&nbsp;
-                        <Button icon primary disabled>
-                            <Icon loading name="spinner" />&nbsp;&nbsp;
-                            Thực hiện
-                        </Button>
-                        </Grid.Column>
-                    </Grid.Row>
+                        <Grid.Row>
+                            <Grid.Column verticalAlign="middle">
+                                <h1>Danh sách</h1>
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Button icon primary floated="right" labelPosition="left">
+                                    <Icon name="plus" />
+                                    Thêm mới
+                                </Button>
+                            </Grid.Column>
+                        </Grid.Row>
+                        <Divider />
                     </Grid>
-                    <TableHeader>
-                        <TableColumn>
-                            #
-                        </TableColumn>
-                        <TableColumn>
-                            Tên loại sản phẩm
-                        </TableColumn>
-                        <TableColumn>
-                            Trạng thái
-                        </TableColumn>
-                        <TableColumn>
-                            Hành động
-                        </TableColumn>
-                    </TableHeader>
-                    <TableBody>
-                        <TableRow>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                        </TableRow>
-                        <TableRow>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                        </TableRow>
-                        <TableRow>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                        </TableRow>
-                        <TableRow>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                        </TableRow>
-                        <TableRow>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                            <TableColumn>
-                                <span>Nguyen Văn Anh</span>
-                            </TableColumn>
-                        </TableRow>
-                    </TableBody>
-                    <TablePagination
-                        totalPages={10000}
+                    <ProductTypeTable header={header}
+                        body={productTypes}
+                        totalPages={20}
                         defaultActivePage={5}
                     />
                 </Segment>
