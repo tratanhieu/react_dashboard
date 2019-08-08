@@ -6,18 +6,12 @@ import style from './styles.module.scss'
 const TableBody = ({children, loading, ...rest}) => {
     return (
         <Dimmer.Dimmable
-            style={{
-                marginTop: 8
-            }}
-            >
+            className={`${style.root}`}
+        >
             <Dimmer
                 active={loading}
                 inverted
-                style={{
-                borderColor: "#eee",
-                borderWidth: 1,
-                borderStyle: "solid"
-                }}
+                className={`${style.dimmer}`}
             >
                 <Loader size="medium">Vui lòng đợi</Loader>
             </Dimmer>

@@ -10,9 +10,9 @@ const TablePagination = ({...rest}) => (
                     className={`${style.root}`}
                     // pointing
                     // secondary
-                    prevItem={<Pagination.Item className={`${style.paginationItem}`}><Icon name="chevron left" /></Pagination.Item>}
-                    nextItem={<Pagination.Item className={`${style.paginationItem}`}><Icon name="chevron right" /></Pagination.Item>}
-                    ellipsisItem={<Pagination.Item className={`${style.paginationItem}`}>...</Pagination.Item>}
+                    prevItem={<Pagination.Item className={`${style.paginationItem}`} content={<Icon name="chevron left" />} />}
+                    nextItem={<Pagination.Item className={`${style.paginationItem}`} content={<Icon name="chevron right" />} />}
+                    ellipsisItem={<Pagination.Item className={`${style.paginationItem}`} content="..." />}
                     firstItem={null}
                     lastItem={null}
                     pageItem={<Pagination.Item className={`${style.paginationItem}`} />}

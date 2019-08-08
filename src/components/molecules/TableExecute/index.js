@@ -11,7 +11,7 @@ const TableExecute = ({stateOptions, onExecute, loading, ...rest}) => {
         onExecute(dropDownValue)
     }
 
-    const handleSelectAction = (e, dropdown) => {
+    const handleSelectAction = (_, dropdown) => {
         setDropDownValue(dropdown.value)
     }
 

@@ -1,14 +1,6 @@
 import React, { useState } from 'react'
 import {
-    Container, Form, Modal, Transition, Icon, Image, 
-    Grid,
-    Segment,
-    Dimmer,
-    Checkbox,
-    Label,
-    Header,
-    Button,
-    Dropdown, Divider
+    Label
 } from 'semantic-ui-react'
 
 import TableHeader from '../../../molecules/TableHeader';
@@ -18,9 +10,7 @@ import TableColumn from '../../../molecules/TableColumn';
 import TablePagination from '../../../molecules/TablePagination';
 import TableExecute from '../../../molecules/TableExecute';
 
-// import style from './styles.module.scss'
-
-const ProductTypeTable = ({totalPages, defaultActivePage, loading, checkboxItems, body}) => {
+const ProductTypeTable = ({totalPages, defaultActivePage, onChangePagination, loading, onView, onDelete, body}) => {
     
     const [checkAll, setCheckAll] = useState(false)
 
@@ -44,9 +34,13 @@ const ProductTypeTable = ({totalPages, defaultActivePage, loading, checkboxItems
         }
     }
 
+    const handleChangePagination = (_, page) => {
+        onChangePagination(page.activePage)
+    }
+
     const handleExecute = () => {
         const items = _getAllCheckedItem()
-        (items)
+        return items
     }
 
     const _checkCheckAll = () => {
@@ -100,22 +94,22 @@ const ProductTypeTable = ({totalPages, defaultActivePage, loading, checkboxItems
                 <TableColumn>
                     Tên loại sản phẩm
                 </TableColumn>
-                <TableColumn width={2} tablet={3}>
+                <TableColumn computer={2} tablet={3}>
                     Trạng thái
                 </TableColumn>
             </TableHeader>
             <TableBody loading={loading}>
-                {body.map(item =>
-                    (<TableRow 
+                {body.map((item, i) =>
+                    (<TableRow key={i}
                         verticalAlign="middle"
                         onChangeCheckbox={handleItemCheck}
-                        onView={() => alert("View")}
-                        onDelete={() => alert("Delete")}
+                        onView={() => onView(item._id)}
+                        onDelete={() => onDelete(item._id)}
                     >
                         <TableColumn>
                             {item.name}
                         </TableColumn>
-                        <TableColumn width={2} tablet={3}>
+                        <TableColumn computer={2} tablet={3}>
                             <Label color="green">
                                 {item.status}
                             </Label>
@@ -126,6 +120,7 @@ const ProductTypeTable = ({totalPages, defaultActivePage, loading, checkboxItems
             <TablePagination
                 totalPages={totalPages}
                 defaultActivePage={defaultActivePage}
+                onPageChange={handleChangePagination}
             />
         </>
     )

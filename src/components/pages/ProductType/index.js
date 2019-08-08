@@ -1,29 +1,20 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import {
-    Container, Form, Modal, Transition, Icon, Image, 
-    Grid,
-    Segment,
-    Dimmer,
-    Checkbox,
-    Label,
-    Header,
-    Button,
-    Dropdown, Divider
+    Container, Icon, 
+    Grid, Segment, Button, Divider,
 } from 'semantic-ui-react'
+
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
 import ProductTypeTable from '../../organisms/tables/ProductTypeTable';
 
-const stateOptions = [
-    {
-        key: "1",
-        text: "Việt Nam",
-        value: "VietNam"
-    },
-    {
-        key: "2",
-        text: "Sinapore",
-        value: "Sin"
-    }
-];
+// Redux
+import { fetchAll, findById } from '../../../redux/api-actions/productTypeApiAction'
+import { VIEW } from '../../../constants/pages';
+import ProductTypeModal from '../../organisms/modals/ProductTypeModal';
 
 const header = [
     {
@@ -36,80 +27,55 @@ const header = [
     }
 ]
 
-const productTypes = [
-    {
-        name: 'Nước lọc',
-        status: 'ACTIVE'
-    },
-    {
-        name: 'Nước ngọt',
-        status: 'IN_ACTIVE'
-    },
-    {
-        name: 'Nước lọc',
-        status: 'ACTIVE'
-    }
-]
-
-export default class Main extends Component {
-    constructor(props) {
-        super(props)
-        this.child = React.createRef();
-    }
+class ProductType extends Component {
     state = {
         open: false,
-        checkAll: false
+        action: VIEW
     }
 
-    handleCheckAll() {
-        this.setState({ checkAll: !this.state.checkAll });
-
-        const checkboxItems = document.querySelectorAll(
-            `div[data-checkbox='checkboxItem'] input[type='checkbox']:${
-            this.state.checkAll ? `checked` : `not(:checked)`}`
-        );
-        checkboxItems.forEach(item => item.click());
+    componentDidMount() {
+        this.props.fetchAll().catch(error => console.log(error))
     }
 
-    handleItemCheck(e, checkbox) {
-        this.child.current.handleItemCheck(e, checkbox)
-    }
+    handleChangePagination = page => 
+        this.props.fetchAll(page).catch(error => console.log(error))
 
-    handleExecute() {
-        const checkboxItems = this._getAllCheckedItem();
-        console.log("Total " + checkboxItems.length);
-    }
-
-    _checkCheckAll() {
-        const checkboxItems = document.querySelectorAll(
-            `div[data-checkbox='checkboxItem'] input[type='checkbox']`
-        ).length;
-
-        const checkboxItemsChecked = document.querySelectorAll(
-            `div[data-checkbox='checkboxItem'] input[type='checkbox']:checked`
-        ).length + 1;
-
-        return checkboxItems === checkboxItemsChecked;
-    }
-
-    _getAllCheckedItem() {
-        let data = [];
-        const checkboxItems = document.querySelectorAll(
-            `div[data-checkbox='checkboxItem'] input[type='checkbox']:checked`
-        );
-
-        if (checkboxItems) {
-            checkboxItems.forEach(item => data.push(item.value));
+    handleView = _id => {
+        this.props.findById(_id).then(result => {
+            this.setState({open: true})
+            console.log(this.props.productType)
         }
-        return data;
+        ).catch(error => console.log(error))
+    }
+
+    handleDelete = _id => {
+        Swal.fire({
+            title: 'Bạn chắc chắn rồi chứ?',
+            text: "Tất cả các sản phẩm liên quan sẽ bị xóa và bạn không thể khôi phục hành động này.",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ok, Xóa',
+            cancelButtonText: 'Không, Hủy!',
+            cancelButtonColor: "#767676",
+            confirmButtonColor: "#dd4b39",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value) {
+                Swal.fire(
+                    'Đã xóa!',
+                    'Tất cả sản phẩm liên quan đã được xóa và không thể khôi phục lại được',
+                    'success'
+                )
+            }
+        })
     }
 
     render() {
+
+        const { productTypes, productType, loading, totalPage, page } = this.props
+
         return (
             <Container>
-                <Form>
-                    <Form.Input label="Username: " required />
-                </Form>
                 <Segment>
                     <Grid columns="equal" padded="vertically">
                         <Grid.Row>
@@ -117,7 +83,9 @@ export default class Main extends Component {
                                 <h1>Danh sách</h1>
                             </Grid.Column>
                             <Grid.Column>
-                                <Button icon primary floated="right" labelPosition="left">
+                                <Button icon primary floated="right" labelPosition="left"
+                                    onClick={() => this.setState({open: true})}
+                                >
                                     <Icon name="plus" />
                                     Thêm mới
                                 </Button>
@@ -126,26 +94,39 @@ export default class Main extends Component {
                         <Divider />
                     </Grid>
                     <ProductTypeTable header={header}
+                        loading={loading}
                         body={productTypes}
-                        totalPages={20}
-                        defaultActivePage={5}
+                        totalPages={totalPage}
+                        defaultActivePage={page}
+                        onView={this.handleView.bind(this)}
+                        onDelete={this.handleDelete.bind(this)}
+                        onChangePagination={this.handleChangePagination.bind(this)}
                     />
                 </Segment>
-
-                <Transition visible={this.state.open} animation='slide down' duration={500}>
-                    <Modal open={this.state.open} centered={false} onClose={() => this.setState({open: false})} closeIcon>
-                        <Modal.Header>Thêm loại sản phẩm</Modal.Header>
-                        <Modal.Content>
-                            <p>Are you sure you want to delete your account</p>
-                        </Modal.Content>
-                        <Modal.Actions>
-                            <Button negative>No</Button>
-                            <Button positive icon='checkmark' labelPosition='right' content='Yes' />
-                            <Button negative onClick={() => this.setState({open: false})} ><Icon name="close"/> Đóng</Button>
-                        </Modal.Actions>
-                    </Modal>
-                </Transition>
+                <ProductTypeModal
+                    open={this.state.open}
+                    productType={productType}
+                    action={this.state.action}
+                    onClose={() => this.setState({open: false})}
+                />
             </Container>
         )
     }
 }
+
+const mapStateToProps = state => ({
+	productTypes: state.productTypeReducer.productTypes,
+	totalPage: state.productTypeReducer.totalPage,
+	productType: state.productTypeReducer.productType,
+	page: state.productTypeReducer.page,
+	loading: state.productTypeReducer.loading
+})
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+	fetchAll, findById
+}, dispatch)
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(ProductType)
