@@ -12,8 +12,9 @@ import withReactContent from 'sweetalert2-react-content'
 import ProductTypeTable from '../../organisms/tables/ProductTypeTable';
 
 // Redux
-import { fetchAll, findById } from '../../../redux/api-actions/productTypeApiAction'
-import { VIEW } from '../../../constants/pages';
+import { fetchAll, findById, doCreate, doUpdate } from '../../../redux/api-actions/productTypeApiAction'
+import { getInsert } from '../../../redux/actions/productTypeAction'
+import { VIEW, INSERT } from '../../../constants/pages';
 import ProductTypeModal from '../../organisms/modals/ProductTypeModal';
 
 const header = [
@@ -33,19 +34,50 @@ class ProductType extends Component {
         action: VIEW
     }
 
-    componentDidMount() {
+    componentDidMount = () =>
         this.props.fetchAll().catch(error => console.log(error))
-    }
 
     handleChangePagination = page => 
         this.props.fetchAll(page).catch(error => console.log(error))
 
+    handleNew = () => {
+        this.props.getInsert()
+        this.setState({
+            open: true,
+            action: INSERT
+        })
+    }
+
     handleView = _id => {
-        this.props.findById(_id).then(result => {
-            this.setState({open: true})
-            console.log(this.props.productType)
-        }
-        ).catch(error => console.log(error))
+        this.props.findById(_id).then(_ => {
+            this.setState({open: true, action: VIEW})
+        }).catch(error => console.log(error))
+    }
+
+    handleUCreate = (productType) => {
+        this.props.doCreate(productType)
+        .then(_ => {
+            Swal.fire(
+                'Đã thêm!',
+                'Thêm mới loại Sản phẩm thành công',
+                'success'
+            ).then(_ => 
+                this.setState({open: false})   
+            )
+        }).catch(error => console.log(error))
+    }
+
+    handleUpdate = (productType) => {
+        this.props.doUpdate(productType, this.props.page)
+        .then(_ => {
+            Swal.fire(
+                'Đã cập nhật!',
+                'Loại sản phẩm cập nhật thành công',
+                'success'
+            ).then(_ => 
+                this.setState({open: false})   
+            )
+        }).catch(error => console.log(error))
     }
 
     handleDelete = _id => {
@@ -84,7 +116,7 @@ class ProductType extends Component {
                             </Grid.Column>
                             <Grid.Column>
                                 <Button icon primary floated="right" labelPosition="left"
-                                    onClick={() => this.setState({open: true})}
+                                    onClick={this.handleNew.bind(this)}
                                 >
                                     <Icon name="plus" />
                                     Thêm mới
@@ -106,7 +138,9 @@ class ProductType extends Component {
                 <ProductTypeModal
                     open={this.state.open}
                     productType={productType}
-                    action={this.state.action}
+                    modalAction={this.state.action}
+                    onCreate={this.handleUCreate.bind(this)}
+                    onUpdate={this.handleUpdate.bind(this)}
                     onClose={() => this.setState({open: false})}
                 />
             </Container>
@@ -123,7 +157,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-	fetchAll, findById
+	fetchAll, findById, getInsert, doCreate, doUpdate
 }, dispatch)
 
 export default connect(

@@ -1,11 +1,49 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { TransitionablePortal, Modal, Button, Icon, Form, Radio } from 'semantic-ui-react'
-import { VIEW } from '../../../../constants/pages';
+import { VIEW, UPDATE, INSERT } from '../../../../constants/pages';
 import ToggleActive from '../../../atoms/ToggleActive';
+import { ACTIVE, HIDDEN } from '../../../../constants/entites';
 
-const ProductTypeModal = ({open = false, productType, action, onClose,...rest}) => {
-    
+const ProductTypeModal = ({
+    open = false,
+    productType,
+    modalAction,
+    onCreate, onUpdate, onClose,
+    ...rest
+}) => {
+
+    const [action, setAction] = useState(modalAction)
+
     const isView = action === VIEW
+
+    const [name, setName] = useState(null)
+    const [status, setStatus] = useState(true)
+
+    const title = {
+        VIEW: 'Chi tiết',
+        UPDATE: 'Cập nhật',
+        INSERT: 'Thêm mới'
+    }
+
+    useEffect(() => {
+        setAction(modalAction)
+        setName(productType.name)
+    }, [productType, modalAction])
+
+    const handleSave = () => {
+        if (action === UPDATE) {
+            onUpdate({
+                _id: productType._id,
+                name,
+                status: status ? ACTIVE : HIDDEN
+            })
+            return
+        }
+        onCreate({
+            name,
+            status: status ? ACTIVE : HIDDEN
+        })
+    }
 
     return (
         <TransitionablePortal
@@ -13,14 +51,14 @@ const ProductTypeModal = ({open = false, productType, action, onClose,...rest}) 
             transition={{animation:'scale', duration: 300}}
         >
             <Modal 
-                size="tiny"
+                size="mini"
                 open={open}
                 centered={false}
                 onClose={onClose}
                 {...rest}
                 closeIcon
             >
-                <Modal.Header>Chi tiết</Modal.Header>
+                <Modal.Header>{title[action]}</Modal.Header>
                 <Modal.Content>
                     <Form>
                         <Form.Input
@@ -29,18 +67,39 @@ const ProductTypeModal = ({open = false, productType, action, onClose,...rest}) 
                             label="Tên loại Sản phẩm: " 
                             required
                             readOnly={isView}
+                            onChange={(_, input) => setName(input.value)}
                             defaultValue={productType.name}
                         />
-                        <ToggleActive value="1" onChangeStatus={(status) => console.log(status)} />
+                        <ToggleActive
+                            readOnly={isView}
+                            checked={productType.status === ACTIVE} 
+                            onChangeStatus={status => setStatus(status)} />
                     </Form>
                 </Modal.Content>
                 <Modal.Actions>
                     {
                         isView
-                        ? <Button positive icon='checkmark' labelPosition='left' content='Cập nhât' />
-                        : <Button positive icon='checkmark' labelPosition='left' content='Cập nhât' />
+                        ? <Button
+                            icon='edit'
+                            labelPosition='left'
+                            color="orange"
+                            content='Chỉnh sửa'
+                            onClick={(() => setAction(UPDATE))}
+                        />
+                        : <Button
+                            color="green"
+                            icon='checkmark'
+                            labelPosition='left' 
+                            onClick={handleSave}
+                            content='Lưu'
+                        />
                     }
-                    <Button negative onClick={onClose} ><Icon name="close"/> Đóng</Button>
+                    <Button
+                        onClick={onClose}
+                        color="grey"
+                    >
+                        <Icon name="close"/> Đóng
+                    </Button>
                 </Modal.Actions>
             </Modal>
         </TransitionablePortal>

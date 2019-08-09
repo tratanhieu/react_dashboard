@@ -10,9 +10,7 @@ export const fetchAll = (page) => {
         return axios.get(`${REDUX_API_URL}${PREFIX}/product_type${page ? `?page=${page}` : ''}`, {
             timeout: 5000
         }).then(response => 
-            dispatch(getALl(response.data.productTypes,
-                response.data.totalPage,
-                response.data.page))
+            dispatch(getALl(response.data))
         ).catch(error => {
             return Promise.reject("Có lỗi xãy ra trong quá trình truy vấn dữ liệu, vui lòng thử lại sau")
         })
@@ -25,7 +23,6 @@ export const findById = (_id) => {
         return axios.get(`${REDUX_API_URL}${PREFIX}/product_type${_id ? `?id=${_id}` : ''}`, {
             timeout: 5000
         }).then(response => {
-            console.log(response)
             dispatch(getOne(response.data.productType))
         }
         ).catch(error => {
@@ -34,15 +31,36 @@ export const findById = (_id) => {
     }
 }
 
-export const create = (productType) => {
+export const doCreate = (productType) => {
     return (dispatch) => {
+        const params = {
+            name: productType.name,
+            status: productType.status
+        }
         dispatch(getLoading(true))
-        return axios.post(`${REDUX_API_URL}${PREFIX}/product_type/create`, {productType}, {
+        return axios.post(`${REDUX_API_URL}${PREFIX}/product_type/create`, params, {
             timeout: 5000
         }).then(response => 
-            dispatch(getALl(response.data.productTypes,
-                response.data.totalPage,
-                response.data.page))
+            dispatch(getALl(response.data))
+        ).catch(error => {
+            return Promise.reject("Có lỗi xãy ra, vui lòng thử lại sau")
+        })
+    }
+}
+
+export const doUpdate = (productType, page) => {
+    return (dispatch) => {
+        dispatch(getLoading(true))
+        const params = {
+            _id: productType._id,
+            name: productType.name,
+            status: productType.status,
+            page
+        }
+        return axios.put(`${REDUX_API_URL}${PREFIX}/product_type/update`, params, {
+            timeout: 5000
+        }).then(response => 
+            dispatch(getALl(response.data))
         ).catch(error => {
             return Promise.reject("Có lỗi xãy ra, vui lòng thử lại sau")
         })

@@ -1,4 +1,4 @@
-import { REDUX_LOADING, REDUX_GET_ALL, REDUX_GET_ONE } from '../../constants/redux-actions';
+import { REDUX_LOADING, REDUX_GET_ALL, REDUX_GET_ONE, REDUX_INSERT } from '../../constants/redux-actions';
 
 const initialState = {
     loading: true,
@@ -25,6 +25,12 @@ export default function(state = initialState, action) {
                 }
 
             case REDUX_GET_ONE: return {
+                    ...state,
+                    productType: action.productType,
+                    loading: false
+                }
+
+            case REDUX_INSERT: return {
                     ...state,
                     productType: action.productType,
                     loading: false
