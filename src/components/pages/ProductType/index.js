@@ -12,7 +12,7 @@ import withReactContent from 'sweetalert2-react-content'
 import ProductTypeTable from '../../organisms/tables/ProductTypeTable';
 
 // Redux
-import { fetchAll, findById, doCreate, doUpdate } from '../../../redux/api-actions/productTypeApiAction'
+import { fetchAll, findById, doCreate, doUpdate, doExecute } from '../../../redux/api-actions/productTypeApiAction'
 import { getInsert } from '../../../redux/actions/productTypeAction'
 import { VIEW, INSERT } from '../../../constants/pages';
 import ProductTypeModal from '../../organisms/modals/ProductTypeModal';
@@ -31,6 +31,7 @@ const header = [
 class ProductType extends Component {
     state = {
         open: false,
+        executeLoading: false,
         action: VIEW
     }
 
@@ -48,13 +49,18 @@ class ProductType extends Component {
         })
     }
 
+    handleExecute = (value, items) => {
+        this.props.doExecute(items, value, this.props.page)
+        .catch(error => console.log(error))
+    }
+
     handleView = _id => {
         this.props.findById(_id).then(_ => {
             this.setState({open: true, action: VIEW})
         }).catch(error => console.log(error))
     }
 
-    handleUCreate = (productType) => {
+    handleCreate = (productType) => {
         this.props.doCreate(productType)
         .then(_ => {
             Swal.fire(
@@ -127,9 +133,11 @@ class ProductType extends Component {
                     </Grid>
                     <ProductTypeTable header={header}
                         loading={loading}
+                        executeLoading={this.state.executeLoading}
                         body={productTypes}
                         totalPages={totalPage}
                         defaultActivePage={page}
+                        onExecute={this.handleExecute.bind(this)}
                         onView={this.handleView.bind(this)}
                         onDelete={this.handleDelete.bind(this)}
                         onChangePagination={this.handleChangePagination.bind(this)}
@@ -139,7 +147,7 @@ class ProductType extends Component {
                     open={this.state.open}
                     productType={productType}
                     modalAction={this.state.action}
-                    onCreate={this.handleUCreate.bind(this)}
+                    onCreate={this.handleCreate.bind(this)}
                     onUpdate={this.handleUpdate.bind(this)}
                     onClose={() => this.setState({open: false})}
                 />
@@ -157,7 +165,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-	fetchAll, findById, getInsert, doCreate, doUpdate
+	fetchAll, findById, getInsert, doCreate, doUpdate, doExecute
 }, dispatch)
 
 export default connect(

@@ -10,7 +10,10 @@ import TableColumn from '../../../molecules/TableColumn';
 import TablePagination from '../../../molecules/TablePagination';
 import TableExecute from '../../../molecules/TableExecute';
 
-const ProductTypeTable = ({totalPages, defaultActivePage, onChangePagination, loading, onView, onDelete, body}) => {
+const ProductTypeTable = ({body,
+    totalPages, defaultActivePage,
+    loading, executeLoading,
+    onChangePagination, onExecute, onView, onDelete}) => {
     
     const [checkAll, setCheckAll] = useState(false)
 
@@ -24,7 +27,7 @@ const ProductTypeTable = ({totalPages, defaultActivePage, onChangePagination, lo
         checkboxItems.forEach(item => item.click());
     }
 
-    const handleItemCheck = (e, checkbox) => {
+    const handleItemCheck = (_, checkbox) => {
         if (checkAll && !checkbox.checked) {
             setCheckAll(false)
             return
@@ -38,9 +41,9 @@ const ProductTypeTable = ({totalPages, defaultActivePage, onChangePagination, lo
         onChangePagination(page.activePage)
     }
 
-    const handleExecute = () => {
+    const handleExecute = value => {
         const items = _getAllCheckedItem()
-        return items
+        onExecute(value,items)
     }
 
     const _checkCheckAll = () => {
@@ -84,8 +87,8 @@ const ProductTypeTable = ({totalPages, defaultActivePage, onChangePagination, lo
         <>
             <TableExecute
                 stateOptions={stateOptions}
-                loading
-                onExecute={(value) => alert(value)}
+                loading={executeLoading}
+                onExecute={handleExecute}
             />
             <TableHeader 
                 checkAll={checkAll}
@@ -103,6 +106,7 @@ const ProductTypeTable = ({totalPages, defaultActivePage, onChangePagination, lo
                     (<TableRow key={i}
                         verticalAlign="middle"
                         onChangeCheckbox={handleItemCheck}
+                        checkboxValue={item._id}
                         onView={() => onView(item._id)}
                         onDelete={() => onDelete(item._id)}
                     >

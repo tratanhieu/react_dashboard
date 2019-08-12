@@ -66,3 +66,21 @@ export const doUpdate = (productType, page) => {
         })
     }
 }
+
+export const doExecute = (listId, status, page) => {
+    return (dispatch) => {
+        dispatch(getLoading(true))
+        const params = {
+            listId,
+            status,
+            page
+        }
+        return axios.put(`${REDUX_API_URL}${PREFIX}/product_type/update_status`, params, {
+            timeout: 5000
+        }).then(response => 
+            dispatch(getALl(response.data))
+        ).catch(error => {
+            return Promise.reject(error)
+        })
+    }
+}

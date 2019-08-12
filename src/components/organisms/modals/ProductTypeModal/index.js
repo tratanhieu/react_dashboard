@@ -28,6 +28,7 @@ const ProductTypeModal = ({
     useEffect(() => {
         setAction(modalAction)
         setName(productType.name)
+        setStatus(productType.status)
     }, [productType, modalAction])
 
     const handleSave = () => {
