@@ -3,6 +3,10 @@ import { Grid, Checkbox } from 'semantic-ui-react'
 
 import TableColumn from '../TableColumn'
 
+import { 
+    _handleCheckAll, _handleItemCheck,
+    _getAllCheckedItem, _checkCheckAll } from '../../../commons/multiple-checkbox';
+
 import style from './styles.module.scss'
 
 const TableHeader = ({children, checkAll, onChangeCheckbox, ...rest}) => {
@@ -14,8 +18,9 @@ const TableHeader = ({children, checkAll, onChangeCheckbox, ...rest}) => {
             >
                 <TableColumn width={1} className={`${style.checkboxAll}`}>
                     <Checkbox
-                        checked={checkAll}
-                        onChange={onChangeCheckbox}
+                        table-header-checkbox="tableCheckAllItem"
+                        // checked={checkAll}
+                        onChange={_handleCheckAll}
                     />
                 </TableColumn>
                 {children}

@@ -1,3 +1,7 @@
+body {
+  background: #e9ebee !important;
+}
+
 .App {
   text-align: center;
 }
@@ -30,4 +34,52 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+body .ui.grid {
+  margin: 0;
+}
+
+body .ui.form .field .ui.input input[readonly] {
+  border-top: none !important;
+  border-right: none !important;
+  border-left: none !important;
+}
+
+.dimmed.dimmable>.ui.animating.dimmer, .dimmed.dimmable>.ui.visible.dimmer, .ui.active.dimmer {
+  z-index: 9999;
+}
+
+.swal2-container.swal2-shown {
+  z-index: 9999;
+}
+
+
+.ui.form .field.error input:not([type]), .ui.form .field.error input[type=date], .ui.form .field.error input[type=datetime-local], .ui.form .field.error input[type=email], .ui.form .field.error input[type=file], .ui.form .field.error input[type=number], .ui.form .field.error input[type=password], .ui.form .field.error input[type=search], .ui.form .field.error input[type=tel], .ui.form .field.error input[type=text], .ui.form .field.error input[type=time], .ui.form .field.error input[type=url], .ui.form .field.error select, .ui.form .field.error textarea, .ui.form .fields.error .field input:not([type]), .ui.form .fields.error .field input[type=date], .ui.form .fields.error .field input[type=datetime-local], .ui.form .fields.error .field input[type=email], .ui.form .fields.error .field input[type=file], .ui.form .fields.error .field input[type=number], .ui.form .fields.error .field input[type=password], .ui.form .fields.error .field input[type=search], .ui.form .fields.error .field input[type=tel], .ui.form .fields.error .field input[type=text], .ui.form .fields.error .field input[type=time], .ui.form .fields.error .field input[type=url], .ui.form .fields.error .field select, .ui.form .fields.error .field textarea {
+  border-color: #f44336 !important;
+  background-color: transparent !important;
+}
+
+.ui.form .field.error .input, .ui.form .field.error label, .ui.form .fields.error .field .input, .ui.form .fields.error .field label {
+  color: #f44336 !important;
+}
+
+body .ui.form .field .prompt.label {
+  border: none !important;
+  top: 0px;
+  margin-top: 0;
+  color: #F44336!important;
+  left: -10px;
+}
+
+.ui.form .field.error {
+  margin-bottom: 0;
+}
+
+body .ui.pointing.label:before, .ui[class*="pointing above"].label:before {
+  border-width: 0px;
+  border-color: transparent;
+  transform: translateX(-50%) translateY(-50%) rotate(45deg);
+  top: 0;
+  left: 0;
 }

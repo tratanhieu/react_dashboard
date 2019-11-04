@@ -1,11 +1,14 @@
 import React from 'react'
-import { Grid, Checkbox, Button, Icon } from 'semantic-ui-react'
+import { Grid, Checkbox, Button, Icon, Popup } from 'semantic-ui-react'
 
 import TableColumn from '../TableColumn'
 
-import style from './styles.module.scss'
+import { _handleCheckItem } from '../../../commons/multiple-checkbox';
 
-const TableRow = ({children, onChangeCheckbox, checkboxClassName, onView, onDelete, checkboxValue, ...rest}) => (
+import style from './styles.module.scss'
+import { DELETED } from '../../../constants/entites';
+
+const TableRow = ({children, status, onChangeCheckbox, checkboxClassName, onView, onDelete, checkboxValue, ...rest}) => (
     <Grid.Row
         divided
         className={`${style.root}`}
@@ -13,29 +16,35 @@ const TableRow = ({children, onChangeCheckbox, checkboxClassName, onView, onDele
     >
         <TableColumn verticalAlign="middle" width={1} className={`${style.checkboxItem}`}>
             <Checkbox
-                onChange={(event, data) => onChangeCheckbox(event, data)}
+                onChange={_handleCheckItem}
                 data-checkbox="checkboxItem"
                 value={checkboxValue}
             />
         </TableColumn>
         {children}
         <TableColumn width={2} className={`${style.action}`}>
-            <Button animated='vertical' size="mini" color="instagram" className={`${style.buttonView}`}
-                onClick={onView}
-            >
-                <Button.Content hidden>Xem</Button.Content>
-                <Button.Content visible>
-                    <Icon name='eye' />
-                </Button.Content>
-            </Button>
-            <Button animated='vertical' size="mini" color="google plus" className={`${style.buttonDelete}`}
-                onClick={onDelete}
-            >
-                <Button.Content hidden>Xóa</Button.Content>
-                <Button.Content visible>
-                    <Icon name='trash alternate' />
-                </Button.Content>
-            </Button>
+            {(status !== DELETED) ? 
+            <>
+                <Popup inverted content="Xem" trigger={
+                    <Button size="mini" color="instagram" className={`${style.buttonView}`}
+                        onClick={onView} icon="eye" />
+                } />
+                <Popup inverted content="Xóa" trigger={
+                    <Button size="mini" color="google plus" className={`${style.buttonDelete}`}
+                        onClick={onDelete} icon='trash alternate' />
+                } />
+            </> : 
+            <>
+                <Popup inverted content="Khôi phục" trigger={
+                    <Button size="mini" color="orange" className={`${style.buttonDelete}`}
+                        onClick={onDelete} icon='undo alternate' />
+                } />
+                <Popup inverted content="Xóa vĩnh viễn" trigger={
+                    <Button size="mini" color="google plus" className={`${style.buttonDelete}`}
+                        onClick={onDelete} icon='delete alternate' />
+                } />
+            </>
+            }
         </TableColumn>
     </Grid.Row>
 )

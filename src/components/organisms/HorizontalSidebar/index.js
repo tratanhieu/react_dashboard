@@ -1,44 +1,47 @@
-import PropTypes from 'prop-types'
 import React, { Component } from 'react'
-import {
-    Button,
-    Checkbox,
-    Grid,
-    Header,
-    Icon,
-    Image,
-    Menu,
-    Segment,
-    Sidebar,
-} from 'semantic-ui-react'
+import { Dropdown, Icon, Input, Menu } from 'semantic-ui-react'
 
-const HorizontalSidebar = ({ animation, direction, visible }) => (
-    <Sidebar as={Segment} animation={animation} direction={direction} visible={visible}>
-        <Grid textAlign='center'>
-            <Grid.Row columns={1}>
-                <Grid.Column>
-                <Header as='h3'>New Content Awaits</Header>
-                </Grid.Column>
-            </Grid.Row>
-            <Grid columns={3} divided>
-                <Grid.Column>
-                    2
-                </Grid.Column>
-                <Grid.Column>
-                    2
-                </Grid.Column>
-                <Grid.Column>
-                    1
-                </Grid.Column>
-            </Grid>
-        </Grid>
-    </Sidebar>
-)
+export default class HorizontalSidebar extends Component {
+    state = {}
 
-HorizontalSidebar.propTypes = {
-    animation: PropTypes.string,
-    direction: PropTypes.string,
-    visible: PropTypes.bool,
+    handleItemClick = (e, { name }) => this.setState({ activeItem: name })
+
+    render() {
+        const { activeItem } = this.state
+        return (
+            <Menu vertical {...this.props}>
+                <Menu.Item
+                    name='messages'
+                    active={activeItem === 'messages'}
+                    onClick={this.handleItemClick}
+                >
+                    <Icon name='home' />
+                    Dashboard
+                </Menu.Item>
+                <Menu.Item
+                    name='browse'
+                    active={activeItem === 'browse'}
+                    onClick={this.handleItemClick}
+                >
+                    <Icon name='grid layout' />
+                    Đơn hàng
+                </Menu.Item>
+                <Menu.Item
+                    name='messages'
+                    active={activeItem === 'messages'}
+                    onClick={this.handleItemClick}
+                >
+                    Loại sản phẩm
+                </Menu.Item>
+
+                <Dropdown item text='Cài đặt'>
+                <Dropdown.Menu>
+                    <Dropdown.Item icon='edit' text='Edit Profile' />
+                    <Dropdown.Item icon='globe' text='Choose Language' />
+                    <Dropdown.Item icon='settings' text='Account Settings' />
+                </Dropdown.Menu>
+                </Dropdown>
+            </Menu>
+        )
+    }
 }
-
-export default HorizontalSidebar

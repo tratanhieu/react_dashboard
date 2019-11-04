@@ -3,7 +3,7 @@
 .root {
     border: 1px solid $whisper_color;
     border-radius: 6px;
-    margin: 8px 0px;
+    margin: 3px 0px;
 }
 
 .checkboxItem {
@@ -12,8 +12,9 @@
 }
 
 .action {
-    max-width: 76px;
-    min-width: 76px;
+    max-width: 96px;
+    min-width: 96px;
+    text-align: center;
 }
 
 .buttonView {

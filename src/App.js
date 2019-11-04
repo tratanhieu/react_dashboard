@@ -1,15 +1,28 @@
-import React from 'react';
-import './App.css';
+import React from 'react'
+import './App.css'
 import 'semantic-ui-css/semantic.min.css'
 import './colors.scss'
 
-import ProductType from './components/pages/ProductType'
+import ProductCategory from './components/pages/ProductCategory'
+
+import Swal from 'sweetalert2'
 
 
-function App() {
-  return (
-    <ProductType />
-  );
+class App extends React.Component {
+
+	componentDidCatch(error, info) {
+		Swal.fire(
+			'Có lỗi',
+			error.message,
+			'error'
+		)
+	}
+
+	render() {
+		return (
+			<ProductCategory />
+		);
+	}
 }
 
 export default App;

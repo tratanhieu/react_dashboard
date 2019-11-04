@@ -1,0 +1,23 @@
+.root {
+
+    input[error] {
+        background-color: transparent !important;
+        border-color: red;
+    }
+
+    .error-text {
+        color: red;
+        display: block;
+        word-break: break-word;
+        padding: 0 2px;
+        margin-top: -8px;
+    }
+}
+
+.errorText {
+    color: red;
+    display: block;
+    word-break: break-word;
+    padding: 0 2px;
+    margin-top: -8px;
+}
