@@ -1,5 +1,6 @@
 export const REDUX_API_URL = 'http://127.0.0.1:5000/'
 export const REDUX_LOADING = 'LOADING'
+export const REDUX_RELOAD = "RELOAD"
 export const REDUX_GET_ONE = 'GET_ONE'
 export const REDUX_GET_ALL = 'GET_ALL'
 export const REDUX_INSERT = 'INSERT'
@@ -12,6 +13,9 @@ export const REDUX_CLEAR_RESPONSE = 'CLEAR_RESPONSE'
 
 export const REDUX_CLOSE_MODAL = "CLOSE_MODAL"
 export const REDUX_FORM_LOADING = 'FORM_LOADING'
+
+export const REDUX_CHANGE_CHECK_ALL_ITEM = 'CHANGE_CHECK_ALL_ITEM'
+export const REDUX_CHANGE_CHECK_ITEM = 'CHANGE_CHECK_ITEM'
 
 export const REDUX_DISMISS = 'DISMISS'
 export const REDUX_DIALOG = 'DIALOG'

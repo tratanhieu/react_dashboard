@@ -11,8 +11,6 @@ const InputWithSlug = ({ path, onChange, ...rest }) => {
 
     const handleChange = (e, value, errors) => {
         const slugName = makeSlug(value);
-        
-        console.log(slugValue)
         if(!slugValue) {
             setTempSlugValue(slugName);
         }

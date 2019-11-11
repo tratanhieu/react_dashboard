@@ -1,7 +1,9 @@
 import React from 'react';
+import { useDispatch } from 'react-redux'
 import { Grid, Button, Divider, Icon } from 'semantic-ui-react'
+import { getInsert } from '../../../../redux/actions/productCategoryAction';
 
-const ProductCategoryHeader = ({ onClickNew }) => {
+const Render = ({ onClickNew }) => {
     return (
         <Grid columns="equal" padded="vertically">
             <Grid.Row>
@@ -19,6 +21,14 @@ const ProductCategoryHeader = ({ onClickNew }) => {
             <Divider />
         </Grid>
     )
+}
+
+const ProductCategoryHeader = () => {
+    const dispatch = useDispatch();
+    const renderProps = {
+        onClickNew: _ => dispatch(getInsert())
+    }
+    return <Render {...renderProps} />
 }
 
 export default ProductCategoryHeader

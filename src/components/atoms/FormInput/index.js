@@ -26,8 +26,6 @@ const FormInput = ({
             return returnOnChange(e, value, validateTypeResult);
         }
 
-        console.log(validateTypeResult);
-
         if (!value.match(new RegExp(pattern, "g"))) {
             return returnOnChange(e, value, patternErrorMessage);
         }
@@ -42,7 +40,6 @@ const FormInput = ({
     };
 
     const validateValueType = (type, value) => {
-        console.log(type);
         switch (type) {
         case "email":
             return !validateEmail(value) ? "Email không hợp lệ" : "";

@@ -8,18 +8,15 @@ import { _handleCheckItem } from '../../../commons/multiple-checkbox';
 import style from './styles.module.scss'
 import { DELETED } from '../../../constants/entites';
 
-const TableRow = ({children, status, onChangeCheckbox, checkboxClassName, onView, onDelete, checkboxValue, ...rest}) => (
-    <Grid.Row
-        divided
-        className={`${style.root}`}
-        {...rest}
-    >
+const TableRow = ({children, status, onView, onDelete,
+    checkItem, checkboxValue,
+    onChangeCheckItem,
+    ...rest}) => (
+    <Grid.Row divided className={`${style.root}`} {...rest}>
         <TableColumn verticalAlign="middle" width={1} className={`${style.checkboxItem}`}>
-            <Checkbox
-                onChange={_handleCheckItem}
-                data-checkbox="checkboxItem"
-                value={checkboxValue}
-            />
+            <Checkbox onChange={_handleCheckItem} data-checkbox="checkboxItem"
+                defaultChecked={checkItem}
+                value={checkboxValue} />
         </TableColumn>
         {children}
         <TableColumn width={2} className={`${style.action}`}>

@@ -25,13 +25,10 @@ const Render = ({
         INSERT: 'Thêm mới'
     }
 
-    console.log(errors)
-
     return (
         <TransitionablePortal
             open={openModal} 
-            transition={{animation:'scale', duration: 300}}
-        >
+            transition={{animation:'scale', duration: 300}}>
             <Modal 
                 size="mini"
                 open={openModal}
@@ -39,8 +36,7 @@ const Render = ({
                 onClose={onClose}
                 {...rest}
                 closeOnDimmerClick={false}
-                closeIcon
-            >
+                closeIcon={!formLoading}>
                 <Modal.Header>{title[modalAction]}</Modal.Header>
                 <Modal.Content>
                     <Form loading={formLoading}>
@@ -53,8 +49,7 @@ const Render = ({
                             readOnly={viewMode}
                             onChange={onChangeName}
                             defaultValue={productCategory.name}
-                            error={errors.name}
-                        />
+                            error={errors.name} />
                         <ToggleActive
                             readOnly={viewMode}
                             checked={productCategory.status === ACTIVE} 
@@ -74,11 +69,11 @@ const Render = ({
                             color="green"
                             icon='checkmark'
                             labelPosition='left'
-                            disabled={isError}
+                            disabled={isError || formLoading}
                             onClick={onClickSave}
                             content='Lưu' />
                     }
-                    <Button onClick={onClose} color="grey" >
+                    <Button onClick={onClose} disabled={formLoading} color="grey" >
                         <Icon name="close"/> Đóng
                     </Button>
                 </Modal.Actions>
@@ -99,7 +94,7 @@ const ProductCategoryModal = _ => {
     const [form, setForm] = useState({...selector.productCategory, isError: true})
     const [viewMode, setViewMode] = useState(selector.modalAction === VIEW)
 
-    const dispath = useDispatch();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         // console.log(selector.errors)
@@ -118,8 +113,8 @@ const ProductCategoryModal = _ => {
             ...form,
             status,
         }),
-        onClickSave: _ => dispath(doSave(form, selector.modalAction)),
-        onClose: _ => dispath(closeModal())
+        onClickSave: _ => dispatch(doSave(form, selector.modalAction)),
+        onClose: _ => dispatch(closeModal())
     }
 
     return (

@@ -1,5 +1,5 @@
-import { loading, getALl, getOne, handleError, formLoading, resetError } from '../actions/productCategoryAction'
-import { REDUX_API_URL, DISMISS } from '../../constants/redux-actions'
+import { loading, getALl, getOne, handleError, formLoading, resetError, closeModal } from '../actions/productCategoryAction'
+import { REDUX_API_URL } from '../../constants/redux-actions'
 import axios from 'axios'
 import { ALERT_SUCCESS } from '../../commons/sweet-alert-modal';
 import { INSERT, UPDATE } from '../../constants/pages';
@@ -84,6 +84,12 @@ export const doDelete = productCategoryId => {
     }
 }
 
+export const onPageChange = page => {
+    return dispatch => {
+        dispatch(fetchAll(page))
+    }
+}
+
 const doCreate = (productCategory) => {
     return (dispatch) => {
         const params = JSON.stringify(productCategory)
@@ -94,7 +100,7 @@ const doCreate = (productCategory) => {
                 'Content-Type': 'application/json'
             }
         }).then(_ => {
-            ALERT_SUCCESS("Đã thêm thành công Danh mục sản phẩm")
+            ALERT_SUCCESS("Đã thêm thành công Danh mục sản phẩm").then(_ => dispatch(closeModal()))
         }).catch(error => {
             dispatch(handleError(error.response.data))
         }).finally(_ => dispatch(formLoading(false)))
