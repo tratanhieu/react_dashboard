@@ -7,7 +7,7 @@ const Render = ({ onClickNew }) => {
     return (
         <Grid columns="equal" padded="vertically">
             <Grid.Row>
-                <Grid.Column verticalAlign="middle">
+                <Grid.Column textAlign="left" verticalAlign="middle">
                     <h1>Danh sách</h1>
                 </Grid.Column>
                 <Grid.Column>
@@ -18,7 +18,6 @@ const Render = ({ onClickNew }) => {
                     </Button>
                 </Grid.Column>
             </Grid.Row>
-            <Divider />
         </Grid>
     )
 }

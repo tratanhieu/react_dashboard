@@ -28,11 +28,11 @@ const Render = ({
     console.log(checkboxItems)
     return (
         <>
-            <TableExecute
+            {/* <TableExecute
                 stateOptions={DEFAULT_ACTIONS}
                 loading={executeLoading}
                 onExecute={handleExecute}
-            />
+            /> */}
             <TableHeader
                 checkAllItem={checkAllItem}>
                 <TableColumn>

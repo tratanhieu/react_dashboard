@@ -4,8 +4,8 @@ import {
     Grid, Segment, Button, Divider,
 } from 'semantic-ui-react'
 
-import ProductCategoryTable from './ProductCategoryTable';
-import ProductCategoryModal from './ProductCategoryModal';
+import ProductCategoryTable from '../organisms/ProductCategory/ProductCategoryTable';
+import ProductCategoryModal from '../organisms/ProductCategory/ProductCategoryModal';
 import Main from '../layouts/Main';
 
 class ProductCategoryTemplate extends Component {
@@ -30,23 +30,7 @@ class ProductCategoryTemplate extends Component {
 
         return (
             <Main>
-                <Segment>
-                    <Grid columns="equal" padded="vertically">
-                        <Grid.Row>
-                            <Grid.Column verticalAlign="middle">
-                                <h1>Danh sách</h1>
-                            </Grid.Column>
-                            <Grid.Column>
-                                <Button icon primary floated="right" labelPosition="left"
-                                    onClick={this.handleNew.bind(this)}
-                                >
-                                    <Icon name="plus" />
-                                    Thêm mới
-                                </Button>
-                            </Grid.Column>
-                        </Grid.Row>
-                        <Divider />
-                    </Grid>
+                    
                     <ProductCategoryTable
                         loading={loading}
                         executeLoading={this.props.executeLoading}
@@ -58,7 +42,6 @@ class ProductCategoryTemplate extends Component {
                         onDelete={this.handleDelete.bind(this)}
                         onChangePagination={this.handleChangePagination.bind(this)}
                     />
-                </Segment>
                 <ProductCategoryModal
                     open={this.props.isOpenModal}
                     productCategory={productCategory}

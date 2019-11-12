@@ -10,10 +10,7 @@ import style from './styles.module.scss'
 const TableHeader = ({children, checkAllItem, onChangeCheckAllItem, ...rest}) => {
     return (
         <Grid columns="equal" padded {...rest}>
-            <Grid.Row verticalAlign="middle"
-                divided
-                className={`${style.root}`}
-            >
+            <Grid.Row verticalAlign="middle" className={`${style.root}`}>
                 <TableColumn width={1} className={`${style.checkboxAll}`}>
                     <Checkbox
                         table-header-checkbox="tableCheckAllItem"
