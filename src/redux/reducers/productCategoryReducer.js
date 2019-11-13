@@ -8,8 +8,9 @@ import {
     REDUX_HANDLE_ERROR,
     REDUX_RESET_ERROR,
     REDUX_RELOAD,
-    REDUX_CHANGE_CHECK_ITEM,
-    REDUX_CHANGE_CHECK_ALL_ITEM
+    REDUX_FILTER_BY_STATUS,
+    REDUX_SORT,
+    REDUX_SEARCH
 } from '../../constants/redux-actions';
 import { VIEW, INSERT, UPDATE } from '../../constants/pages';
 import { ACTIVE } from '../../constants/entites';
@@ -17,6 +18,11 @@ import { ACTIVE } from '../../constants/entites';
 const initialState = {
     loading: true,
     reload: false,
+    filters: {
+        search: '',
+        status: '',
+        orderBy: 'createDate,DESC'
+    },
     mupltipleExecuteLoading: false,
     formLoading: false,
     openModal: false,
@@ -33,6 +39,7 @@ const initialState = {
 }
 
 export default function(state = initialState, action) {
+    console.log(action)
     try {
         switch (action.type) {
             case REDUX_LOADING: return {
@@ -64,10 +71,9 @@ export default function(state = initialState, action) {
                 openModal: true,
                 loading: false
             }
-
             case REDUX_INSERT: return {
                 ...state,
-                productCategory: action.productCategory,
+                productCategory: initialState.productCategory,
                 modalAction: INSERT,
                 openModal: true,
                 loading: false
@@ -83,28 +89,25 @@ export default function(state = initialState, action) {
                 formLoading: action.formLoading,
                 openModal: true
             }
-            case REDUX_CHANGE_CHECK_ALL_ITEM: {
-                state.checkboxItems.forEach((_, key, map) => map.set(key, action.checked))
-                return {
-                    ...state,
-                    checkAllItem: action.checked
+            case REDUX_SEARCH: return {
+                ...state,
+                filters: {
+                    ...state.filters,
+                    search: action.value
                 }
             }
-            case REDUX_CHANGE_CHECK_ITEM: {
-                // let checkAllItem = true
-                let checkboxItems = state.checkboxItems
-                checkboxItems.forEach((_, key, map) => {
-                    if (key === action.item) {
-                        checkboxItems.set(key, action.checked)
-                    }
-                    // if (item === false) {
-                    //     checkAllItem = false
-                    //     return false
-                    // }
-                })
-                return {
-                    ...state,
-                    checkAllItem: true
+            case REDUX_FILTER_BY_STATUS: return {
+                ...state,
+                filters: {
+                    ...state.filters,
+                    status: action.value
+                }
+            }
+            case REDUX_SORT: return {
+                ...state,
+                filters: {
+                    ...state.filters,
+                    sort: action.value
                 }
             }
             case REDUX_HANDLE_ERROR: return {

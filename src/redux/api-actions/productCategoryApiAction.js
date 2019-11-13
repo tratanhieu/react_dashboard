@@ -1,4 +1,4 @@
-import { loading, getALl, getOne, handleError, formLoading, resetError, closeModal } from '../actions/productCategoryAction'
+import { loading, prepareData, getOne, handleError, formLoading, resetError, closeModal } from '../actions/productCategoryAction'
 import { REDUX_API_URL } from '../../constants/redux-actions'
 import axios from 'axios'
 import { ALERT_SUCCESS } from '../../commons/sweet-alert-modal';
@@ -6,13 +6,13 @@ import { INSERT, UPDATE } from '../../constants/pages';
 
 const PREFIX = 'product'
 
-export const fetchAll = (page) => {
+export const fetchAll = page => {
     return (dispatch) => {
         dispatch(loading(true))
         return axios.get(`${REDUX_API_URL}${PREFIX}/category${page ? `?page=${page}` : ''}`, {
             timeout: 5000
         }).then(response => {
-            dispatch(getALl(response.data))
+            dispatch(prepareData(response.data))
         }
         ).catch(error => {
             return 
@@ -20,7 +20,7 @@ export const fetchAll = (page) => {
     }
 }
 
-export const findById = (_id) => {
+export const findById = _id => {
     return (dispatch) => {
         dispatch(loading(true))
         return axios.get(`${REDUX_API_URL}${PREFIX}/category/${_id}`, {
@@ -87,6 +87,26 @@ export const doDelete = productCategoryId => {
 export const onPageChange = page => {
     return dispatch => {
         dispatch(fetchAll(page))
+    }
+}
+
+export const onUpdateFilters = filters => {
+    return dispatch => {
+        dispatch(fetchWithFilter(filters))
+    }
+}
+
+const fetchWithFilter = filters => {
+    return dispatch => {
+        dispatch(loading(true))
+        return axios.get(`${REDUX_API_URL}${PREFIX}/category?search=${filters.search}&status=${filters.status}&sort=${filters.orderBy}`, {
+            timeout: 5000
+        }).then(response => {
+            dispatch(prepareData(response.data))
+        }
+        ).catch(error => {
+            return 
+        })
     }
 }
 

@@ -1,7 +1,13 @@
-import React, { useState } from "react";
-import { Form, Select, Input, Button, Icon } from "semantic-ui-react";
+import React, { useEffect } from "react";
+import { useSelector, shallowEqual, useDispatch } from 'react-redux'
+import { Form, Select, Button, Icon } from "semantic-ui-react";
 
 import Fieldset from "../../../atoms/Fieldset";
+import PageSearch from "../../../molecules/PageSearch";
+import FilterBar from "../../../molecules/FilterBar";
+import { onSearch, onFilterByStatus, onChangeSortValue } from "../../../../redux/actions/productCategoryAction";
+import { onUpdateFilters } from "../../../../redux/api-actions/productCategoryApiAction";
+import { useActions } from "../../../../redux/useActions";
 
 const options = [
     { key: "m", text: "Male", value: "male" },
@@ -17,83 +23,27 @@ const sorts = [
 ];
 
 const listStatus = [
-    { key: "ALL", label: "All" },
+    { key: "", label: "All" },
     { key: "ACTIVE", label: "Active" },
     { key: "HIDDEN", label: "Hidden" },
     { key: "DELETE", label: "Delete" }
 ];
 
-const ProductCategoryFilter = () => {
-    const [status, setStatus] = useState(listStatus[0].key);
-    const handleChange = (e, { value }) => setStatus(value);
-
-    return (
-        <Form>
-        <Fieldset icon="search" title="Search">
-            <Input
-            fluid
-            // disabled
-            action={{
-                color: "blue",
-                icon: "search",
-                content: "Search"
-                // loading: true
-            }}
-            iconPosition="right"
-            placeholder="Order #"
-            />
-        </Fieldset>
-        <Fieldset icon="sort content descending" title="Filter and Sort">
-            <Form.Group widths="equal">
-            <Form.Select
-                fluid
-                disabled
-                loading
-                search
-                label="Category"
-                options={options}
-                onChange={_ => alert("Done")}
-                placeholder="Category"
-            />
-            <Form.Select
-                fluid
-                label="Group Type"
-                options={options}
-                placeholder="Group Type"
-            />
-            <Form.Select
-                fluid
-                label="Type"
-                options={options}
-                placeholder="Type"
-            />
-            </Form.Group>
-            <div style={{ display: "flex", flexWrap: 'wrap', justifyContent: 'space-between' }}>
-            <Form.Group inline>
-                <label>Status: </label>
-                {listStatus.map(item => (
-                    <Form.Radio
-                    label={item.label}
-                    value={item.key}
-                    checked={status === item.key}
-                    onChange={handleChange}
-                    />
-                ))}
-            </Form.Group>
-            <Form.Group inline>
-                <label>Sort: </label>
-                <Form.Select
-                    style={{ width: "100%" }}
-                    options={sorts}
-                    placeholder="Type"
-                />
-                </Form.Group>
-            </div>
-        </Fieldset>
+const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
+    <Form>
+        <PageSearch onSearch={onSearch} />
+        <FilterBar
+            statusValue={filters.status}
+            sortValue={filters.sort}
+            listStatus={listStatus}
+            listSort={sorts}
+            onFilterByStatus={onFilterByStatus}
+            onChangeSortValue={onChangeSortValue}
+        />
         <Fieldset icon="hand point down outline" title="Actions">
             <div style={{ display: "flex", justifyContent: 'space-between', flexWrap: 'wrap' }}>
                 <div style={{ display: "flex" }}>
-                    <Select style={{ marginRight: 8 }} fluid options={options} placeholder="Type" />
+                    <Select style={{ minWidth: 160, marginRight: 8 }} fluid options={options} placeholder="Type" />
                     <Button primary>Execute</Button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -106,8 +56,32 @@ const ProductCategoryFilter = () => {
                 </div>
             </div>
         </Fieldset>
-        </Form>
-    );
-};
+    </Form>
+)
+
+const ProductCategoryFilter = () => {
+    const selector = useSelector(({ productCategoryReducer }) => ({
+        filters: productCategoryReducer.filters
+    }), shallowEqual)
+
+    const dispatch = useDispatch();
+    const actions = useActions({
+        onSearch, 
+        onFilterByStatus,
+        onChangeSortValue
+    })
+
+    useEffect(() => {
+        console.log(selector.filters)
+        dispatch(onUpdateFilters(selector.filters))
+    }, [selector.filters])
+
+    const renderProps = {
+        ...selector,
+        ...actions
+    }
+
+    return <Render {...renderProps} />
+}
 
 export default ProductCategoryFilter;
