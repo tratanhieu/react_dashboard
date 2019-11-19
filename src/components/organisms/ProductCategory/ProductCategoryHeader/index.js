@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux'
-import { Grid, Button, Divider, Icon } from 'semantic-ui-react'
+import { Grid, Button, Icon } from 'semantic-ui-react'
 import { getInsert } from '../../../../redux/actions/productCategoryAction';
 
 const Render = ({ onClickNew }) => {

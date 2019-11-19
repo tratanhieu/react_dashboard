@@ -8,22 +8,21 @@ import TableBody from '../../../molecules/TableBody'
 import TableRow from '../../../molecules/TableRow'
 import TableColumn from '../../../molecules/TableColumn'
 import TablePagination from '../../../molecules/TablePagination'
-import TableExecute from '../../../molecules/TableExecute'
 
 import { DEFAULT_STATUS } from '../../../../constants/entites'
-import { DEFAULT_ACTIONS } from '../../../../constants/pages';
+// import { DEFAULT_ACTIONS } from '../../../../constants/pages';
 
-import { _getAllCheckedItem, _unCheckAll, _checkItem, _handleCheckItem, _handleCheckAll } from '../../../../commons/multiple-checkbox'
+import { _getAllCheckedItem } from '../../../../commons/multiple-checkbox'
 import { useActions } from '../../../../redux/useActions'
 import { onPageChange, doExecute, fetchAll } from '../../../../redux/api-actions/productCategoryApiAction'
-import { reload,  onChangeCheckItem, onChangeCheckAllItem } from '../../../../redux/actions/productCategoryAction';
+import { reload } from '../../../../redux/actions/productCategoryAction';
 
 const Render = ({
     productCategoryList,
     totalPage, defaultActivePage, checkAllItem, checkboxItems,
-    loading, executeLoading,
+    loading,
     onView, onDelete,
-    onPageChange, handleExecute
+    onPageChange
 }) => {
     console.log(checkboxItems)
     return (

@@ -1,47 +1,55 @@
-import React, { Component } from 'react'
-import { Dropdown, Icon, Input, Menu } from 'semantic-ui-react'
+import React, { useState, useEffect } from 'react'
+import { Dropdown, Icon, Menu } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
+import styles from './styles.module.css'
 
-export default class HorizontalSidebar extends Component {
-    state = {}
+const HorizontalSidebar = ({ ...rest }) => {
 
-    handleItemClick = (e, { name }) => this.setState({ activeItem: name })
+    const [menu, setMenu] = useState([
+        {
+            path: '/',
+            icon: 'home',
+            text: 'Dashboard',
+            active: true
+        },
+        {
+            path: '/product/category',
+            icon: 'grid layout',
+            text: 'Product Category',
+            active: false
+        }
+    ])
 
-    render() {
-        const { activeItem } = this.state
-        return (
-            <Menu vertical {...this.props}>
-                <Menu.Item
-                    name='messages'
-                    active={activeItem === 'messages'}
-                    onClick={this.handleItemClick}
-                >
-                    <Icon name='home' />
-                    Dashboard
-                </Menu.Item>
-                <Menu.Item
-                    name='browse'
-                    active={activeItem === 'browse'}
-                    onClick={this.handleItemClick}
-                >
-                    <Icon name='grid layout' />
-                    Đơn hàng
-                </Menu.Item>
-                <Menu.Item
-                    name='messages'
-                    active={activeItem === 'messages'}
-                    onClick={this.handleItemClick}
-                >
-                    Loại sản phẩm
-                </Menu.Item>
-
-                <Dropdown item text='Cài đặt'>
-                <Dropdown.Menu>
-                    <Dropdown.Item icon='edit' text='Edit Profile' />
-                    <Dropdown.Item icon='globe' text='Choose Language' />
-                    <Dropdown.Item icon='settings' text='Account Settings' />
-                </Dropdown.Menu>
-                </Dropdown>
-            </Menu>
-        )
+    const handleItemClick = path => {
+        setMenu(menu.map(item => ({
+            ...item,
+            active: item.path === path
+        })))
+        window.location.href = path
     }
+    return (
+        <div className={styles.mainSidebarMenu} {...rest}>
+            <ul>
+            { 
+                menu.map((item, index) => (
+                    <li key={index}>
+                        <Link to={item.path}>
+                            <Icon name={item.icon} />
+                            {item.text}
+                        </Link>
+                    </li>
+                ))
+            }
+            </ul>
+            {/* <Dropdown item text='Cài đặt'>
+            <Dropdown.Menu>
+                <Dropdown.Item icon='edit' text='Edit Profile' />
+                <Dropdown.Item icon='globe' text='Choose Language' />
+                <Dropdown.Item icon='settings' text='Account Settings' />
+            </Dropdown.Menu>
+            </Dropdown> */}
+        </div>
+    )
 }
+
+export default HorizontalSidebar

@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { TransitionablePortal, Modal, Icon, Form, Button } from 'semantic-ui-react'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import { VIEW, UPDATE, INSERT } from '../../../../constants/pages';
 import ToggleActive from '../../../atoms/ToggleActive';
 // import Button from '../../../atoms/Button';
-import { ACTIVE, HIDDEN } from '../../../../constants/entites';
+import { ACTIVE } from '../../../../constants/entites';
 import InputWithSlug from '../../../atoms/InputWithSlug';
-import { useActions } from '../../../../redux/useActions';
 import { 
     closeModal } from '../../../../redux/actions/productCategoryAction';
 import { doSave } from '../../../../redux/api-actions/productCategoryApiAction';
+import ImageUploads from '../../../atoms/ImageUploads';
 
 const Render = ({ 
     productCategory,
@@ -50,6 +49,7 @@ const Render = ({
                             onChange={onChangeName}
                             defaultValue={productCategory.name}
                             error={errors.name} />
+                        <ImageUploads onChange={images => console.log(images)} />
                         <ToggleActive
                             readOnly={viewMode}
                             checked={productCategory.status === ACTIVE} 
@@ -92,7 +92,6 @@ const ProductCategoryModal = _ => {
     }), shallowEqual)
 
     const [form, setForm] = useState({...selector.productCategory, isError: true})
-    const [viewMode, setViewMode] = useState(selector.modalAction === VIEW)
 
     const dispatch = useDispatch();
 

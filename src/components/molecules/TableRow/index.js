@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Checkbox, Button, Icon, Popup } from 'semantic-ui-react'
+import { Grid, Checkbox, Button, Popup } from 'semantic-ui-react'
 
 import TableColumn from '../TableColumn'
 

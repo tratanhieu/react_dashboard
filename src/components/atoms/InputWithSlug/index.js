@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import FormInput from "../FormInput";
 
-import styles from './styles.module.scss'
+// import styles from './styles.module.scss'
 
 const InputWithSlug = ({ path, onChange, ...rest }) => {
     const [slugValue, setSlugValue] = useState(null);

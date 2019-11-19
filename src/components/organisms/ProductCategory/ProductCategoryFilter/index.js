@@ -72,7 +72,6 @@ const ProductCategoryFilter = () => {
     })
 
     useEffect(() => {
-        console.log(selector.filters)
         dispatch(onUpdateFilters(selector.filters))
     }, [selector.filters])
 
@@ -84,4 +83,4 @@ const ProductCategoryFilter = () => {
     return <Render {...renderProps} />
 }
 
-export default ProductCategoryFilter;
+export default ProductCategoryFilter

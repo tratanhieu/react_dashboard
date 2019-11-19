@@ -12,7 +12,7 @@ export default class Main extends React.Component {
                 <HeaderBar />
                 <Grid style={{marginTop: 54}}>
                     <Grid.Row style={{padding: 0}}>
-                        <Grid.Column style={{width: 230, padding: 0, paddingTop: 16, backgroundColor: '#1b1c1d'}}>
+                        <Grid.Column style={{width: 230, padding: 0, backgroundColor: '#1b1c1d'}}>
                             <HorizontalSidebar fluid inverted />
                         </Grid.Column>
                         <Grid.Column style={{width: 'calc(100% - 230px)', paddingTop: 16, paddingBottom: 16}}>
