@@ -8,6 +8,7 @@
     "node-sass": "^4.13.0",
     "pusher-js": "^5.0.1",
     "react": "^16.8.6",
+    "react-datepicker": "^2.10.0",
     "react-dom": "^16.8.6",
     "react-redux": "^7.1.0",
     "react-router-dom": "^5.1.2",

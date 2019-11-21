@@ -33,24 +33,20 @@ export const findById = _id => {
     }
 }
 
-export const doSave = (form, modalAction) => {
+export const doSave = productCategory => {
     return dispatch => {
         dispatch(resetError())
         dispatch(formLoading(true))
-        const { product_category_id, name, slug_name, status, isError } = form
+        const { product_category_id, name, slug_name, status } = productCategory
 
-        if (isError) return false
-
-        switch(modalAction) {
-            case INSERT: dispatch(doCreate({
-                    name, slug_name, status
-                }))
-                break
-            case UPDATE: dispatch(doUpdate({
-                    product_category_id, name, slug_name, status
-                }))
-                break
-            default: return false
+        if (!product_category_id) {
+            dispatch(doCreate({
+                name, slug_name, status
+            }))
+        } else {
+            dispatch(doUpdate({
+                product_category_id, name, slug_name, status
+            }))
         }
     }
 }

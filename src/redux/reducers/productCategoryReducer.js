@@ -1,3 +1,5 @@
+import { REDUX_API_URL } from '../../constants/redux-actions'
+import axios from 'axios'
 import {
     REDUX_LOADING,
     REDUX_GET_ALL,
@@ -10,7 +12,8 @@ import {
     REDUX_RELOAD,
     REDUX_FILTER_BY_STATUS,
     REDUX_SORT,
-    REDUX_SEARCH
+    REDUX_SEARCH,
+    REDUX_MODAL_SAVE_SUCCESS
 } from '../../constants/redux-actions';
 import { VIEW, INSERT, UPDATE } from '../../constants/pages';
 import { ACTIVE } from '../../constants/entites';
@@ -38,11 +41,46 @@ const initialState = {
     errors: []
 }
 
+const prefix = 'REDUX_PRODUCT_CATEGORY_'
+
+const createAction = action => `${prefix}${action}`
+const createActionSuccess = action => `${prefix}${action}_SUCCESS`
+const createActionFail = action => `${prefix}${action}_FAIL`
+
+const LIST_LOADING = createAction("LIST_LOADING")
+const PREPARE_DATA = createAction("PREPARE_DATA")
+const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING")
+const HANDLE_ERROR = createAction("HANDLE_ERROR")
+const GET_ALL = createAction("GET_ALL")
+
+// API
+const PATH_PRODUCT_CATEGORY = `${REDUX_API_URL}/product/category`
+
+const listLoading = loading => ({ type: LIST_LOADING, loading })
+const prepareData = data => ({
+    type: PREPARE_DATA,
+    productCategoryList: data.listData,
+    totalPage: data.totalPage,
+    pageSize: data.pageSize,
+    page: data.page
+})
+
+const handleErrors = errors => ({ type: HANDLE_ERROR, errors })
+
+export const fetchWithPagination = page => dispatch => {
+    dispatch(listLoading(true))
+    return axios.get(`${PATH_PRODUCT_CATEGORY}${page ? `?page=${page}` : ''}`, {
+        timeout: 5000
+    })
+    .then(response => dispatch(prepareData(response.data)))
+    .catch(error => dispatch(handleErrors(error)))
+}
+
 export default function(state = initialState, action) {
-    console.log(action)
+    console.log(action.type)
     try {
         switch (action.type) {
-            case REDUX_LOADING: return {
+            case LIST_LOADING: return {
                 ...state,
                 loading: action.loading
             }
@@ -51,7 +89,7 @@ export default function(state = initialState, action) {
                 checkboxItems: action.checkboxItems,
                 reload: true
             }
-            case REDUX_GET_ALL: {
+            case PREPARE_DATA: {
                 const checkboxItems = state.reload ? state.checkboxItems : []
                 return {
                     ...state,
@@ -104,6 +142,13 @@ export default function(state = initialState, action) {
                 }
             }
             case REDUX_SORT: return {
+                ...state,
+                filters: {
+                    ...state.filters,
+                    sort: action.value
+                }
+            }
+            case REDUX_MODAL_SAVE_SUCCESS: return {
                 ...state,
                 filters: {
                     ...state.filters,

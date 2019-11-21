@@ -3,18 +3,11 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Label } from 'semantic-ui-react'
 import Pusher from 'pusher-js';
 
-// import TableHeader from '../../../molecules/TableHeader'
-// import TableBody from '../../../molecules/TableBody'
-// import TableRow from '../../../molecules/TableRow'
-// import TableColumn from '../../../molecules/TableColumn'
+import TableHeader from '../../../molecules/TableHeader'
+import TableBody from '../../../molecules/TableBody'
+import TableRow from '../../../molecules/TableRow'
+import TableColumn from '../../../molecules/TableColumn'
 import TablePagination from '../../../molecules/TablePagination'
-import {
-    TableModule,
-    TableRow,
-    TableCell,
-    TableHeaderCell,
-    calcCellWidth
-} from "../../../atoms/TableModule";
 
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 // import { DEFAULT_ACTIONS } from '../../../../constants/pages';
@@ -24,19 +17,6 @@ import { useActions } from '../../../../redux/useActions'
 import { onPageChange, doExecute, fetchAll } from '../../../../redux/api-actions/productCategoryApiAction'
 import { reload } from '../../../../redux/actions/productCategoryAction';
 import { fetchWithPagination } from '../../../../redux/reducers/productCategoryReducer';
-
-const cellWidth = calcCellWidth([70, 30], true);
-
-const TableHeader = () => (
-    <>
-        <TableHeaderCell width={cellWidth[0]}>
-            Tên loại sản phẩm
-        </TableHeaderCell>
-        <TableHeaderCell width={cellWidth[1]} textAlign="center">
-            Trạng thái
-        </TableHeaderCell>
-    </>
-)
 
 const Render = ({
     productCategoryList,
@@ -51,34 +31,41 @@ const Render = ({
             loading={executeLoading}
             onExecute={handleExecute}
         /> */}
-        <TableModule loading={loading} showCheckbox header={<TableHeader />}>
+        <TableHeader
+            checkAllItem={checkAllItem}>
+            <TableColumn>
+                Tên loại sản phẩm
+            </TableColumn>
+            <TableColumn textAlign="center" computer={2} tablet={3}>
+                Trạng thái
+            </TableColumn>
+        </TableHeader>
+        <TableBody loading={loading}>
             {productCategoryList ? productCategoryList.map(item => (
-                <TableRow key={item.product_category_id} showCheckbox
-                    // verticalAlign="middle"
-                    // status={item.status}
-                    // checkboxValue={item.product_category_id}
-                    // checkItem={checkboxItems.includes(item.product_category_id)}
-                    // onView={() => onView(item.product_category_id)}
-                    // onDelete={() => onDelete(item.product_category_id)}
-                >
-                    <TableCell width={cellWidth[0]}>
+                <TableRow key={item.product_category_id}
+                    verticalAlign="middle"
+                    status={item.status}
+                    checkboxValue={item.product_category_id}
+                    checkItem={checkboxItems.includes(item.product_category_id)}
+                    onView={() => onView(item.product_category_id)}
+                    onDelete={() => onDelete(item.product_category_id)}>
+                    <TableColumn>
                         {item.name}
-                    </TableCell>
-                    <TableCell width={cellWidth[1]} textAlign="center">
-                        {/* <Label color={DEFAULT_STATUS[item.status].color}>
+                    </TableColumn>
+                    <TableColumn textAlign="center" computer={2} tablet={3}>
+                        <Label color={DEFAULT_STATUS[item.status].color}>
                             {DEFAULT_STATUS[item.status].text}
-                        </Label> */}
-                        {item.name}
-                    </TableCell>
+                        </Label>
+                    </TableColumn>
                 </TableRow>
             )): 
                 <TableRow>
-                    <TableCell>
+                    <TableColumn>
                         <Label>Không có dữ liệu để hiển thị</Label>
-                    </TableCell>
+                    </TableColumn>
                 </TableRow>
             }
-        </TableModule>
+        </TableBody>
         { (productCategoryList && !loading) ?
         <TablePagination
             totalPages={totalPage}

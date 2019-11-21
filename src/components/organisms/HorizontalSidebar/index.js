@@ -20,13 +20,6 @@ const HorizontalSidebar = ({ ...rest }) => {
         }
     ])
 
-    const handleItemClick = path => {
-        setMenu(menu.map(item => ({
-            ...item,
-            active: item.path === path
-        })))
-        window.location.href = path
-    }
     return (
         <div className={styles.mainSidebarMenu} {...rest}>
             <ul>
@@ -41,13 +34,6 @@ const HorizontalSidebar = ({ ...rest }) => {
                 ))
             }
             </ul>
-            {/* <Dropdown item text='Cài đặt'>
-            <Dropdown.Menu>
-                <Dropdown.Item icon='edit' text='Edit Profile' />
-                <Dropdown.Item icon='globe' text='Choose Language' />
-                <Dropdown.Item icon='settings' text='Account Settings' />
-            </Dropdown.Menu>
-            </Dropdown> */}
         </div>
     )
 }

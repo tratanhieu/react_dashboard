@@ -1,124 +1,91 @@
 import React, { useState, useEffect } from 'react'
-import { TransitionablePortal, Modal, Icon, Form, Button } from 'semantic-ui-react'
+import { Modal, Icon, Form, Button, Message } from 'semantic-ui-react'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import ToggleActive from '../../../atoms/ToggleActive';
 // import Button from '../../../atoms/Button';
 import { ACTIVE } from '../../../../constants/entites';
 import InputWithSlug from '../../../atoms/InputWithSlug';
-import { 
-    closeModal } from '../../../../redux/actions/productCategoryAction';
+import { closeModal } from '../../../../redux/actions/productCategoryAction';
 import { doSave } from '../../../../redux/api-actions/productCategoryApiAction';
-import ImageUploads from '../../../atoms/ImageUploads';
+import ModalModule from '../../../atoms/ModalModule';
 
 const Render = ({ 
-    productCategory,
-    modalAction, viewMode = false,
-    openModal, onClose, formLoading, name, slug_name, status,
-    onClickSave, onChangeName, onChangeStatus, handChangeViewMode,
-    isError, errors = {},
+    productCategory = {},
+    error,
+    openModal, onClose, formLoading,
+    onPositive, onChangeName, onChangeStatus,
+    errors = {},
     ...rest
 }) => {
-    const title = {
-        VIEW: 'Chi tiết',
-        UPDATE: 'Cập nhật',
-        INSERT: 'Thêm mới'
-    }
+    const title = productCategory.product_category_id ? 'Update' : 'Create'
 
     return (
-        <TransitionablePortal
-            open={openModal} 
-            transition={{animation:'scale', duration: 300}}>
-            <Modal 
-                size="mini"
-                open={openModal}
-                centered={false}
-                onClose={onClose}
-                {...rest}
-                closeOnDimmerClick={false}
-                closeIcon={!formLoading}>
-                <Modal.Header>{title[modalAction]}</Modal.Header>
-                <Modal.Content>
-                    <Form loading={formLoading}>
-                        <InputWithSlug
-                            tabIndex={0}
-                            type="text"
-                            label="Tên loại Sản phẩm: " 
-                            required
-                            style={{width: '100%'}}
-                            readOnly={viewMode}
-                            onChange={onChangeName}
-                            defaultValue={productCategory.name}
-                            error={errors.name} />
-                        <ImageUploads onChange={images => console.log(images)} />
-                        <ToggleActive
-                            readOnly={viewMode}
-                            checked={productCategory.status === ACTIVE} 
-                            onChangeStatus={onChangeStatus} />
-                    </Form>
-                </Modal.Content>
-                <Modal.Actions>
-                    {
-                        viewMode
-                        ? <Button
-                            icon='edit'
-                            labelPosition='left'
-                            color="orange"
-                            content='Chỉnh sửa'
-                            onClick={handChangeViewMode} />
-                        : <Button
-                            color="green"
-                            icon='checkmark'
-                            labelPosition='left'
-                            disabled={isError || formLoading}
-                            onClick={onClickSave}
-                            content='Lưu' />
-                    }
-                    <Button onClick={onClose} disabled={formLoading} color="grey" >
-                        <Icon name="close"/> Đóng
-                    </Button>
-                </Modal.Actions>
-            </Modal>
-        </TransitionablePortal>
+        <ModalModule
+            size="mini"
+            title={title}
+            open={openModal}
+            onClose={onClose}
+            actionDisable={error}
+            actionLoading={formLoading}
+            onPositive={onPositive}
+            {...rest}
+        >
+            <Form error loading={formLoading}>
+                <InputWithSlug
+                    tabIndex={0}
+                    fluid
+                    type="text"
+                    label="Tên loại Sản phẩm: " 
+                    required
+                    onChange={onChangeName}
+                    defaultValue={productCategory.name}
+                    error={errors.name} />
+                <ToggleActive
+                    checked={productCategory.status === ACTIVE} 
+                    onChangeStatus={onChangeStatus} />
+                <Message error>{title} Failed!!</Message>
+                <Message success>{title} Success!!</Message>
+            </Form>
+        </ModalModule>
     )
 }
 
-const ProductCategoryModal = _ => {
-    const selector = useSelector(({ productCategoryReducer }) => ({
-        openModal: productCategoryReducer.openModal,
-        modalAction: productCategoryReducer.modalAction,
-        formLoading: productCategoryReducer.formLoading,
-        productCategory: productCategoryReducer.productCategory,
-        errors: productCategoryReducer.errors
-    }), shallowEqual)
+const ProductCategoryModal = ({ onPositive }) => {
+    const selector = useSelector(({
+        productCategoryReducer: { openModal, formLoading, productCategory, errors } 
+    }) => ({ openModal, formLoading, productCategory, errors }), shallowEqual)
 
-    const [form, setForm] = useState({...selector.productCategory, isError: true})
+    const [state, setState] = useState({
+        productCategory: { ...selector.productCategory },
+        error: false
+    })
 
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        // console.log(selector.errors)
-    }, [selector.errors])
+    const dispatch = useDispatch()
 
     const renderProps = {
         ...selector,
-        isError: form.isError,
-        onChangeName: (_, name, slug_name, error) => setForm({
-            ...form,
-            name,
-            slug_name,
-            isError: error ? true : false
+        ...state,
+        onChangeName: (_, name, slug_name, error) => setState({
+            ...state,
+            productCategory: {
+                ...state.productCategory,
+                name,
+                slug_name
+            },
+            error
         }),
-        onChangeStatus: status => setForm({
-            ...form,
-            status,
+        onChangeStatus: status => setState({
+            ...state,
+            productCategory: {
+                ...state.productCategory,
+                status
+            }
         }),
-        onClickSave: _ => dispatch(doSave(form, selector.modalAction)),
+        onPositive: _ => dispatch(doSave(state.productCategory)),
         onClose: _ => dispatch(closeModal())
     }
 
-    return (
-        <Render {...renderProps} />
-    )
+    return <Render {...renderProps} />
 }
 
 export default ProductCategoryModal
