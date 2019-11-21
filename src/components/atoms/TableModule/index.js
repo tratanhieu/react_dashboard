@@ -6,22 +6,34 @@ import {
 } from "semantic-ui-react";
 
 import "./style.css";
+import ConfirmPopup from "../../atoms/ConfirmPopup";
 
 const TABLE_WIDTH = 1000;
 const CHECKBOX_CELL_WIDTH = 50;
 const ACTION_CELL_WIDTH = 100;
 
-const TableModule = ({ loading, showCheckbox = false, header, children }) => {
+const TableModule = ({
+    loading = false,
+    checkAllItem = false,
+    onCheckAllItem,
+    showCheckbox = false,
+    header,
+    children,
+    footer
+}) => {
     return (
-        <Table celled selectable className={loading ? 'loading' : ''}>
+    <Table celled selectable className={loading ? `loading` : ``}>
         <Table.Header>
             <Table.Row>
                 {showCheckbox ? (
                     <Table.HeaderCell
-                    style={{ width: `${CHECKBOX_CELL_WIDTH}px` }}
-                    textAlign="center"
+                        style={{ width: `${CHECKBOX_CELL_WIDTH}px` }}
+                        textAlign="center"
                     >
-                    <Checkbox />
+                        <Checkbox
+                            checked={checkAllItem}
+                            onChange={(_, checkbox) => onCheckAllItem(checkbox.checked)}
+                        />
                     </Table.HeaderCell>
                 ) : null}
                 {header}
@@ -34,6 +46,11 @@ const TableModule = ({ loading, showCheckbox = false, header, children }) => {
             </Table.Row>
         </Table.Header>
         <Table.Body>{children}</Table.Body>
+        <Table.Footer>
+            <Table.Row>
+                {footer}
+            </Table.Row>
+        </Table.Footer>
         </Table>
     );
 };
@@ -42,7 +59,9 @@ const TableRow = ({
     checked = false,
     children,
     showCheckbox = false,
-    onChangeCheckbox,
+    onCheckItem,
+    onChange,
+    onDelete,
     ...rest
 }) => (
     <Table.Row {...rest}>
@@ -51,13 +70,21 @@ const TableRow = ({
             style={{ width: `${CHECKBOX_CELL_WIDTH}px` }}
             textAlign="center"
         >
-            <Checkbox checked={checked} onChange={onChangeCheckbox} />
+            <Checkbox
+                checked={checked}
+                onChange={(_, checkbox) => onCheckItem(checkbox.checked)} 
+            />
         </Table.Cell>
         ) : null}
         {children}
         <Table.Cell style={{ width: `${ACTION_CELL_WIDTH}px` }} textAlign="center">
-            <Button size="mini" color="orange" icon="edit" />
-            <Button size="mini" color="red" icon="trash" />
+            <Button size="mini" color="orange" icon="edit" onClick={onChange} />
+            <ConfirmPopup
+                size="mini"
+                color="red"
+                icon="trash"
+                onPositive={onDelete}
+            />
         </Table.Cell>
     </Table.Row>
 );

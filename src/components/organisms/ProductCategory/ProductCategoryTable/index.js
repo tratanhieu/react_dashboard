@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Label } from 'semantic-ui-react'
 import Pusher from 'pusher-js';
@@ -25,81 +25,93 @@ import { onPageChange, doExecute, fetchAll } from '../../../../redux/api-actions
 import { reload } from '../../../../redux/actions/productCategoryAction';
 import { fetchWithPagination } from '../../../../redux/reducers/productCategoryReducer';
 
-const cellWidth = calcCellWidth([70, 30], true);
-
-const TableHeader = () => (
-    <>
-        <TableHeaderCell width={cellWidth[0]}>
-            Tên loại sản phẩm
-        </TableHeaderCell>
-        <TableHeaderCell width={cellWidth[1]} textAlign="center">
-            Trạng thái
-        </TableHeaderCell>
-    </>
-)
-
 const Render = ({
-    productCategoryList,
     totalPage, defaultActivePage, checkAllItem, checkboxItems,
     loading,
     onView, onDelete,
-    onPageChange
-}) => (
-    <>
-        {/* <TableExecute
-            stateOptions={DEFAULT_ACTIONS}
-            loading={executeLoading}
-            onExecute={handleExecute}
-        /> */}
-        <TableModule loading={loading} showCheckbox header={<TableHeader />}>
-            {productCategoryList ? productCategoryList.map(item => (
-                <TableRow key={item.product_category_id} showCheckbox
-                    // verticalAlign="middle"
-                    // status={item.status}
-                    // checkboxValue={item.product_category_id}
-                    // checkItem={checkboxItems.includes(item.product_category_id)}
-                    // onView={() => onView(item.product_category_id)}
-                    // onDelete={() => onDelete(item.product_category_id)}
+    onPageChange,
+    dataSources,
+    onChange,
+    onCheckItem,
+    onCheckAllItem
+}) => {
+    const cellWidth = calcCellWidth([80, 20], true)
+
+    const TableHeader = () => (
+        <>
+            <TableHeaderCell width={cellWidth[0]}>
+                Tên loại sản phẩm
+            </TableHeaderCell>
+            <TableHeaderCell width={cellWidth[1]} textAlign="center">
+                Trạng thái
+            </TableHeaderCell>
+        </>
+    )
+
+    const Footer = () => (
+        <TableHeaderCell colSpan="4">
+            <TablePagination
+                totalPages={totalPage}
+                defaultActivePage={defaultActivePage}
+                onPageChange={onPageChange}
+            />
+        </TableHeaderCell>
+    )
+
+    const EmptyRow = () => (
+        <TableHeaderCell colSpan={4} textAlign="center">
+            Data is empty...
+        </TableHeaderCell>
+    )
+
+    return (
+        <TableModule
+            loading={loading}
+            showCheckbox 
+            header={<TableHeader />} 
+            footer={<Footer />}
+            checkAllItem={checkAllItem}
+            onCheckAllItem={checked => onCheckAllItem(checked)}
+        >
+        {
+            dataSources.map((item, index) => (
+                <TableRow
+                    key={index}
+                    showCheckbox
+                    checked={item.checked}
+                    onCheckItem={checked => onCheckItem(index, checked)}
+                    onChange={_ => onChange(item.id)}
+                    onDelete={onDelete}
                 >
                     <TableCell width={cellWidth[0]}>
                         {item.name}
                     </TableCell>
                     <TableCell width={cellWidth[1]} textAlign="center">
-                        {/* <Label color={DEFAULT_STATUS[item.status].color}>
+                        <Label color={DEFAULT_STATUS[item.status].color}>
                             {DEFAULT_STATUS[item.status].text}
-                        </Label> */}
-                        {item.name}
+                        </Label>
                     </TableCell>
                 </TableRow>
-            )): 
-                <TableRow>
-                    <TableCell>
-                        <Label>Không có dữ liệu để hiển thị</Label>
-                    </TableCell>
-                </TableRow>
-            }
-        </TableModule>
-        { (productCategoryList && !loading) ?
-        <TablePagination
-            totalPages={totalPage}
-            defaultActivePage={defaultActivePage}
-            onPageChange={onPageChange}
-        /> : null
+            ))
         }
-    </>
-)
+        </TableModule>
+    )
+}
 
-const ProductCategoryTable = () => {
+const ProductCategoryTable = ({ onChangeCheckItem }) => {
     const selector = useSelector(({ productCategoryReducer }) => ({
         productCategoryList: productCategoryReducer.productCategoryList,
         page: productCategoryReducer.page,
         totalPage: productCategoryReducer.totalPage,
         loading: productCategoryReducer.loading,
-        checkAllItem: productCategoryReducer.checkAllItem,
-        checkboxItems: productCategoryReducer.checkboxItems,
         reload: productCategoryReducer.reload,
         errors: productCategoryReducer.errors
     }), shallowEqual)
+
+    const [state, setState] = useState({
+        checkAllItem: false,
+        dataSources: []
+    });
 
     const dispatch = useDispatch();
 
@@ -114,6 +126,17 @@ const ProductCategoryTable = () => {
     }, [selector.reload])
 
     useEffect(() => {
+        setState({
+            ...state,
+            checkAllItem: false,
+            dataSources: selector.productCategoryList.map(item => ({
+                ...item,
+                checked: false
+            }))
+        })
+    }, [selector.productCategoryList])
+
+    useEffect(() => {
         dispatch(fetchWithPagination())
         const pusher = new Pusher('7853616a98fac75c9b66', {
             cluster: 'ap3',
@@ -126,12 +149,36 @@ const ProductCategoryTable = () => {
     }, [])
 
     const renderProps = {
+        ...state,
         ...selector,
         ...actions,
         defaultActivePage: selector.page,
-        handleExecute: value => {
-            const items = _getAllCheckedItem()
-            dispatch(doExecute(items, value))
+        onCheckItem: (index, checked) => {
+            const checkedItems = [];
+            state.dataSources[index].checked = checked;
+            state.dataSources.forEach(item =>
+                item.checked === true ? checkedItems.push(item.product_category_id) : null
+            );
+            state.checkAllItem = checkedItems.length === state.dataSources.length
+            setState({ ...state })
+            onChangeCheckItem(checkedItems)
+        },
+        onCheckAllItem: checkAllItem => {
+            const checkedItems = [];
+            setState({
+                ...state,
+                checkAllItem,
+                dataSources: state.dataSources.map(item => {
+                    if (checkAllItem) {
+                        checkedItems.push(item.product_category_id);
+                    }
+                    return {
+                        ...item,
+                        checked: item.checked !== checkAllItem ? checkAllItem : item.checked
+                    };
+                })
+            });
+            onChangeCheckItem(checkedItems);
         }
     }
 

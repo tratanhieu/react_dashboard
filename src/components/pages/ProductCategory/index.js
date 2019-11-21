@@ -10,7 +10,7 @@ const ProductCategory = () => (
     <>
         <ProductCategoryHeader />
         <ProductCategoryFilter />
-        <ProductCategoryTable />
+        <ProductCategoryTable onChangeCheckItem={checkedItems => console.log(checkedItems)} />
         <ProductCategoryModal />
         <ProductModal />
     </>
