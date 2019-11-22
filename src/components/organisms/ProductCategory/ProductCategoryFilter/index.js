@@ -1,13 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector, shallowEqual, useDispatch } from 'react-redux'
 import { Form, Select, Button, Icon } from "semantic-ui-react";
 
 import Fieldset from "../../../atoms/Fieldset";
 import PageSearch from "../../../molecules/PageSearch";
 import FilterBar from "../../../molecules/FilterBar";
-import { onSearch, onFilterByStatus, onChangeSortValue } from "../../../../redux/actions/productCategoryAction";
-import { onUpdateFilters } from "../../../../redux/api-actions/productCategoryApiAction";
-import { useActions } from "../../../../redux/useActions";
+import { setFilters } from "../../../../redux/reducers/productCategoryReducer";
 
 const options = [
     { key: "m", text: "Male", value: "male" },
@@ -60,24 +58,21 @@ const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
 )
 
 const ProductCategoryFilter = () => {
-    const selector = useSelector(({ productCategoryReducer }) => ({
-        filters: productCategoryReducer.filters
-    }), shallowEqual)
+    const selector = useSelector(({ productCategoryReducer: { filters } }) => ({ filters }), shallowEqual)
 
-    const dispatch = useDispatch();
-    const actions = useActions({
-        onSearch, 
-        onFilterByStatus,
-        onChangeSortValue
-    })
-
-    useEffect(() => {
-        dispatch(onUpdateFilters(selector.filters))
-    }, [selector.filters])
+    const dispatch = useDispatch()
 
     const renderProps = {
         ...selector,
-        ...actions
+        onSearch: search => {
+            dispatch(setFilters({ ...selector.filters, search }))
+        }, 
+        onFilterByStatus: status => {
+            dispatch(setFilters({ ...selector.filters, status }))
+        },
+        onChangeSortValue: sort => {
+            dispatch(setFilters({ ...selector.filters, sort }))
+        }
     }
 
     return <Render {...renderProps} />

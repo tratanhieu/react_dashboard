@@ -1,23 +1,27 @@
-table {
+table.table-data {
     width: 100%;
 }
 
-table tr td {
+table.table-data tr th {
+    padding: 12px 8px !important;
+}
+
+table.table-data tr td {
     padding: 8px 8px !important;
 }
 
-table thead,
-table tbody {
+table.table-data thead,
+table.table-data tbody {
     display: table;
     width: 100%;
 }
 
-table.loading tbody {
+table.table-data.loading tbody {
     position: relative;
     min-height: 100px;
 }
 
-table.loading tbody:after {
+table.table-data.loading tbody:after {
     position: absolute;
     top: 0;
     left: 0;

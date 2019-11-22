@@ -1,15 +1,12 @@
 import { REDUX_API_URL } from '../../constants/redux-actions'
 import axios from 'axios'
 import {
-    REDUX_LOADING,
-    REDUX_GET_ALL,
     REDUX_GET_ONE,
     REDUX_INSERT,
     REDUX_CLOSE_MODAL,
     REDUX_FORM_LOADING,
     REDUX_HANDLE_ERROR,
     REDUX_RESET_ERROR,
-    REDUX_RELOAD,
     REDUX_FILTER_BY_STATUS,
     REDUX_SORT,
     REDUX_SEARCH,
@@ -31,9 +28,8 @@ const initialState = {
     openModal: false,
     modalAction: VIEW,
     productCategoryList: [],
-    checkAllItem: false,
-    checkboxItems: [],
-    totalPage: 0,
+    checkedItems: [],
+    totalPages: 0,
     page: 1,
     productCategory: {
         status: ACTIVE
@@ -49,6 +45,8 @@ const createActionFail = action => `${prefix}${action}_FAIL`
 
 const LIST_LOADING = createAction("LIST_LOADING")
 const PREPARE_DATA = createAction("PREPARE_DATA")
+const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
+const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS")
 const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING")
 const HANDLE_ERROR = createAction("HANDLE_ERROR")
 const GET_ALL = createAction("GET_ALL")
@@ -64,17 +62,19 @@ const prepareData = data => ({
     pageSize: data.pageSize,
     page: data.page
 })
-
 const handleErrors = errors => ({ type: HANDLE_ERROR, errors })
 
-export const fetchWithPagination = page => dispatch => {
+export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
     dispatch(listLoading(true))
-    return axios.get(`${PATH_PRODUCT_CATEGORY}${page ? `?page=${page}` : ''}`, {
-        timeout: 5000
-    })
-    .then(response => dispatch(prepareData(response.data)))
+    return axios.get(`${PATH_PRODUCT_CATEGORY}?search=${filters.search}&status=${filters.status}&`
+            + `sort=${filters.orderBy}&page=${page}`,
+        { timeout: 5000 }
+    ).then(response => dispatch(prepareData(response.data)))
     .catch(error => dispatch(handleErrors(error)))
 }
+
+export const setFilters = filters => ({ type: UPDATE_FILTERS, filters })
+export const setCheckedItems = checkedItems => ({ type: SET_CHECKED_ITEMS, checkedItems })
 
 export default function(state = initialState, action) {
     console.log(action.type)
@@ -84,23 +84,20 @@ export default function(state = initialState, action) {
                 ...state,
                 loading: action.loading
             }
-            case REDUX_RELOAD: return {
+            case PREPARE_DATA: return {
                 ...state,
-                checkboxItems: action.checkboxItems,
-                reload: true
+                productCategoryList: action.productCategoryList,
+                totalPage: action.totalPage,
+                page: action.page,
+                loading: false
             }
-            case PREPARE_DATA: {
-                const checkboxItems = state.reload ? state.checkboxItems : []
-                return {
-                    ...state,
-                    productCategoryList: action.productCategoryList,
-                    totalPage: action.totalPage,
-                    page: action.page,
-                    checkAllItem: checkboxItems.length === action.productCategoryList.length,
-                    checkboxItems,
-                    loading: false,
-                    reload: false
-                }
+            case UPDATE_FILTERS: return {
+                ...state,
+                filters: action.filters
+            }
+            case SET_CHECKED_ITEMS: return {
+                ...state,
+                checkedItems: action.checkedItems
             }
             case REDUX_GET_ONE: return {
                 ...state,

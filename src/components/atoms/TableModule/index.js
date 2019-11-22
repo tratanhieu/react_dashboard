@@ -7,8 +7,9 @@ import {
 
 import "./style.css";
 import ConfirmPopup from "../../atoms/ConfirmPopup";
+import TablePagination from "../TablePagination";
 
-const TABLE_WIDTH = 1000;
+const TABLE_WIDTH = 600;
 const CHECKBOX_CELL_WIDTH = 50;
 const ACTION_CELL_WIDTH = 100;
 
@@ -19,15 +20,19 @@ const TableModule = ({
     showCheckbox = false,
     header,
     children,
-    footer
+    currentItems,
+    paginationColSpan,
+    totalPages,
+    defaultActivePage,
+    onChangePage,
 }) => {
     return (
-    <Table celled selectable className={loading ? `loading` : ``}>
+    <Table celled selectable className={loading ? `table-data loading` : `table-data`}>
         <Table.Header>
             <Table.Row>
                 {showCheckbox ? (
                     <Table.HeaderCell
-                        style={{ width: `${CHECKBOX_CELL_WIDTH}px` }}
+                        style={{ width: `${CHECKBOX_CELL_WIDTH}px`, minWidth: `${CHECKBOX_CELL_WIDTH}px`, maxWidth: `${CHECKBOX_CELL_WIDTH}px` }}
                         textAlign="center"
                     >
                         <Checkbox
@@ -38,7 +43,7 @@ const TableModule = ({
                 ) : null}
                 {header}
                 <Table.HeaderCell
-                    style={{ width: `${ACTION_CELL_WIDTH}px` }}
+                    style={{ width: `${ACTION_CELL_WIDTH}px`, minWidth: `${ACTION_CELL_WIDTH}px`, maxWidth: `${ACTION_CELL_WIDTH}px` }}
                     textAlign="center"
                 >
                     Actions
@@ -48,12 +53,28 @@ const TableModule = ({
         <Table.Body>{children}</Table.Body>
         <Table.Footer>
             <Table.Row>
-                {footer}
+                { currentItems > 0 ?
+                <Table.HeaderCell colSpan={paginationColSpan}>
+                    <TablePagination
+                        disabled={loading}
+                        totalPages={totalPages}
+                        defaultActivePage={defaultActivePage}
+                        onPageChange={onChangePage}
+                    />
+                </Table.HeaderCell>
+                : <EmptyRow />
+                }
             </Table.Row>
         </Table.Footer>
         </Table>
     );
 };
+
+const EmptyRow = ({ colSpan, message }) => (
+    <Table.Cell colSpan={colSpan} textAlign="center">
+        {message}
+    </Table.Cell>
+)
 
 const TableRow = ({
     checked = false,
@@ -67,7 +88,7 @@ const TableRow = ({
     <Table.Row {...rest}>
         {showCheckbox ? (
         <Table.Cell
-            style={{ width: `${CHECKBOX_CELL_WIDTH}px` }}
+            style={{ width: `${CHECKBOX_CELL_WIDTH}px`, minWidth: `${CHECKBOX_CELL_WIDTH}px`, maxWidth: `${CHECKBOX_CELL_WIDTH}px` }}
             textAlign="center"
         >
             <Checkbox
@@ -77,7 +98,7 @@ const TableRow = ({
         </Table.Cell>
         ) : null}
         {children}
-        <Table.Cell style={{ width: `${ACTION_CELL_WIDTH}px` }} textAlign="center">
+        <Table.Cell style={{ width: `${ACTION_CELL_WIDTH}px`, minWidth: `${ACTION_CELL_WIDTH}px`, maxWidth: `${ACTION_CELL_WIDTH}px` }} textAlign="center">
             <Button size="mini" color="orange" icon="edit" onClick={onChange} />
             <ConfirmPopup
                 size="mini"

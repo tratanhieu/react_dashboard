@@ -13,9 +13,7 @@ const PageSearch = ({
     ...rest
 }) => {
     const [value, setValue] = useState('')
-    const onPressEnter = e => {
-        if (e.key === 'Enter') onSearch(value)
-    }
+    
     return (
         <Fieldset icon="search" title={title}>
             <Input
@@ -31,7 +29,6 @@ const PageSearch = ({
             placeholder="Type some thing and enter to search..."
             value={value}
             onChange={(_, input) => setValue(input.value)}
-            onKeyDown={onPressEnter}
             {...rest} />
         </Fieldset>
     )

@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Label } from 'semantic-ui-react'
-import Pusher from 'pusher-js';
 
-// import TableHeader from '../../../molecules/TableHeader'
-// import TableBody from '../../../molecules/TableBody'
-// import TableRow from '../../../molecules/TableRow'
-// import TableColumn from '../../../molecules/TableColumn'
-import TablePagination from '../../../molecules/TablePagination'
 import {
     TableModule,
     TableRow,
@@ -17,23 +11,12 @@ import {
 } from "../../../atoms/TableModule";
 
 import { DEFAULT_STATUS } from '../../../../constants/entites'
-// import { DEFAULT_ACTIONS } from '../../../../constants/pages';
-
-import { _getAllCheckedItem } from '../../../../commons/multiple-checkbox'
-import { useActions } from '../../../../redux/useActions'
-import { onPageChange, doExecute, fetchAll } from '../../../../redux/api-actions/productCategoryApiAction'
-import { reload } from '../../../../redux/actions/productCategoryAction';
-import { fetchWithPagination } from '../../../../redux/reducers/productCategoryReducer';
+// REDUX
+import { setCheckedItems, fetchWithPaginationAndFilter } from '../../../../redux/reducers/productCategoryReducer';
 
 const Render = ({
-    totalPage, defaultActivePage, checkAllItem, checkboxItems,
-    loading,
-    onView, onDelete,
-    onPageChange,
-    dataSources,
-    onChange,
-    onCheckItem,
-    onCheckAllItem
+    dataSources, loading, totalPages, defaultActivePage, checkAllItem,
+    onChange, onDelete, onChangePage, onCheckItem, onCheckAllItem
 }) => {
     const cellWidth = calcCellWidth([80, 20], true)
 
@@ -48,30 +31,18 @@ const Render = ({
         </>
     )
 
-    const Footer = () => (
-        <TableHeaderCell colSpan="4">
-            <TablePagination
-                totalPages={totalPage}
-                defaultActivePage={defaultActivePage}
-                onPageChange={onPageChange}
-            />
-        </TableHeaderCell>
-    )
-
-    const EmptyRow = () => (
-        <TableHeaderCell colSpan={4} textAlign="center">
-            Data is empty...
-        </TableHeaderCell>
-    )
-
     return (
         <TableModule
             loading={loading}
             showCheckbox 
             header={<TableHeader />} 
-            footer={<Footer />}
+            paginationColspan={4}
+            currentItems={dataSources.length}
+            totalPages={totalPages}
+            defaultActivePage={defaultActivePage}
             checkAllItem={checkAllItem}
             onCheckAllItem={checked => onCheckAllItem(checked)}
+            onChangePage={onChangePage}
         >
         {
             dataSources.map((item, index) => (
@@ -98,15 +69,10 @@ const Render = ({
     )
 }
 
-const ProductCategoryTable = ({ onChangeCheckItem }) => {
-    const selector = useSelector(({ productCategoryReducer }) => ({
-        productCategoryList: productCategoryReducer.productCategoryList,
-        page: productCategoryReducer.page,
-        totalPage: productCategoryReducer.totalPage,
-        loading: productCategoryReducer.loading,
-        reload: productCategoryReducer.reload,
-        errors: productCategoryReducer.errors
-    }), shallowEqual)
+const ProductCategoryTable = () => {
+    const selector = useSelector(({
+        productCategoryReducer: { productCategoryList, page, totalPage: totalPages, filters, loading } 
+    }) => ({ productCategoryList, loading, page, totalPages, filters }), shallowEqual)
 
     const [state, setState] = useState({
         checkAllItem: false,
@@ -114,16 +80,6 @@ const ProductCategoryTable = ({ onChangeCheckItem }) => {
     });
 
     const dispatch = useDispatch();
-
-    const actions = useActions({
-        onPageChange
-    })
-
-    useEffect(() => {
-        if (selector.reload) {
-            dispatch(fetchAll(selector.page))
-        }
-    }, [selector.reload])
 
     useEffect(() => {
         setState({
@@ -137,22 +93,14 @@ const ProductCategoryTable = ({ onChangeCheckItem }) => {
     }, [selector.productCategoryList])
 
     useEffect(() => {
-        dispatch(fetchWithPagination())
-        const pusher = new Pusher('7853616a98fac75c9b66', {
-            cluster: 'ap3',
-            encrypted: true
-        });
-        const channel = pusher.subscribe('spring_reactjs-development');
-        channel.bind('PRODUCT_CATEGORY', _ => {
-            dispatch(reload(_getAllCheckedItem()))
-        });
-    }, [])
+        dispatch(fetchWithPaginationAndFilter(selector.filters, 1))
+    }, [selector.filters])
 
     const renderProps = {
         ...state,
         ...selector,
-        ...actions,
         defaultActivePage: selector.page,
+        onChangePage: page => dispatch(fetchWithPaginationAndFilter(selector.filters, page)),
         onCheckItem: (index, checked) => {
             const checkedItems = [];
             state.dataSources[index].checked = checked;
@@ -161,7 +109,7 @@ const ProductCategoryTable = ({ onChangeCheckItem }) => {
             );
             state.checkAllItem = checkedItems.length === state.dataSources.length
             setState({ ...state })
-            onChangeCheckItem(checkedItems)
+            dispatch(setCheckedItems(checkedItems))
         },
         onCheckAllItem: checkAllItem => {
             const checkedItems = [];
@@ -178,7 +126,7 @@ const ProductCategoryTable = ({ onChangeCheckItem }) => {
                     };
                 })
             });
-            onChangeCheckItem(checkedItems);
+            dispatch(setCheckedItems(checkedItems))
         }
     }
 

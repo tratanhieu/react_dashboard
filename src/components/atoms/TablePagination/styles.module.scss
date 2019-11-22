@@ -3,7 +3,8 @@
 .root {
     float: right;
     border: 0 !important;
-    box-shadow: none !important
+    box-shadow: none !important;
+    background: transparent !important;
 }
 
 .paginationItem {
@@ -30,5 +31,15 @@
     &[aria-current='true'] {
         background: $primary_color !important;
         color: $white_color !important
+    }
+
+    &[aria-current='true'].disabled {
+        background: $primary_color !important;
+        color: $white_color !important
+    }
+
+    &.active.disabled {
+        background-color: $whisper_color !important;
+        color: $white_color !important;
     }
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Switch, Link, Route } from 'react-router-dom'
+import Pusher from 'pusher-js'
 import './App.css'
 import 'semantic-ui-css/semantic.min.css'
 import './colors.scss'
@@ -12,12 +13,19 @@ import Main from './components/templates/layouts/Main';
 
 class App extends React.Component {
 
-	componentDidCatch(error, info) {
-		Swal.fire(
-			'Có lỗi',
-			error.message,
-			'error'
-		)
+	componentDidCatch(error) {
+		console.log(error)
+	}
+
+	componentDidMount() {
+		const pusher = new Pusher('7853616a98fac75c9b66', {
+			cluster: 'ap3',
+			encrypted: true
+		});
+		const channel = pusher.subscribe('spring_reactjs-development');
+		channel.bind('UPDATE_DATA', data => {
+			console.log(data)
+		});
 	}
 
 	render() {

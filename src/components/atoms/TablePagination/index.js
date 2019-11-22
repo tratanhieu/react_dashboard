@@ -1,6 +1,7 @@
 import React from 'react'
-import { Grid, Pagination, Icon } from 'semantic-ui-react'
+import { Pagination, Icon } from 'semantic-ui-react'
 import style from './styles.module.scss'
+import './style.css'
 
 const Render = ({ handleOnPageChage, ...rest }) => (
     <Pagination
