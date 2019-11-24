@@ -18,6 +18,7 @@ import { ACTIVE } from '../../constants/entites';
 const initialState = {
     loading: true,
     reload: false,
+    modalFormSuccessMessage: '',
     filters: {
         search: '',
         status: '',
@@ -48,8 +49,10 @@ const PREPARE_DATA = createAction("PREPARE_DATA")
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS")
 const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING")
-const HANDLE_ERROR = createAction("HANDLE_ERROR")
-const GET_ALL = createAction("GET_ALL")
+const MODAL_FORM_GET_CREATE_ACTION = createAction("MODAL_FORM_GET_CREATE_ACTION")
+const MODAL_FORM_UPDATE_SUCCESS = createAction("MODAL_FORM_UPDATE_SUCESS")
+const SET_PRODUCT_CATEGORY = createAction("SET_PRODUCT_CATEGORY")
+const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 
 // API
 const PATH_PRODUCT_CATEGORY = `${REDUX_API_URL}/product/category`
@@ -62,7 +65,11 @@ const prepareData = data => ({
     pageSize: data.pageSize,
     page: data.page
 })
-const handleErrors = errors => ({ type: HANDLE_ERROR, errors })
+const resetError = () => ({ type: REDUX_RESET_ERROR })
+const handleErrors = errors => ({ type: HANDLE_ERRORS, errors })
+const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
+const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
+export const setProductCategory = productCategory => ({ type: SET_PRODUCT_CATEGORY, productCategory})
 
 export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
     dispatch(listLoading(true))
@@ -71,6 +78,54 @@ export const fetchWithPaginationAndFilter = (filters, page) => async dispatch =>
         { timeout: 5000 }
     ).then(response => dispatch(prepareData(response.data)))
     .catch(error => dispatch(handleErrors(error)))
+}
+
+export const doSave = productCategory => {
+    return dispatch => {
+        dispatch(resetError())
+        dispatch(formLoading(true))
+        const { product_category_id, name, slug_name, status } = productCategory
+
+        if (!product_category_id) {
+            dispatch(doCreate({ name, slug_name, status }))
+        } else {
+            dispatch(doUpdate({ product_category_id, name, slug_name, status }))
+        }
+    }
+}
+
+export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
+
+const doCreate = productCategory => {
+    return dispatch => {
+        const params = JSON.stringify(productCategory)
+        axios.post(`${PATH_PRODUCT_CATEGORY}/create`, params, {
+            timeout: 5000,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(_ => {
+            dispatch(modalFormSuccessMessage("Product Category is created successfully!!"))
+            dispatch(setProductCategory({ ...initialState.productCategory }))
+        }).catch(error => {
+            dispatch(handleErrors(error.response.data))
+        }).finally(_ => dispatch(formLoading(false)))
+    }
+}
+
+const doUpdate = productCategory => {
+    return dispatch => {
+        const params = JSON.stringify(productCategory)
+        return axios.post(
+            `${PATH_PRODUCT_CATEGORY}/${productCategory.product_category_id}/update`,
+            params,
+            { timeout: 5000}
+        ).catch(error => {
+            dispatch(handleErrors(error.response.data))
+        }).finally(_ => {
+            // dispatch(loading(false))
+        })
+    }
 }
 
 export const setFilters = filters => ({ type: UPDATE_FILTERS, filters })
@@ -83,6 +138,10 @@ export default function(state = initialState, action) {
             case LIST_LOADING: return {
                 ...state,
                 loading: action.loading
+            }
+            case MODAL_FORM_LOADING: return {
+                ...state,
+                formLoading: action.loading
             }
             case PREPARE_DATA: return {
                 ...state,
@@ -99,6 +158,28 @@ export default function(state = initialState, action) {
                 ...state,
                 checkedItems: action.checkedItems
             }
+            case MODAL_FORM_GET_CREATE_ACTION: return {
+                ...state,
+                productCategory: initialState.productCategory,
+                openModal: true,
+                modalFormSuccessMessage: initialState.modalFormSuccessMessage
+            }
+            case MODAL_FORM_UPDATE_SUCCESS: return {
+                ...state,
+                modalFormSuccessMessage: action.message
+            }
+            case SET_PRODUCT_CATEGORY: return {
+                ...state,
+                productCategory: action.productCategory
+            }
+            case HANDLE_ERRORS: return {
+                ...state,
+                errors: {
+                    ...state.errors,
+                    ...action.errors
+                }
+            }
+            //
             case REDUX_GET_ONE: return {
                 ...state,
                 productCategory: action.productCategory,
@@ -117,7 +198,8 @@ export default function(state = initialState, action) {
                 ...state,
                 productCategory: initialState.productCategory,
                 openModal: false,
-                errors: initialState.errors
+                errors: initialState.errors,
+                modalFormSuccessMessage: initialState.modalFormSuccessMessage
             }
             case REDUX_FORM_LOADING: return {
                 ...state,
@@ -150,13 +232,6 @@ export default function(state = initialState, action) {
                 filters: {
                     ...state.filters,
                     sort: action.value
-                }
-            }
-            case REDUX_HANDLE_ERROR: return {
-                ...state,
-                errors: {
-                    ...state.errors,
-                    ...action.errors
                 }
             }
             case REDUX_RESET_ERROR: return {

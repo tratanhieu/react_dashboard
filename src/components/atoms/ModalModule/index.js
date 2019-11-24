@@ -1,17 +1,19 @@
 import React from 'react'
-import { Modal, Button, TransitionablePortal } from 'semantic-ui-react'
+import { Modal, Button, TransitionablePortal, Message } from 'semantic-ui-react'
 
 const ModalModule = ({
     transition = {animation:'scale', duration: 300},
     children,
     open,
     title,
+    modalSuccessMessage,
     actionDisable,
     actionLoading,
     positiveLabel = 'Save',
     negativeLabel = 'Cancel',
     onClose,
     onPositive,
+    onContinue,
     ...rest
 }) => (
     <TransitionablePortal onClose={onClose} open={open}
@@ -26,17 +28,28 @@ const ModalModule = ({
         >
             <Modal.Header>{title}</Modal.Header>
             <Modal.Content>
-                {children}
+                {modalSuccessMessage ? 
+                    <Message success>{modalSuccessMessage}</Message> : children
+                }
             </Modal.Content>
             <Modal.Actions>
-                <Button
-                    positive
-                    icon='checkmark'
-                    labelPosition='right'
-                    disabled={actionDisable || actionLoading}
-                    content={positiveLabel}
-                    onClick={onPositive}
-                />
+                { modalSuccessMessage ?
+                    <Button
+                        positive
+                        icon='checkmark'
+                        labelPosition='right'
+                        content="Continue"
+                        onClick={onContinue}
+                    /> : 
+                    <Button
+                        positive
+                        icon='checkmark'
+                        labelPosition='right'
+                        disabled={actionDisable || actionLoading}
+                        content={positiveLabel}
+                        onClick={onPositive}
+                    /> 
+                }
                 <Button
                     disabled={actionLoading}
                     color="grey"

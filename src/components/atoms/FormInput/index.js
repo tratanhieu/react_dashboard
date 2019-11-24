@@ -74,11 +74,11 @@ const FormInput = ({
 
     return (
         <Form.Input
-        className={styles.root}
-        {...rest}
-        error={errorState ? errorState : false}
-        required={required}
-        onChange={handleOnChange}
+            className={styles.root}
+            {...rest}
+            error={errorState ? errorState : false}
+            required={required}
+            onChange={handleOnChange}
         />
     );
 };
