@@ -1,14 +1,16 @@
 import React from 'react'
-import { Grid, Segment } from 'semantic-ui-react'
+import { useSelector, shallowEqual } from 'react-redux'
+import { Grid, Segment, Message } from 'semantic-ui-react'
 import HeaderBar from '../../../organisms/HeaderBar';
 import HorizontalSidebar from '../../../organisms/HorizontalSidebar';
 // import Footer from '../../../organisms/Footer';
 
-const Main = ({ children, ...rest}) => {
+const Render = ({ children, systemErrors, ...rest}) => {
     return(
         <>
             <HeaderBar />
             <Grid style={{marginTop: 54}}>
+                <Message error>{systemErrors.message}</Message>
                 <Grid.Row style={{padding: 0}}>
                     <Grid.Column style={{width: 230, padding: 0, backgroundColor: '#1b1c1d'}}>
                         <HorizontalSidebar />
@@ -23,6 +25,19 @@ const Main = ({ children, ...rest}) => {
             {/* <Footer /> */}
         </>
     )
+}
+
+const Main = ({ children }) => {
+    const selector = useSelector(({
+        rootReducer: { systemErrors } 
+    }) => ({ systemErrors }), shallowEqual)
+
+    const renderProps = {
+        children,
+        ...selector
+    }
+
+    return <Render {...renderProps} />
 }
 
 export default Main

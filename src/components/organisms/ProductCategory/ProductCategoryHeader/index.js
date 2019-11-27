@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux'
 import { Grid, Button, Icon } from 'semantic-ui-react'
-import { getInsert } from '../../../../redux/actions/productCategoryAction';
+import { getCreateAction } from '../../../../redux/reducers/productCategoryReducer';
 
 const Render = ({ onClickNew }) => {
     return (
@@ -25,7 +25,7 @@ const Render = ({ onClickNew }) => {
 const ProductCategoryHeader = () => {
     const dispatch = useDispatch();
     const renderProps = {
-        onClickNew: _ => dispatch(getInsert())
+        onClickNew: _ => dispatch(getCreateAction())
     }
     return <Render {...renderProps} />
 }

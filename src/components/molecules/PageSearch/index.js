@@ -10,26 +10,26 @@ const PageSearch = ({
     loading = false,
     placeholder="Type some thing and enter to search...",
     onSearch,
-    ...rest
+    ...rest 
 }) => {
     const [value, setValue] = useState('')
-    
+
     return (
         <Fieldset icon="search" title={title}>
             <Input
-            fluid
-            // disabled
-            action={{
-                color,
-                icon: "search",
-                content: buttonSearchLabel,
-                onClick: _ => onSearch(value),
-                loading
-            }}
-            placeholder="Type some thing and enter to search..."
-            value={value}
-            onChange={(_, input) => setValue(input.value)}
-            {...rest} />
+                fluid
+                // disabled
+                action={{
+                    color,
+                    icon: "search",
+                    content: buttonSearchLabel,
+                    onClick: _ => onSearch(value),
+                    loading
+                }}
+                placeholder="Type some thing and enter to search..."
+                value={value}
+                onChange={(_, input) => setValue(input.value)}
+                {...rest} />
         </Fieldset>
     )
 }

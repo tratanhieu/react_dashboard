@@ -68,9 +68,9 @@ const FormInput = ({
         return re.test(String(email).toLowerCase());
     };
 
-    // useEffect(() => {
-    //     setErrorState(error);
-    // }, [error]);
+    useEffect(() => {
+        setErrorState(error);
+    }, [error]);
 
     return (
         <Form.Input

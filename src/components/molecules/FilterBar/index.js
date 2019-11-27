@@ -34,8 +34,9 @@ const FilterBar = ({
                     <Form.Select
                         style={{ width: "100%" }}
                         options={listSort}
-                        placeholder="Type"
-                        onChange={onChangeSortValue}
+                        defaultValue={sortValue}
+                        placeholder="-- Sort by --"
+                        onChange={(_, select) => onChangeSortValue(select.value)}
                     />
                 </Form.Group>
             </div>

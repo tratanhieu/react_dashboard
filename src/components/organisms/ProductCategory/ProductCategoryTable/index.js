@@ -12,7 +12,9 @@ import {
 
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 // REDUX
-import { setCheckedItems, fetchWithPaginationAndFilter } from '../../../../redux/reducers/productCategoryReducer';
+import {
+    setCheckedItems, fetchWithPaginationAndFilter, getUpdateAction
+} from '../../../../redux/reducers/productCategoryReducer';
 
 const Render = ({
     dataSources, loading, totalPages, defaultActivePage, checkAllItem,
@@ -54,14 +56,14 @@ const Render = ({
                     showCheckbox
                     checked={item.checked}
                     onCheckItem={checked => onCheckItem(index, checked)}
-                    onChange={_ => onChange(item.id)}
-                    onDelete={onDelete}
+                    onChange={_ => onChange(item.productCategoryId)}
+                    onDelete={_ => onDelete(item.productCategoryId)}
                 >
                     <TableCell width={cellWidth[0]}>
                         {item.name}
                     </TableCell>
                     <TableCell width={cellWidth[1]}>
-                        {item.slug_name}
+                        {item.slugName}
                     </TableCell>
                     <TableCell width={cellWidth[2]} textAlign="center">
                         <Label color={DEFAULT_STATUS[item.status].color}>
@@ -133,7 +135,8 @@ const ProductCategoryTable = () => {
                 })
             });
             dispatch(setCheckedItems(checkedItems))
-        }
+        },
+        onChange: product_category_id => dispatch(getUpdateAction(product_category_id))
     }
 
     return <Render {...renderProps} />

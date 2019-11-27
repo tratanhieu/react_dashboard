@@ -1,23 +1,16 @@
 import React from "react";
 import { useSelector, shallowEqual, useDispatch } from 'react-redux'
-import { Form, Select, Button, Icon } from "semantic-ui-react";
+import { Form } from "semantic-ui-react";
 
-import Fieldset from "../../../atoms/Fieldset";
 import PageSearch from "../../../molecules/PageSearch";
 import FilterBar from "../../../molecules/FilterBar";
 import { setFilters } from "../../../../redux/reducers/productCategoryReducer";
 
-const options = [
-    { key: "m", text: "Male", value: "male" },
-    { key: "f", text: "Female", value: "female" },
-    { key: "o", text: "Other", value: "other" }
-];
-
 const sorts = [
-    { key: "name,desc", text: "Name Descending", value: "name,desc" },
-    { key: "name,asc", text: "Name Ascending", value: "name,asc" },
-    { key: "price,desc", text: "Price Descending", value: "price,desc" },
-    { key: "price,asc", text: "Price Ascending", value: "price,desc" }
+    { key: "name,DESC", text: "Name Descending", value: "name,DESC" },
+    { key: "name,ASC", text: "Name Ascending", value: "name,ASC" },
+    { key: "createDate,DESC", text: "Create Date Descending", value: "createDate,DESC" },
+    { key: "createDate,ASC", text: "Create Date Ascending", value: "createDate,ASC" }
 ];
 
 const listStatus = [
@@ -29,7 +22,7 @@ const listStatus = [
 
 const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
     <Form>
-        <PageSearch onSearch={onSearch} />
+        <PageSearch defaultValue={filters.search} onSearch={onSearch} />
         <FilterBar
             statusValue={filters.status}
             sortValue={filters.sort}
@@ -38,22 +31,6 @@ const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
             onFilterByStatus={onFilterByStatus}
             onChangeSortValue={onChangeSortValue}
         />
-        <Fieldset icon="hand point down outline" title="Actions">
-            <div style={{ display: "flex", justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <div style={{ display: "flex" }}>
-                    <Select style={{ minWidth: 160, marginRight: 8 }} fluid options={options} placeholder="Type" />
-                    <Button primary>Execute</Button>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button primary>
-                        <Icon name="cloud upload" inverted />Import
-                    </Button>
-                    <Button primary>
-                        <Icon name="cloud download" inverted />Export
-                    </Button>
-                </div>
-            </div>
-        </Fieldset>
     </Form>
 )
 
@@ -71,6 +48,7 @@ const ProductCategoryFilter = () => {
             dispatch(setFilters({ ...selector.filters, status }))
         },
         onChangeSortValue: sort => {
+            console.log(sort)
             dispatch(setFilters({ ...selector.filters, sort }))
         }
     }

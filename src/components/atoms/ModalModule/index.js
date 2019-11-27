@@ -38,6 +38,11 @@ const ModalModule = ({
                     content="Continue"
                     onClick={onContinue}
                 />
+                <Button
+                    color="grey"
+                    content="Close"
+                    onClick={onClose}
+                />
             </div>
             ) : (
                 children
@@ -56,8 +61,6 @@ const ModalModule = ({
             <Button
                 disabled={actionLoading}
                 color="grey"
-                icon="close"
-                labelPosition="right"
                 content={negativeLabel}
                 onClick={onClose}
             />

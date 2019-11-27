@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input } from 'semantic-ui-react'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
+import { Form } from 'semantic-ui-react'
+import _ from 'lodash'
+
 import ToggleActive from '../../../atoms/ToggleActive';
-// import Button from '../../../atoms/Button';
 import { ACTIVE } from '../../../../constants/entites';
-import InputWithSlug from '../../../atoms/InputWithSlug';
-import { closeModal } from '../../../../redux/actions/productCategoryAction';
 import ModalModule from '../../../atoms/ModalModule';
-import { doSave, getCreateAction, handleErrors } from '../../../../redux/reducers/productCategoryReducer';
+import {
+    doSave, getCreateAction, closeModal, initialState 
+} from '../../../../redux/reducers/productCategoryReducer';
+import FormInputSlug from '../../../atoms/FormInputSlug';
+import { makeSlug } from '../../../../commons/utils';
 
 const Render = ({ 
     productCategory = {},
@@ -18,14 +21,18 @@ const Render = ({
     ...rest
 }) => {
     const title = productCategory.product_category_id ? 'Update' : 'Create'
-
+    useEffect(() => {
+        console.log(_.isEqual(initialState.errors, errors))
+        console.log(errors)
+        console.log(productCategory)
+    }, [errors])
     return (
         <ModalModule
             size="mini"
             title={title}
             open={openModal}
             onClose={onClose}
-            actionDisable={error}
+            actionDisable={!_.isEqual(initialState.errors, errors) || !productCategory.name}
             modalSuccessMessage={modalFormSuccessMessage}
             actionLoading={formLoading}
             onPositive={onPositive}
@@ -33,16 +40,21 @@ const Render = ({
             {...rest}
         >
             <Form success={modalFormSuccessMessage} loading={formLoading}>
-                <InputWithSlug
+                <FormInputSlug
                     tabIndex={0}
                     fluid
                     type="text"
-                    label="Tên loại Sản phẩm: " 
+                    name="name"
+                    label="Product Category Name: " 
                     required
-                    onChange={onChangeName}
                     defaultValue={productCategory.name}
-                    error={errors.name} />
+                    defaultSlugValue={productCategory.slugName}
+                    valueError={errors.name}
+                    slugValueError={errors.slugName}
+                    onChange={onChangeName}
+                    onChangeSlugValue={onChangeName} />
                 <ToggleActive
+                    tabIndex={2}
                     checked={productCategory.status === ACTIVE} 
                     onChangeStatus={onChangeStatus} />
             </Form>
@@ -55,22 +67,38 @@ const ProductCategoryModal = () => {
         productCategoryReducer: { openModal, modalFormSuccessMessage, formLoading, productCategory, errors } 
     }) => ({ openModal, formLoading, modalFormSuccessMessage, productCategory, errors }), shallowEqual)
 
-    const [productCategory, setProductCategory] = useState({})
+    const [productCategory, setProductCategory] = useState({ ...initialState.productCategory })
+    const [errors, setErrors] = useState({ ...initialState.errors })
 
     const dispatch = useDispatch()
 
     useEffect(() => {
         setProductCategory({ ...selector.productCategory })
-        console.log(productCategory)
-    }, [selector.productCategory])
+    }, [selector.productCategory, selector.openModal, selector.modalFormSuccessMessage])
+
+    useEffect(() => {
+        setErrors({ ...selector.errors })
+    }, [selector.errors])
 
     const renderProps = {
         ...selector,
+        errors,
         productCategory,
-        onChangeName: (_, input, slug_name, error) => {
-            console.log(input)
-            setProductCategory({ ...productCategory, name: input.value, slug_name })
-            handleErrors({ name: error })
+        onChangeName: (_, input, error) => {
+            setProductCategory({ 
+                ...productCategory,
+                name: input.value,
+                slugName: makeSlug(input.value)
+            })
+            setErrors({ ...errors, [input.name]: error })
+        },
+        onChangeName: (_, input, error) => {
+            setProductCategory({ 
+                ...productCategory,
+                name: input.value,
+                slugName: makeSlug(input.value)
+            })
+            setErrors({ ...errors, [input.name]: error })
         },
         onChangeStatus: status => setProductCategory({ ...productCategory, status }),
         onPositive: _ => dispatch(doSave(productCategory)),

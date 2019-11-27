@@ -1,33 +1,20 @@
 import { REDUX_API_URL } from '../../constants/redux-actions'
 import axios from 'axios'
-import {
-    REDUX_GET_ONE,
-    REDUX_INSERT,
-    REDUX_CLOSE_MODAL,
-    REDUX_FORM_LOADING,
-    REDUX_HANDLE_ERROR,
-    REDUX_RESET_ERROR,
-    REDUX_FILTER_BY_STATUS,
-    REDUX_SORT,
-    REDUX_SEARCH,
-    REDUX_MODAL_SAVE_SUCCESS
-} from '../../constants/redux-actions';
-import { VIEW, INSERT, UPDATE } from '../../constants/pages';
 import { ACTIVE } from '../../constants/entites';
+import { handleErrors } from './rootReducer';
 
-const initialState = {
+export const initialState = {
     loading: true,
     reload: false,
     modalFormSuccessMessage: '',
     filters: {
         search: '',
         status: '',
-        orderBy: 'createDate,DESC'
+        sort: 'createDate,DESC'
     },
-    mupltipleExecuteLoading: false,
+    multipleExecuteLoading: false,
     formLoading: false,
     openModal: false,
-    modalAction: VIEW,
     productCategoryList: [],
     checkedItems: [],
     totalPages: 0,
@@ -35,14 +22,15 @@ const initialState = {
     productCategory: {
         status: ACTIVE
     },
-    errors: []
+    errors: {
+        name: '',
+        slugName: ''
+    }
 }
 
 const prefix = 'REDUX_PRODUCT_CATEGORY_'
 
 const createAction = action => `${prefix}${action}`
-const createActionSuccess = action => `${prefix}${action}_SUCCESS`
-const createActionFail = action => `${prefix}${action}_FAIL`
 
 const LIST_LOADING = createAction("LIST_LOADING")
 const PREPARE_DATA = createAction("PREPARE_DATA")
@@ -52,6 +40,8 @@ const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING")
 const MODAL_FORM_GET_CREATE_ACTION = createAction("MODAL_FORM_GET_CREATE_ACTION")
 const MODAL_FORM_UPDATE_SUCCESS = createAction("MODAL_FORM_UPDATE_SUCESS")
 const SET_PRODUCT_CATEGORY = createAction("SET_PRODUCT_CATEGORY")
+const CLOSE_MODAL = createAction("CLOSE_MODAL")
+const MULTIPLE_EXECUTE_LOADING = createAction("MULTIPLE_EXECUTE_LOADING")
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 
 // API
@@ -65,68 +55,84 @@ const prepareData = data => ({
     pageSize: data.pageSize,
     page: data.page
 })
-const resetError = () => ({ type: REDUX_RESET_ERROR })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
+
+const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
+
+const setProductCategory = (productCategory, openModal) => ({ type: SET_PRODUCT_CATEGORY, productCategory, openModal})
+
 const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
 
-export const handleErrors = errors => ({ type: HANDLE_ERRORS, errors })
-export const setProductCategory = productCategory => ({ type: SET_PRODUCT_CATEGORY, productCategory})
+export const closeModal = () => ({ type: CLOSE_MODAL })
+
+export const doMultipleExecute = (listId, status) => async dispatch =>{
+    const params = { listId, status }
+    dispatch(setMultipleExecuteLoading(true))
+    return axios.post(`${PATH_PRODUCT_CATEGORY}/execute`, params, {
+        timeout: 5000,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(_ => dispatch(setMultipleExecuteLoading(false)))
+}
 
 export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
     dispatch(listLoading(true))
     return axios.get(`${PATH_PRODUCT_CATEGORY}?search=${filters.search}&status=${filters.status}&`
-            + `sort=${filters.orderBy}&page=${page}`,
+            + `sort=${filters.sort}&page=${page}`,
         { timeout: 5000 }
-    ).then(response => dispatch(prepareData(response.data)))
-    .catch(error => dispatch(handleErrors(error)))
+    )
+    .then(response => dispatch(prepareData(response.data)))
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
 }
 
-export const doSave = productCategory => {
-    return dispatch => {
-        dispatch(resetError())
-        dispatch(formLoading(true))
-        const { product_category_id, name, slug_name, status } = productCategory
+export const doSave = productCategory => async dispatch => {
+    dispatch(formLoading(true))
+    const { productCategoryId, name, slugName, status } = productCategory
 
-        if (!product_category_id) {
-            dispatch(doCreate({ name, slug_name, status }))
-        } else {
-            dispatch(doUpdate({ product_category_id, name, slug_name, status }))
-        }
+    if (!productCategoryId) {
+        dispatch(doCreate({ name, slugName, status }))
+    } else {
+        dispatch(doUpdate({ productCategoryId, name, slugName, status }))
     }
 }
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
+export const getUpdateAction = productCategoryId => async dispatch => {
+    dispatch(listLoading(true))
+    return axios.get(`${PATH_PRODUCT_CATEGORY}/${productCategoryId}`, {
+        timeout: 5000
+    }).then(response => dispatch(setProductCategory(response.data, true)))
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(_ => dispatch(listLoading(false)))
+}
 
-const doCreate = productCategory => {
-    return dispatch => {
-        const params = JSON.stringify(productCategory)
-        axios.post(`${PATH_PRODUCT_CATEGORY}/create`, params, {
+const doCreate = productCategory => async dispatch => {
+    const params = JSON.stringify(productCategory)
+    axios.post(`${PATH_PRODUCT_CATEGORY}/create`, params, {
+        timeout: 5000,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(_ => dispatch(modalFormSuccessMessage("Product Category is created successfully!!")))
+    .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(_ => dispatch(formLoading(false)))
+}
+
+const doUpdate = productCategory => async dispatch => {
+    const params = JSON.stringify(productCategory)
+    return axios.post(
+        `${PATH_PRODUCT_CATEGORY}/${productCategory.productCategoryId}/update`, params, { 
             timeout: 5000,
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(_ => {
-            dispatch(modalFormSuccessMessage("Product Category is created successfully!!"))
-            dispatch(setProductCategory({ ...initialState.productCategory }))
-        }).catch(error => {
-            dispatch(handleErrors(error.response.data))
-        }).finally(_ => dispatch(formLoading(false)))
-    }
-}
-
-const doUpdate = productCategory => {
-    return dispatch => {
-        const params = JSON.stringify(productCategory)
-        return axios.post(
-            `${PATH_PRODUCT_CATEGORY}/${productCategory.product_category_id}/update`,
-            params,
-            { timeout: 5000}
-        ).catch(error => {
-            dispatch(handleErrors(error.response.data))
-        }).finally(_ => {
-            // dispatch(loading(false))
-        })
-    }
+        }
+    ).then(_ => dispatch(modalFormSuccessMessage("Product Category is update successfully!!")))
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(_ => dispatch(formLoading(false)))
 }
 
 export const setFilters = filters => ({ type: UPDATE_FILTERS, filters })
@@ -142,7 +148,12 @@ export default function(state = initialState, action) {
             }
             case MODAL_FORM_LOADING: return {
                 ...state,
-                formLoading: action.loading
+                formLoading: action.loading,
+                errors: action.loading ? initialState.errors : state.errors
+            }
+            case MULTIPLE_EXECUTE_LOADING: return {
+                ...state,
+                multipleExecuteLoading: action.loading
             }
             case PREPARE_DATA: return {
                 ...state,
@@ -171,73 +182,25 @@ export default function(state = initialState, action) {
             }
             case SET_PRODUCT_CATEGORY: return {
                 ...state,
-                productCategory: action.productCategory
+                productCategory: action.productCategory,
+                openModal: action.openModal,
+                modalFormSuccessMessage: initialState.modalFormSuccessMessage
+            }
+            case CLOSE_MODAL: return {
+                ...state,
+                openModal: false,
+                listLoading: false,
+                formLoading: false,
+                productCategory: initialState.productCategory,
+                formLoading: initialState.formLoading,
+                errors: initialState.errors,
             }
             case HANDLE_ERRORS: return {
                 ...state,
                 errors: {
                     ...state.errors,
-                    ...action.errors
+                    ...action.errors.response.data
                 }
-            }
-            //
-            case REDUX_GET_ONE: return {
-                ...state,
-                productCategory: action.productCategory,
-                modalAction: UPDATE,
-                openModal: true,
-                loading: false
-            }
-            case REDUX_INSERT: return {
-                ...state,
-                productCategory: initialState.productCategory,
-                modalAction: INSERT,
-                openModal: true,
-                loading: false
-            }
-            case REDUX_CLOSE_MODAL: return {
-                ...state,
-                productCategory: initialState.productCategory,
-                openModal: false,
-                errors: initialState.errors,
-                modalFormSuccessMessage: initialState.modalFormSuccessMessage
-            }
-            case REDUX_FORM_LOADING: return {
-                ...state,
-                formLoading: action.formLoading,
-                openModal: true
-            }
-            case REDUX_SEARCH: return {
-                ...state,
-                filters: {
-                    ...state.filters,
-                    search: action.value
-                }
-            }
-            case REDUX_FILTER_BY_STATUS: return {
-                ...state,
-                filters: {
-                    ...state.filters,
-                    status: action.value
-                }
-            }
-            case REDUX_SORT: return {
-                ...state,
-                filters: {
-                    ...state.filters,
-                    sort: action.value
-                }
-            }
-            case REDUX_MODAL_SAVE_SUCCESS: return {
-                ...state,
-                filters: {
-                    ...state.filters,
-                    sort: action.value
-                }
-            }
-            case REDUX_RESET_ERROR: return {
-                ...state,
-                errors: initialState.errors
             }
             default: return {
                 ...state
