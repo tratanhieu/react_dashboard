@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Dropdown, Icon, Menu } from 'semantic-ui-react'
+import { Dropdown, Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import styles from './styles.module.css'
 
@@ -16,6 +16,18 @@ const HorizontalSidebar = ({ ...rest }) => {
             path: '/product/category',
             icon: 'grid layout',
             text: 'Product Category',
+            active: false
+        },
+        {
+            path: '/user',
+            icon: 'user group',
+            text: 'User',
+            active: false
+        },
+        {
+            path: '/user/group',
+            icon: 'user',
+            text: 'User Group',
             active: false
         }
     ])

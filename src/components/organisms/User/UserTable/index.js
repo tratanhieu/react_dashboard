@@ -18,18 +18,24 @@ const Render = ({
     dataSources, loading, totalPages, defaultActivePage, checkAllItem,
     onChange, onDelete, onChangePage, onCheckItem, onCheckAllItem
 }) => {
-    const cellWidth = calcCellWidth([40, 40, 20], true)
+    const cellWidth = calcCellWidth([30, 20, 20, 20, 10], true)
 
     const TableHeader = () => (
         <>
             <TableHeaderCell width={cellWidth[0]}>
-                Tên loại sản phẩm
+                Fullname
             </TableHeaderCell>
             <TableHeaderCell width={cellWidth[1]}>
-                Slug Name
+                Phone
             </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[2]} textAlign="center">
-                Trạng thái
+            <TableHeaderCell width={cellWidth[2]}>
+                Email
+            </TableHeaderCell>
+            <TableHeaderCell width={cellWidth[3]}>
+                User Group
+            </TableHeaderCell>
+            <TableHeaderCell width={cellWidth[4]} textAlign="center">
+                Status
             </TableHeaderCell>
         </>
     )
@@ -58,12 +64,18 @@ const Render = ({
                     onDelete={onDelete}
                 >
                     <TableCell width={cellWidth[0]}>
-                        {item.name}
+                        {`${item.first_name} ${item.last_name} ${item.name}`}
                     </TableCell>
                     <TableCell width={cellWidth[1]}>
-                        {item.slug_name}
+                        {item.phone}
                     </TableCell>
-                    <TableCell width={cellWidth[2]} textAlign="center">
+                    <TableCell width={cellWidth[2]}>
+                        {item.email}
+                    </TableCell>
+                    <TableCell width={cellWidth[3]}>
+                        {item.user_group}
+                    </TableCell>
+                    <TableCell width={cellWidth[4]} textAlign="center">
                         <Label color={DEFAULT_STATUS[item.status].color}>
                             {DEFAULT_STATUS[item.status].text}
                         </Label>
@@ -75,10 +87,28 @@ const Render = ({
     )
 }
 
-const ProductCategoryTable = () => {
-    const selector = useSelector(({
-        productCategoryReducer: { productCategoryList, page, totalPage: totalPages, filters, loading } 
-    }) => ({ productCategoryList, loading, page, totalPages, filters }), shallowEqual)
+const UserTable = () => {
+    // const selector = useSelector(({
+    //     productCategoryReducer: { productCategoryList, page, totalPage: totalPages, filters, loading } 
+    // }) => ({ productCategoryList, loading, page, totalPages, filters }), shallowEqual)
+
+    const selector = {
+        userList: [
+            { 
+                user_id: 10,
+                first_name: "Trần",
+                last_name: "Văn",
+                name: "Anh",
+                phone: 123456,
+                email: "sjhdj@gmail.com",
+                user_group: "ADMIN",
+                status: "ACTIVE" 
+            }
+        ],
+        loading: false,
+        totalPages: 2,
+        filters: {}
+    }
 
     const [state, setState] = useState({
         checkAllItem: false,
@@ -91,16 +121,16 @@ const ProductCategoryTable = () => {
         setState({
             ...state,
             checkAllItem: false,
-            dataSources: selector.productCategoryList.map(item => ({
+            dataSources: selector.userList.map(item => ({
                 ...item,
                 checked: false
             }))
         })
-    }, [selector.productCategoryList])
+    }, [selector.userList])
 
-    useEffect(() => {
-        dispatch(fetchWithPaginationAndFilter(selector.filters, 1))
-    }, [selector.filters])
+    // useEffect(() => {
+    //     dispatch(fetchWithPaginationAndFilter(selector.filters, 1))
+    // }, [selector.filters])
 
     const renderProps = {
         ...state,
@@ -139,4 +169,4 @@ const ProductCategoryTable = () => {
     return <Render {...renderProps} />
 }
 
-export default ProductCategoryTable
+export default UserTable

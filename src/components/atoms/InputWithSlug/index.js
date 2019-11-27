@@ -9,18 +9,18 @@ const InputWithSlug = ({ path, onChange, ...rest }) => {
     const [tempSlugValue, setTempSlugValue] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
 
-    const handleChange = (e, value, errors) => {
-        const slugName = makeSlug(value);
+    const handleChange = (e, input, errors) => {
+        const slugName = makeSlug(input.value);
         if(!slugValue) {
             setTempSlugValue(slugName);
         }
 
-        onChange(e, value, slugValue, errors);
+        onChange(e, input, slugValue, errors);
     };
 
-    const handleChangeSlugValue = (e, value, errors) => {
-        setSlugValue(value);
-        setTempSlugValue(value);
+    const handleChangeSlugValue = (e, input, errors) => {
+        setSlugValue(input.value);
+        setTempSlugValue(input.value);
     };
 
     const makeSlug = str => {
@@ -52,43 +52,27 @@ const InputWithSlug = ({ path, onChange, ...rest }) => {
     
     return (
         <>
-            <FormInput
-                onChange={handleChange}
-                {...rest}
-            />
+            <FormInput onChange={handleChange} {...rest} />
             {tempSlugValue && isEdit === false ? (
                 <div style={{width: '100%', marginBottom: 8, paddingRight: 8}}>
                     <i style={{ textDecoration: "underline", wordBreak: 'break-word' }}>
                         <a>{DOMAIN_NAME}</a>{tempSlugValue}<a>.html</a>
                     </i>
-                <span> - </span>
-                <a href="javascript:void(0)"
-                    style={{ textDecoration: "underline" }}
-                    onClick={_ => setIsEdit(true)}>Sửa</a>
+                    <span> - </span>
+                    <a href="javascript:void(0)"
+                        style={{ textDecoration: "underline" }}
+                        onClick={_ => setIsEdit(true)}>Sửa</a>
                 </div>
             ) : null}
             {isEdit ? (
                 <div style={{ width: '100%', display: "block", background: "#eee", padding: 8, marginBottom: 8 }}>
-                <FormInput
-                    value={tempSlugValue}
-                    onChange={handleChangeSlugValue}
-                />
-                &nbsp; &nbsp;
-                <a
-                    href="javascript:void(0)"
-                    style={{ textDecoration: "underline" }}
-                    onClick={_ => setIsEdit(false)}
-                >
-                    Ok
-                </a>
-                &nbsp; &nbsp;
-                <a
-                    href="javascript:void(0)"
-                    style={{ textDecoration: "underline" }}
-                    onClick={_ => setIsEdit(false)}
-                >
-                    Hủy
-                </a>
+                    <FormInput value={tempSlugValue} onChange={handleChangeSlugValue} />
+                    &nbsp; &nbsp;
+                    <a href="javascript:void(0)" style={{ textDecoration: "underline" }}
+                        onClick={_ => setIsEdit(false)} >Ok</a>
+                    &nbsp; &nbsp;
+                    <a href="javascript:void(0)" style={{ textDecoration: "underline" }}
+                        onClick={_ => setIsEdit(false)} >Hủy</a>
                 </div>
             ) : null}
         </>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Icon, Form, Button, Message } from 'semantic-ui-react'
+import { Form, Input } from 'semantic-ui-react'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import ToggleActive from '../../../atoms/ToggleActive';
 // import Button from '../../../atoms/Button';
@@ -7,7 +7,7 @@ import { ACTIVE } from '../../../../constants/entites';
 import InputWithSlug from '../../../atoms/InputWithSlug';
 import { closeModal } from '../../../../redux/actions/productCategoryAction';
 import ModalModule from '../../../atoms/ModalModule';
-import { doSave, getCreateAction } from '../../../../redux/reducers/productCategoryReducer';
+import { doSave, getCreateAction, handleErrors } from '../../../../redux/reducers/productCategoryReducer';
 
 const Render = ({ 
     productCategory = {},
@@ -18,10 +18,6 @@ const Render = ({
     ...rest
 }) => {
     const title = productCategory.product_category_id ? 'Update' : 'Create'
-
-    useEffect(() => {
-        console.log(productCategory)
-    }, [productCategory])
 
     return (
         <ModalModule
@@ -59,37 +55,25 @@ const ProductCategoryModal = () => {
         productCategoryReducer: { openModal, modalFormSuccessMessage, formLoading, productCategory, errors } 
     }) => ({ openModal, formLoading, modalFormSuccessMessage, productCategory, errors }), shallowEqual)
 
-    const [state, setState] = useState({
-        productCategory: {},
-        error: false
-    })
+    const [productCategory, setProductCategory] = useState({})
 
     const dispatch = useDispatch()
 
     useEffect(() => {
-        setState({ ...state, productCategory: { ...selector.productCategory } })
+        setProductCategory({ ...selector.productCategory })
+        console.log(productCategory)
     }, [selector.productCategory])
 
     const renderProps = {
         ...selector,
-        ...state,
-        onChangeName: (_, name, slug_name, error) => setState({
-            ...state,
-            productCategory: {
-                ...state.productCategory,
-                name,
-                slug_name
-            },
-            error
-        }),
-        onChangeStatus: status => setState({
-            ...state,
-            productCategory: {
-                ...state.productCategory,
-                status
-            }
-        }),
-        onPositive: _ => dispatch(doSave(state.productCategory)),
+        productCategory,
+        onChangeName: (_, input, slug_name, error) => {
+            console.log(input)
+            setProductCategory({ ...productCategory, name: input.value, slug_name })
+            handleErrors({ name: error })
+        },
+        onChangeStatus: status => setProductCategory({ ...productCategory, status }),
+        onPositive: _ => dispatch(doSave(productCategory)),
         onContinue: _ => dispatch(getCreateAction()),
         onClose: _ => dispatch(closeModal())
     }

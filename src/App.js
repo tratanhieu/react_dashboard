@@ -9,6 +9,8 @@ import ProductCategory from './components/pages/ProductCategory'
 
 import Swal from 'sweetalert2'
 import Main from './components/templates/layouts/Main';
+import User from './components/pages/User';
+import UserGroup from './components/pages/UserGroup';
 
 
 class App extends React.Component {
@@ -38,8 +40,14 @@ class App extends React.Component {
 					<Route path="/product">
 						<h2>OK</h2>
 					</Route>
+					<Route path="/user">
+						<User />
+					</Route>
+					<Route path="/user/group">
+						<UserGroup />
+					</Route>
 					<Route path="/">
-						<h1>Main</h1>
+						<h2>Main</h2>
 					</Route>
 				</Switch>
 			</Main>

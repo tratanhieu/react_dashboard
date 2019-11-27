@@ -9,7 +9,7 @@ import "./style.css";
 import ConfirmPopup from "../../atoms/ConfirmPopup";
 import TablePagination from "../TablePagination";
 
-const TABLE_WIDTH = 600;
+const TABLE_WIDTH = 1000;
 const CHECKBOX_CELL_WIDTH = 50;
 const ACTION_CELL_WIDTH = 100;
 

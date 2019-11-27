@@ -13,29 +13,29 @@ const FormInput = ({
 }) => {
     const [errorState, setErrorState] = useState(error);
 
-    const handleOnChange = e => {
-        const value = e.currentTarget.value;
+    const handleOnChange = (e, input) => {
+        const value = input.value;
         setErrorState("");
 
         if (!value && required) {
-            return returnOnChange(e, value, "Field is Required");
+            return returnOnChange(e, input, "Field is Required");
         }
 
         const validateTypeResult = validateValueType(type, value);
         if (validateTypeResult) {
-            return returnOnChange(e, value, validateTypeResult);
+            return returnOnChange(e, input, validateTypeResult);
         }
 
         if (!value.match(new RegExp(pattern, "g"))) {
-            return returnOnChange(e, value, patternErrorMessage);
+            return returnOnChange(e, input, patternErrorMessage);
         }
 
-        onChange(e, value, "")
+        onChange(e, input, "")
     };
 
-    const returnOnChange = (e, value, errorMessage) => {
+    const returnOnChange = (e, input, errorMessage) => {
         setErrorState(errorMessage);
-        onChange(e, value, errorMessage);
+        onChange(e, input, errorMessage);
         return false;
     };
 
@@ -68,9 +68,9 @@ const FormInput = ({
         return re.test(String(email).toLowerCase());
     };
 
-    useEffect(() => {
-        setErrorState(error);
-    }, [error]);
+    // useEffect(() => {
+    //     setErrorState(error);
+    // }, [error]);
 
     return (
         <Form.Input

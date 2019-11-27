@@ -66,9 +66,10 @@ const prepareData = data => ({
     page: data.page
 })
 const resetError = () => ({ type: REDUX_RESET_ERROR })
-const handleErrors = errors => ({ type: HANDLE_ERRORS, errors })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
+
+export const handleErrors = errors => ({ type: HANDLE_ERRORS, errors })
 export const setProductCategory = productCategory => ({ type: SET_PRODUCT_CATEGORY, productCategory})
 
 export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
