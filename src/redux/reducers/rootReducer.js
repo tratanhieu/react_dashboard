@@ -11,6 +11,8 @@ const SYSTEM_ERROR_MESSAGE = 'The system has an undefined error, please try agai
 
 const RESET_SYSTEM_ERRORS = 'RESET_SYSTEM_ERRORS'
 
+export const reload = pageName => ({ type: `${pageName}_RELOAD` })
+
 export const handleErrors = (errors = {}, pageErrorAction) => {
     if (errors.response) {
         if (errors.response.data) {

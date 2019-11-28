@@ -79,8 +79,8 @@ const Render = ({
 
 const ProductCategoryTable = () => {
     const selector = useSelector(({
-        productCategoryReducer: { productCategoryList, page, totalPage: totalPages, filters, loading } 
-    }) => ({ productCategoryList, loading, page, totalPages, filters }), shallowEqual)
+        productCategoryReducer: { productCategoryList, page, totalPage: totalPages, filters, loading, reload } 
+    }) => ({ productCategoryList, loading, page, totalPages, filters, reload}), shallowEqual)
 
     const [state, setState] = useState({
         checkAllItem: false,
@@ -103,6 +103,13 @@ const ProductCategoryTable = () => {
     useEffect(() => {
         dispatch(fetchWithPaginationAndFilter(selector.filters, 1))
     }, [selector.filters])
+
+    useEffect(() => {
+        console.log(selector.reload)
+        if (selector.reload) {
+            dispatch(fetchWithPaginationAndFilter(selector.filters, selector.page))
+        }
+    }, [selector.reload])
 
     const renderProps = {
         ...state,

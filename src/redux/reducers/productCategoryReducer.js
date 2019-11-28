@@ -28,11 +28,12 @@ export const initialState = {
     }
 }
 
-const prefix = 'REDUX_PRODUCT_CATEGORY_'
+const prefix = 'PRODUCT_CATEGORY_'
 
 const createAction = action => `${prefix}${action}`
 
 const LIST_LOADING = createAction("LIST_LOADING")
+const RELOAD = createAction("RELOAD")
 const PREPARE_DATA = createAction("PREPARE_DATA")
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS")
@@ -146,6 +147,10 @@ export default function(state = initialState, action) {
                 ...state,
                 loading: action.loading
             }
+            case RELOAD: return {
+                ...state,
+                reload: true
+            }
             case MODAL_FORM_LOADING: return {
                 ...state,
                 formLoading: action.loading,
@@ -160,7 +165,8 @@ export default function(state = initialState, action) {
                 productCategoryList: action.productCategoryList,
                 totalPage: action.totalPage,
                 page: action.page,
-                loading: false
+                loading: false,
+                reload: false
             }
             case UPDATE_FILTERS: return {
                 ...state,

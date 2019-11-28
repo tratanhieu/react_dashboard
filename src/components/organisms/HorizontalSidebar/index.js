@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Dropdown, Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
-import styles from './styles.module.css'
 
-const HorizontalSidebar = ({ ...rest }) => {
+const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen, ...rest }) => {
 
     const [menu, setMenu] = useState([
         {
@@ -33,14 +32,21 @@ const HorizontalSidebar = ({ ...rest }) => {
     ])
 
     return (
-        <div className={styles.mainSidebarMenu} {...rest}>
-            <ul>
+        <div className={`main-layout--sidebar ${statusNav}`}>
+            <Icon
+                name="bars"
+                className={`open-close-icon ${statusNav}-nav`}
+                size="large"
+                inverted
+                onClick={() => setNavOpen(!navOpen)}
+            />
+            <ul style={{ textAlign: `${navOpen ? "left" : "center"}` }}>
             { 
                 menu.map((item, index) => (
                     <li key={index}>
                         <Link to={item.path}>
-                            <Icon name={item.icon} />
-                            {item.text}
+                            <Icon name={item.icon} />                        
+                            {navOpen ? <span> {item.text}</span> : null}
                         </Link>
                     </li>
                 ))

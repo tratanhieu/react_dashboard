@@ -1,29 +1,59 @@
-import React from 'react'
-import { useSelector, shallowEqual } from 'react-redux'
-import { Grid, Segment, Message } from 'semantic-ui-react'
+import React, { useState, useEffect } from 'react'
+import faker from "faker";
+import Pusher from 'pusher-js'
+import { useSelector, useDispatch, shallowEqual } from 'react-redux'
+import { Icon, Image, Dropdown } from 'semantic-ui-react'
 import HeaderBar from '../../../organisms/HeaderBar';
 import HorizontalSidebar from '../../../organisms/HorizontalSidebar';
+import { reload } from '../../../../redux/reducers/rootReducer';
 // import Footer from '../../../organisms/Footer';
 
-const Render = ({ children, systemErrors, ...rest}) => {
+const trigger = (
+    <span>
+        <Image avatar src={faker.internet.avatar()} /> {faker.name.findName()}
+    </span>
+);
+
+const options = [
+    { key: "user", text: "Account", icon: "user" },
+    { key: "settings", text: "Settings", icon: "settings" },
+    { key: "sign-out", text: "Sign Out", icon: "sign out" }
+];
+
+const DropdownUser = props => (
+    <Dropdown
+        trigger={trigger}
+        options={options}
+        pointing="top left"
+        icon={null}
+        {...props}
+    />
+);
+
+const Render = ({ navOpen, setNavOpen, children, systemErrors, ...rest}) => {
+    const statusNav = navOpen ? "open" : "close";
     return(
-        <>
-            <HeaderBar />
-            <Grid style={{marginTop: 54}}>
-                <Message error>{systemErrors.message}</Message>
-                <Grid.Row style={{padding: 0}}>
-                    <Grid.Column style={{width: 230, padding: 0, backgroundColor: '#1b1c1d'}}>
-                        <HorizontalSidebar />
-                    </Grid.Column>
-                    <Grid.Column style={{width: 'calc(100% - 230px)', paddingTop: 16, paddingBottom: 16}}>
-                        <Segment>
-                            {children}
-                        </Segment>
-                    </Grid.Column>
-                </Grid.Row>
-            </Grid>
-            {/* <Footer /> */}
-        </>
+        <div className="main-layout">
+            <HorizontalSidebar
+                navOpen={navOpen}
+                setNavOpen={setNavOpen}
+                statusNav={statusNav} />
+            <div className={`main-layout--body ${statusNav}-nav`}>
+                <div className="main-layout--body---header">
+                    <Image
+                        src="http://localhost:3000/images/logo.png"
+                        alt="logo"
+                        style={{ height: 36 }}
+                    />
+                    <DropdownUser />
+                </div>
+                <div className="main-layout--body---content">
+                    <div className="main-layout--body---main-content">
+                        {children}
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }
 
@@ -32,7 +62,24 @@ const Main = ({ children }) => {
         rootReducer: { systemErrors } 
     }) => ({ systemErrors }), shallowEqual)
 
+    const [navOpen, setNavOpen] = useState(true);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const pusher = new Pusher('7853616a98fac75c9b66', {
+			cluster: 'ap3',
+			encrypted: true
+		});
+		const channel = pusher.subscribe('spring_reactjs-development');
+		channel.bind('RELOAD', pageName => {
+			dispatch(reload(pageName))
+		});
+    }, [])
+
     const renderProps = {
+        navOpen,
+        setNavOpen,
         children,
         ...selector
     }
