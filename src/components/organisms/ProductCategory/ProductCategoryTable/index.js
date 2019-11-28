@@ -105,7 +105,6 @@ const ProductCategoryTable = () => {
     }, [selector.filters])
 
     useEffect(() => {
-        console.log(selector.reload)
         if (selector.reload) {
             dispatch(fetchWithPaginationAndFilter(selector.filters, selector.page))
         }
@@ -117,23 +116,23 @@ const ProductCategoryTable = () => {
         defaultActivePage: selector.page,
         onChangePage: page => dispatch(fetchWithPaginationAndFilter(selector.filters, page)),
         onCheckItem: (index, checked) => {
-            const checkedItems = [];
+            let checkedItems = [];
             state.dataSources[index].checked = checked;
             state.dataSources.forEach(item =>
-                item.checked === true ? checkedItems.push(item.product_category_id) : null
+                item.checked === true ? checkedItems.push(item.productCategoryId) : null
             );
             state.checkAllItem = checkedItems.length === state.dataSources.length
             setState({ ...state })
             dispatch(setCheckedItems(checkedItems))
         },
         onCheckAllItem: checkAllItem => {
-            const checkedItems = [];
+            let checkedItems = [];
             setState({
                 ...state,
                 checkAllItem,
                 dataSources: state.dataSources.map(item => {
                     if (checkAllItem) {
-                        checkedItems.push(item.product_category_id);
+                        checkedItems.push(item.productCategoryId);
                     }
                     return {
                         ...item,
@@ -143,7 +142,7 @@ const ProductCategoryTable = () => {
             });
             dispatch(setCheckedItems(checkedItems))
         },
-        onChange: product_category_id => dispatch(getUpdateAction(product_category_id))
+        onChange: productCategoryId => dispatch(getUpdateAction(productCategoryId))
     }
 
     return <Render {...renderProps} />

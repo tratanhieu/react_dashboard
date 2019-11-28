@@ -1,6 +1,9 @@
 $sidebar_width_mini: 60px;
 $sidebar_width_full: 200px;
 
+$open_sidebar_animation_duration: 0.05s;
+$close_sidebar_animation_duration: 0.3s;
+
 html,
 body {
     height: 100% !important;
@@ -42,13 +45,13 @@ body {
                 &.open {
                     width: $sidebar_width_full;
                     animation-name: open-nav;
-                    animation-duration: 1s;
+                    animation-duration: $open_sidebar_animation_duration;
                 }
 
                 &.close {
                     width: $sidebar_width_mini;
                     animation-name: close-nav;
-                    animation-duration: 1s;
+                    animation-duration: $close_sidebar_animation_duration;
                 }
 
                 ul {
@@ -77,18 +80,21 @@ body {
                 &.open-nav {
                     width: calc(100% - #{$sidebar_width_full});
                     animation-name: body-open-nav;
-                    animation-duration: 1s;
+                    animation-duration: $open_sidebar_animation_duration;
                 }
 
                 &.close-nav {
                     width: calc(100% - #{$sidebar_width_mini});
                     animation-name: body-close-nav;
-                    animation-duration: 1s;
+                    animation-duration: $close_sidebar_animation_duration;
                 }
 
                 .main-layout--body---header {
                     display: flex;
                     justify-content: space-between;
+                    z-index: 99;
+                    position: sticky;
+                    top: 0;
                     align-items: center;
                     background-color: #fff;
                     height: 60px;
@@ -107,6 +113,22 @@ body {
                         padding: 8px;
                     }
                 }
+            }
+        }
+
+        .error-system {
+            position: fixed;
+            color: #fff;
+            background: #f44336;
+            text-align: center;
+            padding: 8px;
+            z-index: 9999;
+            width: 100%;
+            bottom: 0;
+
+            .error-system--close-icon {
+                position: absolute;
+                right: 8px;
             }
         }
     }

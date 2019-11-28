@@ -16,7 +16,7 @@ const MultipleExecute = ({ options, disabled = false, onExecute, loading = false
             <Button
                 primary
                 loading={loading}
-                disabled={disabled || loading}
+                disabled={disabled || loading || !dropDownValue}
                 onClick={_ => onExecute(dropDownValue)}>Execute</Button>
         </div>
     )

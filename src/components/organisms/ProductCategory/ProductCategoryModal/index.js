@@ -20,7 +20,7 @@ const Render = ({
     errors = {},
     ...rest
 }) => {
-    const title = productCategory.product_category_id ? 'Update' : 'Create'
+    const title = productCategory.productCategoryId ? 'Update' : 'Create'
     useEffect(() => {
         console.log(_.isEqual(initialState.errors, errors))
         console.log(errors)

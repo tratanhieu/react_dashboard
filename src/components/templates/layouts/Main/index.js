@@ -5,7 +5,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Icon, Image, Dropdown } from 'semantic-ui-react'
 import HeaderBar from '../../../organisms/HeaderBar';
 import HorizontalSidebar from '../../../organisms/HorizontalSidebar';
-import { reload } from '../../../../redux/reducers/rootReducer';
+import { reload, resetSystemErrors } from '../../../../redux/reducers/rootReducer';
 // import Footer from '../../../organisms/Footer';
 
 const trigger = (
@@ -30,30 +30,42 @@ const DropdownUser = props => (
     />
 );
 
-const Render = ({ navOpen, setNavOpen, children, systemErrors, ...rest}) => {
+const Render = ({ navOpen, setNavOpen, children, systemErrors, onCloseSystemErrors, ...rest}) => {
     const statusNav = navOpen ? "open" : "close";
     return(
-        <div className="main-layout">
-            <HorizontalSidebar
-                navOpen={navOpen}
-                setNavOpen={setNavOpen}
-                statusNav={statusNav} />
-            <div className={`main-layout--body ${statusNav}-nav`}>
-                <div className="main-layout--body---header">
-                    <Image
-                        src="http://localhost:3000/images/logo.png"
-                        alt="logo"
-                        style={{ height: 36 }}
-                    />
-                    <DropdownUser />
-                </div>
-                <div className="main-layout--body---content">
-                    <div className="main-layout--body---main-content">
-                        {children}
+        <>
+            <div className="main-layout">
+                <HorizontalSidebar
+                    navOpen={navOpen}
+                    setNavOpen={setNavOpen}
+                    statusNav={statusNav} />
+                <div className={`main-layout--body ${statusNav}-nav`}>
+                    <div className="main-layout--body---header">
+                        <Image
+                            src="http://localhost:3000/images/logo.png"
+                            alt="logo"
+                            style={{ height: 36 }}
+                        />
+                        <DropdownUser />
+                    </div>
+                    <div className="main-layout--body---content">
+                        <div className="main-layout--body---main-content">
+                            {children}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            {
+                systemErrors.message ?
+                    <div className="error-system">
+                        <span>
+                            <Icon name="warning sign" />
+                            &nbsp;{systemErrors.message}
+                        </span>
+                        <Icon name="close" className="error-system--close-icon" onClick={onCloseSystemErrors} />
+                    </div> : null
+            }
+        </>
     )
 }
 
@@ -81,7 +93,8 @@ const Main = ({ children }) => {
         navOpen,
         setNavOpen,
         children,
-        ...selector
+        ...selector,
+        onCloseSystemErrors: () => dispatch(resetSystemErrors())
     }
 
     return <Render {...renderProps} />

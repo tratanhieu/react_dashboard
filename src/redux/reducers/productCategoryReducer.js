@@ -1,7 +1,7 @@
 import { REDUX_API_URL } from '../../constants/redux-actions'
 import axios from 'axios'
 import { ACTIVE } from '../../constants/entites';
-import { handleErrors } from './rootReducer';
+import { handleErrors, resetSystemErrors } from './rootReducer';
 
 export const initialState = {
     loading: true,
@@ -68,6 +68,7 @@ export const closeModal = () => ({ type: CLOSE_MODAL })
 
 export const doMultipleExecute = (listId, status) => async dispatch =>{
     const params = { listId, status }
+    dispatch(resetSystemErrors())
     dispatch(setMultipleExecuteLoading(true))
     return axios.post(`${PATH_PRODUCT_CATEGORY}/execute`, params, {
         timeout: 5000,
@@ -75,11 +76,13 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
             'Content-Type': 'application/json'
         }
     })
+    .then(_ => dispatch(setCheckedItems([])))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(setMultipleExecuteLoading(false)))
 }
 
 export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
+    dispatch(resetSystemErrors())
     dispatch(listLoading(true))
     return axios.get(`${PATH_PRODUCT_CATEGORY}?search=${filters.search}&status=${filters.status}&`
             + `sort=${filters.sort}&page=${page}`,
@@ -87,9 +90,11 @@ export const fetchWithPaginationAndFilter = (filters, page) => async dispatch =>
     )
     .then(response => dispatch(prepareData(response.data)))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(_ => dispatch(listLoading(false)))
 }
 
 export const doSave = productCategory => async dispatch => {
+    dispatch(resetSystemErrors())
     dispatch(formLoading(true))
     const { productCategoryId, name, slugName, status } = productCategory
 
@@ -102,6 +107,7 @@ export const doSave = productCategory => async dispatch => {
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
 export const getUpdateAction = productCategoryId => async dispatch => {
+    dispatch(resetSystemErrors())
     dispatch(listLoading(true))
     return axios.get(`${PATH_PRODUCT_CATEGORY}/${productCategoryId}`, {
         timeout: 5000
