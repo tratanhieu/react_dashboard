@@ -74,6 +74,7 @@ const FormInput = ({
 
     return (
         <Form.Input
+            type={type}
             className={styles.root}
             {...rest}
             error={errorState ? errorState : false}

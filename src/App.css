@@ -47,7 +47,7 @@ body .ui.form .field .ui.input input[readonly] {
 }
 
 .dimmed.dimmable>.ui.animating.dimmer, .dimmed.dimmable>.ui.visible.dimmer, .ui.active.dimmer {
-  z-index: 9999;
+  z-index: 9998;
 }
 
 .swal2-container.swal2-shown {
