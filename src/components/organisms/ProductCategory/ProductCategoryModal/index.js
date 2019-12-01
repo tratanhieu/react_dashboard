@@ -10,20 +10,19 @@ import {
     doSave, getCreateAction, closeModal, initialState 
 } from '../../../../redux/reducers/productCategoryReducer';
 import FormInputSlug from '../../../atoms/FormInputSlug';
-import { makeSlug } from '../../../../commons/utils';
 
 const Render = ({ 
     productCategory = {},
     error,
     openModal, onClose, formLoading, modalFormSuccessMessage,
-    onPositive, onChangeName, onChangeStatus, onContinue,
+    onPositive, onChangeName, onChangeStatus, onContinue, onChangeSlugValue,
     errors = {},
     ...rest
 }) => {
     const title = productCategory.productCategoryId ? 'Update' : 'Create'
     useEffect(() => {
         console.log(_.isEqual(initialState.errors, errors))
-        console.log(errors)
+        console.log(errors.name)
         console.log(productCategory)
     }, [errors])
     return (
@@ -39,7 +38,7 @@ const Render = ({
             onContinue={onContinue}
             {...rest}
         >
-            <Form success={modalFormSuccessMessage} loading={formLoading}>
+            <Form loading={formLoading}>
                 <FormInputSlug
                     tabIndex={0}
                     fluid
@@ -52,7 +51,7 @@ const Render = ({
                     valueError={errors.name}
                     slugValueError={errors.slugName}
                     onChange={onChangeName}
-                    onChangeSlugValue={onChangeName} />
+                    onChangeSlugValue={onChangeSlugValue} />
                 <ToggleActive
                     tabIndex={2}
                     checked={productCategory.status === ACTIVE} 
@@ -87,18 +86,16 @@ const ProductCategoryModal = () => {
         onChangeName: (_, input, error) => {
             setProductCategory({ 
                 ...productCategory,
-                name: input.value,
-                slugName: makeSlug(input.value)
+                name: input.value
             })
             setErrors({ ...errors, [input.name]: error })
         },
-        onChangeName: (_, input, error) => {
+        onChangeSlugValue: (slugName, error) => {
             setProductCategory({ 
                 ...productCategory,
-                name: input.value,
-                slugName: makeSlug(input.value)
+                slugName
             })
-            setErrors({ ...errors, [input.name]: error })
+            setErrors({ ...errors, slugName: error })
         },
         onChangeStatus: status => setProductCategory({ ...productCategory, status }),
         onPositive: _ => dispatch(doSave(productCategory)),

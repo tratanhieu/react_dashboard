@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { Dropdown, Icon } from 'semantic-ui-react'
+import React, { useState } from 'react'
+import { Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 
-const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen, ...rest }) => {
+const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
 
-    const [menu, setMenu] = useState([
+    const [menu, _] = useState([
         {
             path: '/',
             icon: 'home',
@@ -19,7 +19,7 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen, ...rest }) => {
         },
         {
             path: '/user',
-            icon: 'user group',
+            icon: 'group',
             text: 'User',
             active: false
         },

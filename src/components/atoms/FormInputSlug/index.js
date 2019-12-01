@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FormInput from "../FormInput";
 import { makeSlug } from "../../../commons/utils";
 import './style.css'
@@ -19,6 +19,10 @@ const FormInputSlug = ({
         slugValueError: slugValueError,
         edit: false
     });
+
+    useEffect(() => {
+        setState({ ...state, valueError, slugValueError })
+    }, [valueError, slugValueError])
 
     const handleChangeValue = (e, input, error) => {
         const slugValue = makeSlug(input.value);
@@ -55,7 +59,7 @@ const FormInputSlug = ({
                 {...rest}
             />
             {state.edit ? (
-                <div class="edit-area">
+                <div className="edit-area">
                     <FormInput
                         label="Slug: "
                         defaultValue={state.slugValue}

@@ -27,7 +27,7 @@ const PageSearch = ({
                     loading
                 }}
                 placeholder="Type some thing and enter to search..."
-                value={value}
+                defaultValue={value}
                 onChange={(_, input) => setValue(input.value)}
                 {...rest} />
         </Fieldset>
