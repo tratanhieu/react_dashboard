@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
 
-    const [menu, _] = useState([
+    const [menu] = useState([
         {
             path: '/',
             icon: 'home',

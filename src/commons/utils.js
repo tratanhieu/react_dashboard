@@ -9,16 +9,15 @@ export const makeSlug = str => {
     str = str.replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, "y");
     str = str.replace(/đ/gi, "d");
     str = str.replace(
-    /\`|\~|\!|\@|\#|\||\$|\%|\^|\&|\*|\(|\)|\+|\=|\,|\.|\/|\?|\>|\<|\'|\"|\:|\;|_/gi,
+    /`|~|!|@|#|\||\$|%|\^|&|\*|\(|\)|\+|=|,|\.|\/|\?|>|<|'|"|:|;|_/gi,
     ""
-    );
+    ); // eslint-disable-line 
     str = str.replace(/ /gi, "-");
-    str = str.replace(/\-\-\-\-\-/gi, "-");
-    str = str.replace(/\-\-\-\-/gi, "-");
-    str = str.replace(/\-\-\-/gi, "-");
-    str = str.replace(/\-\-/gi, "-");
+    str = str.replace(/-----/gi, "-");
+    str = str.replace(/----/gi, "-");
+    str = str.replace(/---/gi, "-");
+    str = str.replace(/--/gi, "-");
     str = "@" + str + "@";
-    str = str.replace(/\@\-|\-\@|\@/gi, "");
-
+    str = str.replace(/@-|-@|@/gi, "");
     return str;
 };

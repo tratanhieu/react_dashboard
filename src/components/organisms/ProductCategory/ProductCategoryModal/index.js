@@ -20,11 +20,7 @@ const Render = ({
     ...rest
 }) => {
     const title = productCategory.productCategoryId ? 'Update' : 'Create'
-    useEffect(() => {
-        console.log(_.isEqual(initialState.errors, errors))
-        console.log(errors.name)
-        console.log(productCategory)
-    }, [errors])
+
     return (
         <ModalModule
             size="mini"

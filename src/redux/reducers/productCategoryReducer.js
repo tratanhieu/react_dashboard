@@ -202,7 +202,6 @@ export default function(state = initialState, action) {
                 ...state,
                 openModal: false,
                 listLoading: false,
-                formLoading: false,
                 productCategory: initialState.productCategory,
                 formLoading: initialState.formLoading,
                 errors: initialState.errors,

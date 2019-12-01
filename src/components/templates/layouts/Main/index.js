@@ -3,10 +3,8 @@ import faker from "faker";
 import Pusher from 'pusher-js'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Icon, Image, Dropdown } from 'semantic-ui-react'
-import HeaderBar from '../../../organisms/HeaderBar';
 import HorizontalSidebar from '../../../organisms/HorizontalSidebar';
 import { reload, resetSystemErrors } from '../../../../redux/reducers/rootReducer';
-// import Footer from '../../../organisms/Footer';
 
 const trigger = (
     <span>
@@ -86,7 +84,8 @@ const Main = ({ children }) => {
 		const channel = pusher.subscribe('spring_reactjs-development');
 		channel.bind('RELOAD', pageName => {
 			dispatch(reload(pageName))
-		});
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const renderProps = {

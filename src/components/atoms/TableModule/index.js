@@ -21,6 +21,8 @@ const TableModule = ({
     header,
     children,
     currentItems,
+    emptyColSpan = 1,
+    emptyMessage = "Table data is empty...",
     paginationColSpan,
     totalPages,
     defaultActivePage,
@@ -62,7 +64,7 @@ const TableModule = ({
                         onPageChange={onChangePage}
                     />
                 </Table.HeaderCell>
-                : <EmptyRow />
+                : <EmptyRow colSpan={emptyColSpan} message={emptyMessage} />
                 }
             </Table.Row>
         </Table.Footer>
@@ -128,5 +130,6 @@ const calcCellWidth = (cellWidths, showCheckbox) => {
         : TABLE_WIDTH - ACTION_CELL_WIDTH;
     return cellWidths.map(item => `${(item / 100) * perCell}px`);
 };
+
 
 export { TableModule, TableRow, TableCell, TableHeaderCell, calcCellWidth };

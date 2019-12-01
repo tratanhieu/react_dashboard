@@ -48,6 +48,7 @@ const Render = ({
             checkAllItem={checkAllItem}
             onCheckAllItem={checked => onCheckAllItem(checked)}
             onChangePage={onChangePage}
+            emptyColSpan={3}
         >
         {
             dataSources.map((item, index) => (
@@ -98,16 +99,19 @@ const ProductCategoryTable = () => {
                 checked: false
             }))
         })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selector.productCategoryList])
 
     useEffect(() => {
         dispatch(fetchWithPaginationAndFilter(selector.filters, 1))
-    }, [selector.filters])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selector.filters, dispatch])
 
     useEffect(() => {
         if (selector.reload) {
             dispatch(fetchWithPaginationAndFilter(selector.filters, selector.page))
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selector.reload])
 
     const renderProps = {

@@ -22,6 +22,7 @@ const FormInputSlug = ({
 
     useEffect(() => {
         setState({ ...state, valueError, slugValueError })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [valueError, slugValueError])
 
     const handleChangeValue = (e, input, error) => {
@@ -32,7 +33,7 @@ const FormInputSlug = ({
         onChange(e, input, error);
     };
 
-    const handleChangeSlugValue = (e, input, error) => {
+    const handleChangeSlugValue = (_, input, error) => {
         const tempSlugValue = makeSlug(input.value);
         setState({ ...state, tempSlugValue, slugValueError: "" });
         onChangeSlugValue(tempSlugValue, error);
@@ -41,9 +42,9 @@ const FormInputSlug = ({
     const handleCancel = () => setState({ ...state, edit: false });
 
     const ButtonLink = props => (
-        <a href="javascript:void(0);" {...props}>
+        <button {...props}>
             {props.children}
-        </a>
+        </button>
     );
 
     const handleClickOk = () => {
@@ -80,7 +81,7 @@ const FormInputSlug = ({
                         }`}
                     >
                         <b>Slug: </b>
-                        <i>{state.slugValue}</i>
+                        <i className="slug-text">{state.slugValue}</i>
                         &nbsp;&nbsp;
                         <ButtonLink
                             onClick={_ =>

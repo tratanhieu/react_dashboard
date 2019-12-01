@@ -12,6 +12,7 @@ const User = () => {
 
     useEffect(() => {
         dispatch(resetSystemErrors())
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (
