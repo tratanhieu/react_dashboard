@@ -1,7 +1,7 @@
 import React from 'react';
-import { useDispatch } from 'react-redux'
+// import { useDispatch } from 'react-redux'
 import { Grid, Button, Icon } from 'semantic-ui-react'
-import { getInsert } from '../../../../redux/actions/productCategoryAction';
+// import { getInsert } from '../../../../redux/actions/productCategoryAction';
 
 const Render = ({ onClickNew }) => {
     return (
@@ -23,9 +23,9 @@ const Render = ({ onClickNew }) => {
 }
 
 const UserHeader = () => {
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const renderProps = {
-        onClickNew: _ => dispatch(getInsert())
+        // onClickNew: _ => dispatch(getInsert())
     }
     return <Render {...renderProps} />
 }
