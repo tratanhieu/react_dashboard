@@ -15,11 +15,11 @@ export const initialState = {
     multipleExecuteLoading: false,
     formLoading: false,
     openModal: false,
-    productCategoryList: [],
+    productBrandList: [],
     checkedItems: [],
     totalPages: 0,
     page: 1,
-    productCategory: {
+    productBrand: {
         status: ACTIVE
     },
     errors: {
@@ -28,7 +28,7 @@ export const initialState = {
     }
 }
 
-const prefix = 'PRODUCT_CATEGORY_'
+const prefix = 'PRODUCT_BRAND_'
 
 const createAction = action => `${prefix}${action}`
 
@@ -40,18 +40,18 @@ const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS")
 const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING")
 const MODAL_FORM_GET_CREATE_ACTION = createAction("MODAL_FORM_GET_CREATE_ACTION")
 const MODAL_FORM_UPDATE_SUCCESS = createAction("MODAL_FORM_UPDATE_SUCESS")
-const SET_PRODUCT_CATEGORY = createAction("SET_PRODUCT_CATEGORY")
+const SET_PRODUCT_BRAND = createAction("SET_PRODUCT_BRAND")
 const CLOSE_MODAL = createAction("CLOSE_MODAL")
 const MULTIPLE_EXECUTE_LOADING = createAction("MULTIPLE_EXECUTE_LOADING")
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 
 // API
-const PATH_PRODUCT_CATEGORY = `${REDUX_API_URL}/product/category`
+const PATH_PRODUCT_BRAND = `${REDUX_API_URL}/product/brand`
 
 const listLoading = loading => ({ type: LIST_LOADING, loading })
 const prepareData = data => ({
     type: PREPARE_DATA,
-    productCategoryList: data.listData,
+    productBrandList: data.listData,
     totalPage: data.totalPage,
     pageSize: data.pageSize,
     page: data.page
@@ -60,7 +60,7 @@ const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
 
-const setProductCategory = (productCategory, openModal) => ({ type: SET_PRODUCT_CATEGORY, productCategory, openModal})
+const setproductBrand = (productBrand, openModal) => ({ type: SET_PRODUCT_BRAND, productBrand, openModal})
 
 const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
 
@@ -70,7 +70,7 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
     const params = { listId, status }
     dispatch(resetSystemErrors())
     dispatch(setMultipleExecuteLoading(true))
-    return axios.post(`${PATH_PRODUCT_CATEGORY}/execute`, params, {
+    return axios.post(`${PATH_PRODUCT_BRAND}/execute`, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
@@ -84,7 +84,7 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
 export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${PATH_PRODUCT_CATEGORY}?search=${filters.search}&status=${filters.status}&`
+    return axios.get(`${PATH_PRODUCT_BRAND}?search=${filters.search}&status=${filters.status}&`
             + `sort=${filters.sort}&page=${page}`,
         { timeout: 5000 }
     )
@@ -93,32 +93,32 @@ export const fetchWithPaginationAndFilter = (filters, page) => async dispatch =>
     .finally(_ => dispatch(listLoading(false)))
 }
 
-export const doSave = productCategory => async dispatch => {
+export const doSave = productBrand => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(formLoading(true))
-    const { productCategoryId, name, slugName, status } = productCategory
+    const { productBrandId, name, slugName, status } = productBrand
 
-    if (!productCategoryId) {
+    if (!productBrandId) {
         dispatch(doCreate({ name, slugName, status }))
     } else {
-        dispatch(doUpdate({ productCategoryId, name, slugName, status }))
+        dispatch(doUpdate({ productBrandId, name, slugName, status }))
     }
 }
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
-export const getUpdateAction = productCategoryId => async dispatch => {
+export const getUpdateAction = productBrandId => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${PATH_PRODUCT_CATEGORY}/${productCategoryId}`, {
+    return axios.get(`${PATH_PRODUCT_BRAND}/${productBrandId}`, {
         timeout: 5000
-    }).then(response => dispatch(setProductCategory(response.data, true)))
+    }).then(response => dispatch(setproductBrand(response.data, true)))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(listLoading(false)))
 }
 
-const doCreate = productCategory => async dispatch => {
-    const params = JSON.stringify(productCategory)
-    axios.post(`${PATH_PRODUCT_CATEGORY}/create`, params, {
+const doCreate = productBrand => async dispatch => {
+    const params = JSON.stringify(productBrand)
+    axios.post(`${PATH_PRODUCT_BRAND}/create`, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
@@ -128,10 +128,10 @@ const doCreate = productCategory => async dispatch => {
     .finally(_ => dispatch(formLoading(false)))
 }
 
-const doUpdate = productCategory => async dispatch => {
-    const params = JSON.stringify(productCategory)
+const doUpdate = productBrand => async dispatch => {
+    const params = JSON.stringify(productBrand)
     return axios.post(
-        `${PATH_PRODUCT_CATEGORY}/${productCategory.productCategoryId}/update`, params, { 
+        `${PATH_PRODUCT_BRAND}/${productBrand.productBrandId}/update`, params, { 
             timeout: 5000,
             headers: {
                 'Content-Type': 'application/json'
@@ -168,7 +168,7 @@ export default function(state = initialState, action) {
             }
             case PREPARE_DATA: return {
                 ...state,
-                productCategoryList: action.productCategoryList,
+                productBrandList: action.productBrandList,
                 totalPage: action.totalPage,
                 page: action.page,
                 loading: false,
@@ -184,7 +184,7 @@ export default function(state = initialState, action) {
             }
             case MODAL_FORM_GET_CREATE_ACTION: return {
                 ...state,
-                productCategory: initialState.productCategory,
+                productBrand: initialState.productBrand,
                 openModal: true,
                 modalFormSuccessMessage: initialState.modalFormSuccessMessage
             }
@@ -192,9 +192,9 @@ export default function(state = initialState, action) {
                 ...state,
                 modalFormSuccessMessage: action.message
             }
-            case SET_PRODUCT_CATEGORY: return {
+            case SET_PRODUCT_BRAND: return {
                 ...state,
-                productCategory: action.productCategory,
+                productBrand: action.productBrand,
                 openModal: action.openModal,
                 modalFormSuccessMessage: initialState.modalFormSuccessMessage
             }
@@ -202,7 +202,7 @@ export default function(state = initialState, action) {
                 ...state,
                 openModal: false,
                 listLoading: false,
-                productCategory: initialState.productCategory,
+                productBrand: initialState.productBrand,
                 formLoading: initialState.formLoading,
                 errors: initialState.errors,
             }

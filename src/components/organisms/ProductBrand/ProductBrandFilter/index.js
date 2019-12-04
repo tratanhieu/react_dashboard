@@ -58,22 +58,16 @@ const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
 )
 
 const ProductBrandFilter = () => {
-    const selector = useSelector(({ productCategoryReducer: { filters } }) => ({ filters }), shallowEqual)
+    const selector = useSelector(({ productCategoryReducer: { filters } }) => 
+    ({ filters }), shallowEqual)
 
     const dispatch = useDispatch()
 
     const renderProps = {
         ...selector,
-        onSearch: search => {
-            dispatch(setFilters({ ...selector.filters, search }))
-        }, 
-        onFilterByStatus: status => {
-            dispatch(setFilters({ ...selector.filters, status }))
-        },
-        onChangeSortValue: sort => {
-            console.log(sort)
-            dispatch(setFilters({ ...selector.filters, sort }))
-        }
+        onSearch: search => dispatch(setFilters({ ...selector.filters, search })), 
+        onFilterByStatus: status => dispatch(setFilters({ ...selector.filters, status })),
+        onChangeSortValue: sort => dispatch(setFilters({ ...selector.filters, sort }))
     }
 
     return <Render {...renderProps} />

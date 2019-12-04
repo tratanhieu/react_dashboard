@@ -33,9 +33,9 @@ const Render = ({ multipleExecuteLoading, checkedItems = [], onExecuteMultiple }
 )
 
 const ProductBrandAction = () => {
-    const selector = useSelector(({ 
-        productCategoryReducer: { multipleExecuteLoading, checkedItems } }) => ({ multipleExecuteLoading, checkedItems })
-    , shallowEqual)
+    // const selector = useSelector(({ 
+    //     productCategoryReducer: { multipleExecuteLoading, checkedItems } }) => ({ multipleExecuteLoading, checkedItems })
+    // , shallowEqual)
 
     const dispatch = useDispatch()
 

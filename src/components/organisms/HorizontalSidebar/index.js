@@ -4,12 +4,19 @@ import { Link } from 'react-router-dom'
 
 const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
 
-    const [menu] = useState([
+    const [menu, setMenu] = useState([
         {
             path: '/',
             icon: 'home',
             text: 'Dashboard',
             active: true
+        },
+        ,
+        {
+            path: '/product',
+            icon: 'grid layout',
+            text: 'Product',
+            active: false
         },
         {
             path: '/product/category',
@@ -18,7 +25,7 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
             active: false
         },
         {
-            path: '/brand',
+            path: '/product/brand',
             icon: 'grid layout',
             text: 'Product Brand',
             active: false

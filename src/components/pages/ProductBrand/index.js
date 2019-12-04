@@ -20,7 +20,7 @@ const ProductBrand = () => {
             <ProductBrandHeader/>
             <ProductBrandFilter />
             <ProductBrandTable />
-            <ProductBrandModal open={false} />
+            <ProductBrandModal />
         </>
     )
 }
