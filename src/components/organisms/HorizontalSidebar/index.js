@@ -18,6 +18,12 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
             active: false
         },
         {
+            path: '/brand',
+            icon: 'grid layout',
+            text: 'Product Brand',
+            active: false
+        },
+        {
             path: '/user',
             icon: 'group',
             text: 'User',
