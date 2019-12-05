@@ -84,7 +84,7 @@ const ProductBrandTable = () => {
     // }) => ({ productCategoryList, loading, page, totalPages, filters, reload}), shallowEqual)
 
     const selector = {
-        brandList: [
+        productBrandList: [
             { 
                 brand_id: 10,
                 name: "Samsung",
@@ -105,17 +105,17 @@ const ProductBrandTable = () => {
 
     const dispatch = useDispatch();
 
-    // useEffect(() => {
-    //     setState({
-    //         ...state,
-    //         checkAllItem: false,
-    //         dataSources: selector.productBrandList.map(item => ({
-    //             ...item,
-    //             checked: false
-    //         }))
-    //     })
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [selector.productBrandList])
+    useEffect(() => {
+        setState({
+            ...state,
+            checkAllItem: false,
+            dataSources: selector.productBrandList.map(item => ({
+                ...item,
+                checked: false
+            }))
+        })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selector.productBrandList])
 
     useEffect(() => {
         dispatch(fetchWithPaginationAndFilter(selector.filters, 1))
