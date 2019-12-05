@@ -30,7 +30,7 @@ class App extends React.Component {
 					<Route path="/product">
 						<h2>OK</h2>
 					</Route>
-					<Route path="/user">
+					<Route exact path="/user">
 						<User />
 					</Route>
 					<Route path="/user/group">

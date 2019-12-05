@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Form } from "semantic-ui-react";
 import ModalModule from "../../../atoms/ModalModule";
 import FormInput from "../../../atoms/FormInput";
 import FormSelect from "../../../atoms/FormSelect";
+import { initialState, closeModal } from '../../../../redux/reducers/userReducer'
 import _ from "lodash";
 
 const userGroups = [
@@ -11,28 +13,22 @@ const userGroups = [
     { key: 12347, value: 12347, text: "Manager" }
 ];
 
-const inititalErrors = {
-    firstName: "",
-    lastName: "",
-    name: "",
-    phone: "",
-    email: "",
-    userGroup: ""
-};
-
 const Render = ({
+    openModal,
     user,
     errors,
     onChangeUserInfo,
     onChangeActive,
-    onPositive
+    onPositive,
+    onClose
 }) => (
     <ModalModule
         title="Create User"
-        open={false}
+        open={openModal}
         size="tiny"
-        actionDisable={!_.isEqual(inititalErrors, errors)}
+        actionDisable={!_.isEqual(initialState.errors, errors)}
         onPositive={onPositive}
+        onClose={onClose}
     >
         <Form>
             <Form.Group widths="equal">
@@ -102,6 +98,14 @@ const Render = ({
 );
 
 const UserModal = ({ onPositive }) => {
+    const selector = useSelector(({
+        userReducer: { openModal, modalFormSuccessMessage, formLoading, productCategory, errors } 
+    }) => ({ openModal, formLoading, modalFormSuccessMessage, productCategory, errors }), shallowEqual)
+    
+    const [errors, setErrors] = useState({ ...initialState.errors })
+
+    const dispatch = useDispatch()
+
     const [user, setUser] = useState({
         firstName: "",
         lastName: "",
@@ -112,9 +116,8 @@ const UserModal = ({ onPositive }) => {
         status: true
     });
 
-    const [errors, setErrors] = useState(inititalErrors);
-
     const renderProps = {
+        ...selector,
         user,
         errors,
         onChangeUserInfo: (_, { name, value }, error) => {
@@ -125,7 +128,8 @@ const UserModal = ({ onPositive }) => {
             ...user,
             status: checkbox.checked
         }),
-        onPositive: _ => onPositive(user)
+        onPositive: _ => onPositive(user),
+        onClose: _ => dispatch(closeModal())
     };
 
     return <Render {...renderProps} />;

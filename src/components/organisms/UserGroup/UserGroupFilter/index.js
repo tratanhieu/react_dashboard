@@ -4,7 +4,7 @@ import { Form } from 'semantic-ui-react'
 
 import PageSearch from "../../../molecules/PageSearch";
 import FilterBar from "../../../molecules/FilterBar";
-import { setFilters } from "../../../../redux/reducers/productCategoryReducer";
+import { setFilters } from "../../../../redux/reducers/userGroupReducer";
 
 const sorts = [
     { key: "name,desc", text: "Name Descending", value: "name,desc" },
@@ -34,8 +34,8 @@ const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
     </Form>
 )
 
-const UserFilter = () => {
-    const selector = useSelector(({ productCategoryReducer: { filters } }) => ({ filters }), shallowEqual)
+const UserGroupFilter = () => {
+    const selector = useSelector(({ userGroupReducer: { filters } }) => ({ filters }), shallowEqual)
 
     const dispatch = useDispatch()
 
@@ -55,4 +55,4 @@ const UserFilter = () => {
     return <Render {...renderProps} />
 }
 
-export default UserFilter
+export default UserGroupFilter

@@ -23,16 +23,16 @@ const Render = ({
     const TableHeader = () => (
         <>
             <TableHeaderCell width={cellWidth[0]}>
-                Fullname
+                Name
             </TableHeaderCell>
             <TableHeaderCell width={cellWidth[1]}>
-                Phone
+                User In Group
             </TableHeaderCell>
             <TableHeaderCell width={cellWidth[2]}>
-                Email
+                Create Date
             </TableHeaderCell>
             <TableHeaderCell width={cellWidth[3]}>
-                User Group
+                Update Date
             </TableHeaderCell>
             <TableHeaderCell width={cellWidth[4]} textAlign="center">
                 Status
@@ -64,16 +64,16 @@ const Render = ({
                     onDelete={onDelete}
                 >
                     <TableCell width={cellWidth[0]}>
-                        {`${item.first_name} ${item.last_name} ${item.name}`}
+                        ${item.name}
                     </TableCell>
                     <TableCell width={cellWidth[1]}>
-                        {item.phone}
+                        {item.userInGroup}
                     </TableCell>
                     <TableCell width={cellWidth[2]}>
-                        {item.email}
+                        {item.createDate.toLocaleString('vi')}
                     </TableCell>
                     <TableCell width={cellWidth[3]}>
-                        {item.user_group}
+                        {item.updateDate.toLocaleString('vi')}
                     </TableCell>
                     <TableCell width={cellWidth[4]} textAlign="center">
                         <Label color={DEFAULT_STATUS[item.status].color}>
@@ -87,21 +87,35 @@ const Render = ({
     )
 }
 
-const UserTable = () => {
+const UserGroupTable = () => {
     // const selector = useSelector(({
     //     productCategoryReducer: { productCategoryList, page, totalPage: totalPages, filters, loading } 
     // }) => ({ productCategoryList, loading, page, totalPages, filters }), shallowEqual)
 
     const selector = {
-        userList: [
+        userGroupList: [
             { 
-                user_id: 10,
-                first_name: "Trần",
-                last_name: "Văn",
-                name: "Anh",
-                phone: 123456,
-                email: "sjhdj@gmail.com",
-                user_group: "ADMIN",
+                userGroupId: 1,
+                name: "Administrator",
+                userInGroup: 1,
+                createDate: new Date(),
+                updateDate: new Date(),
+                status: "ACTIVE" 
+            },
+            { 
+                userGroupId: 1,
+                name: "Manager",
+                userInGroup: 2,
+                createDate: new Date(),
+                updateDate: new Date(),
+                status: "ACTIVE" 
+            },
+            { 
+                userGroupId: 1,
+                name: "Seller",
+                userInGroup: 10,
+                createDate: new Date(),
+                updateDate: new Date(),
                 status: "ACTIVE" 
             }
         ],
@@ -121,13 +135,13 @@ const UserTable = () => {
         setState({
             ...state,
             checkAllItem: false,
-            dataSources: selector.userList.map(item => ({
+            dataSources: selector.userGroupList.map(item => ({
                 ...item,
                 checked: false
             }))
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selector.userList])
+    }, [selector.userGroupList])
 
     // useEffect(() => {
     //     dispatch(fetchWithPaginationAndFilter(selector.filters, 1))
@@ -170,4 +184,4 @@ const UserTable = () => {
     return <Render {...renderProps} />
 }
 
-export default UserTable
+export default UserGroupTable
