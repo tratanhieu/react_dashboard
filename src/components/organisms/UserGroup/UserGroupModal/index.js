@@ -84,35 +84,38 @@ const Render = ({
                 <Table.Body>
                 {userGroup.features.map((item, index) => (
                     <Table.Row key={index} textAlign="center">
-                    <Table.Cell textAlign="left">{item.name}</Table.Cell>
-                    <Table.Cell>
-                        <Form.Checkbox
-                        value="view"
-                        checked={item.view}
-                        onChange={(_, checkbox) => onChangePermision(index, checkbox)}
-                        />
-                    </Table.Cell>
-                    <Table.Cell>
-                        <Form.Checkbox
-                        value="create"
-                        checked={item.create}
-                        onChange={(_, checkbox) => onChangePermision(index, checkbox)}
-                        />
-                    </Table.Cell>
-                    <Table.Cell>
-                        <Form.Checkbox
-                        value="update"
-                        checked={item.update}
-                        onChange={(_, checkbox) => onChangePermision(index, checkbox)}
-                        />
-                    </Table.Cell>
-                    <Table.Cell>
-                        <Form.Checkbox
-                        value="delete"
-                        checked={item.delete}
-                        onChange={(_, checkbox) => onChangePermision(index, checkbox)}
-                        />
-                    </Table.Cell>
+                        <Table.Cell textAlign="left">{item.name}</Table.Cell>
+                        <Table.Cell>
+                            <Form.Checkbox
+                                value="view"
+                                checked={item.view}
+                                onChange={(_, checkbox) => onChangePermision(index, checkbox)}
+                            />
+                        </Table.Cell>
+                        <Table.Cell>
+                            <Form.Checkbox
+                                value="create"
+                                disabled={!item.view}
+                                checked={item.create}
+                                onChange={(_, checkbox) => onChangePermision(index, checkbox)}
+                            />
+                        </Table.Cell>
+                        <Table.Cell>
+                            <Form.Checkbox
+                                value="update"
+                                disabled={!item.view}
+                                checked={item.update}
+                                onChange={(_, checkbox) => onChangePermision(index, checkbox)}
+                            />
+                        </Table.Cell>
+                        <Table.Cell>
+                            <Form.Checkbox
+                                value="delete"
+                                disabled={!item.view}
+                                checked={item.delete}
+                                onChange={(_, checkbox) => onChangePermision(index, checkbox)}
+                            />
+                        </Table.Cell>
                     </Table.Row>
                 ))}
                 </Table.Body>

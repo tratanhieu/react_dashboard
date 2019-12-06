@@ -12,13 +12,13 @@ import {
 
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 // REDUX
-import { setCheckedItems, fetchWithPaginationAndFilter } from '../../../../redux/reducers/userReducer';
+import { fetchWithPaginationAndFilter } from '../../../../redux/reducers/userReducer';
 
 const Render = ({
-    dataSources, loading, totalPages, defaultActivePage, checkAllItem,
-    onChange, onDelete, onChangePage, onCheckItem, onCheckAllItem
+    dataSources, loading, totalPages, defaultActivePage,
+    onChange, onDelete, onChangePage, onCheckItem
 }) => {
-    const cellWidth = calcCellWidth([30, 20, 20, 20, 10], true)
+    const cellWidth = calcCellWidth([30, 20, 20, 20, 10], false)
 
     const TableHeader = () => (
         <>
@@ -43,28 +43,24 @@ const Render = ({
     return (
         <TableModule
             loading={loading}
-            showCheckbox 
             header={<TableHeader />} 
-            paginationColspan={4}
             currentItems={dataSources.length}
+            paginationColspan={4}
             totalPages={totalPages}
             defaultActivePage={defaultActivePage}
-            checkAllItem={checkAllItem}
-            onCheckAllItem={checked => onCheckAllItem(checked)}
             onChangePage={onChangePage}
         >
         {
             dataSources.map((item, index) => (
                 <TableRow
                     key={index}
-                    showCheckbox
                     checked={item.checked}
                     onCheckItem={checked => onCheckItem(index, checked)}
                     onChange={_ => onChange(item.id)}
                     onDelete={onDelete}
                 >
                     <TableCell width={cellWidth[0]}>
-                        ${item.name}
+                        {item.name}
                     </TableCell>
                     <TableCell width={cellWidth[1]}>
                         {item.userInGroup}
@@ -151,34 +147,7 @@ const UserGroupTable = () => {
         ...state,
         ...selector,
         defaultActivePage: selector.page,
-        onChangePage: page => dispatch(fetchWithPaginationAndFilter(selector.filters, page)),
-        onCheckItem: (index, checked) => {
-            const checkedItems = [];
-            state.dataSources[index].checked = checked;
-            state.dataSources.forEach(item =>
-                item.checked === true ? checkedItems.push(item.product_category_id) : null
-            );
-            state.checkAllItem = checkedItems.length === state.dataSources.length
-            setState({ ...state })
-            dispatch(setCheckedItems(checkedItems))
-        },
-        onCheckAllItem: checkAllItem => {
-            const checkedItems = [];
-            setState({
-                ...state,
-                checkAllItem,
-                dataSources: state.dataSources.map(item => {
-                    if (checkAllItem) {
-                        checkedItems.push(item.product_category_id);
-                    }
-                    return {
-                        ...item,
-                        checked: item.checked !== checkAllItem ? checkAllItem : item.checked
-                    };
-                })
-            });
-            dispatch(setCheckedItems(checkedItems))
-        }
+        onChangePage: page => dispatch(fetchWithPaginationAndFilter(selector.filters, page))
     }
 
     return <Render {...renderProps} />
