@@ -1,6 +1,8 @@
 $sidebar_width_mini: 60px;
 $sidebar_width_full: 200px;
 
+$sidebar_bg_color:  #1b1c1d;
+
 $open_sidebar_animation_duration: 0.05s;
 $close_sidebar_animation_duration: 0.3s;
 
@@ -23,8 +25,24 @@ body {
 
             .main-layout--sidebar {
                 position: relative;
-                background: #1b1c1d;
+                background: $sidebar_bg_color;
                 padding-top: 60px;
+
+                .sub-menu {
+                    padding-left: 16px;
+
+                    li {
+                        display: flex;
+
+                        a {
+                            &:hover {
+                                text-decoration: underline;
+                                background: $sidebar_bg_color;
+                                color: #fff;
+                            }
+                        }
+                    }
+                }
 
                 .open-close-icon {
                     position: absolute;
@@ -62,8 +80,10 @@ body {
                     li {
                         a {
                             display: flex;
+                            justify-content: space-between;
                             color: #fff;
                             padding: 16px 24px;
+                            padding-right: 16px;
                             flex-wrap: nowrap;
 
                             &:hover {
