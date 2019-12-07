@@ -1,8 +1,18 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Button, Modal, Form } from "semantic-ui-react";
+import FormInputSlug from "../../../atoms/FormInputSlug";
+import ImageUploads from "../../../atoms/ImageUploads";
+import ModalModule from "../../../atoms/ModalModule";
+
+
+import {
+    doSave, getCreateAction, closeModal, initialState 
+} from '../../../../redux/reducers/productBrandReducer';
 
 const Render = ({
-    productBrand: { name, slugName, image, status },
+    openModal,
+    productBrand: { productBrandId, name, slugName, image = [], status },
     onPositive,
     onClose,
     onChangeName,
@@ -10,69 +20,63 @@ const Render = ({
     onChangeStatus,
     ...rest
 }) => (
-    <Modal
-    size="mini"
-    closeIcon
-    closeOnEscape={false}
-    closeOnDimmerClick={false}
-    onClose={onClose}
-    {...rest}>
-        <Modal.Header>Create Product Brand</Modal.Header>
-        <Modal.Content>
-            <Form>
-                <Form.Input
-                    label="Name"
-                    value={name}
-                    placeholder="Enter name..."
-                    onChange={onChangeName}
-                />
-                <image />
-                <Form.Checkbox
-                    label="Active"
-                    checked={status}
-                    onChange={onChangeStatus}
-                />
-            </Form>
-        </Modal.Content>
-        <Modal.Actions>
-            <Button
-                onClick={onPositive}
-                positive
-                labelPosition="right"
-                icon="checkmark"
-                content="Import"
+    <ModalModule
+        size="mini"
+        title={productBrandId ? 'Create' : 'Update'}
+        open={openModal}
+        onClose={onClose}
+        onPositive={onPositive}
+        {...rest}>
+        <Form>
+            <FormInputSlug
+                label="Name"
+                defaultValue={name}
+                defaultSlugValue={slugName}
+                placeholder="Enter name..."
+                onChange={onChangeName}
             />
-            <Button onClick={onClose} negative>
-                Cancel
-            </Button>
-        </Modal.Actions>
-    </Modal>
+            <ImageUploads dataSources={image} onChange={onChangeImage} />
+            <Form.Checkbox
+                label="Active"
+                checked={status}
+                onChange={onChangeStatus}
+            />
+        </Form>
+    </ModalModule>
 );
 
 const ProductBrandModal = ({ onPositive, ...rest }) => {
+    const selector = useSelector(({
+        productBrandReducer: { openModal, modalFormSuccessMessage, formLoading, productBrand, errors } 
+    }) => ({ openModal, formLoading, modalFormSuccessMessage, productBrand, errors }), shallowEqual)
+
     const [productBrand, setProductBrand] = useState({
         name: "",
         slugName: "",
-        image: "",
+        image: [],
         status: true
     })
 
+    const dispatch = useDispatch()
+
     const renderProps = {
         ...rest,
+        ...selector,
         productBrand,
         onChangeName: (_, input) => setProductBrand({
             ...productBrand,
             name: input.value
         }),
-        onChangeImage: (_, input) => setProductBrand({
+        onChangeImage: (_, images) => setProductBrand({
             ...productBrand,
-            image: input.value
+            image: images
         }),
         onChangeStatus: (_, checkbox) => setProductBrand({
             ...productBrand,
             status: checkbox.checked
         }),
-        onPositive: _ => onPositive(productBrand)
+        onPositive: _ => dispatch(doSave(productBrand)),
+        onClose: _ => dispatch(closeModal())
     }
 
     return <Render {...renderProps} />

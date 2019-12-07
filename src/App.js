@@ -7,6 +7,7 @@ import './colors.scss'
 import ProductCategory from './components/pages/ProductCategory'
 import Main from './components/templates/layouts/Main';
 import User from './components/pages/User';
+import ProductBrand from './components/pages/ProductBrand';
 import UserGroup from './components/pages/UserGroup';
 
 
@@ -27,8 +28,11 @@ class App extends React.Component {
 					<Route path="/product/category">
 						<ProductCategory />
 					</Route>
-					<Route path="/product">
+					<Route exact path="/product">
 						<h2>OK</h2>
+					</Route>
+					<Route path="/product/brand">
+						<ProductBrand />
 					</Route>
 					<Route exact path="/user">
 						<User />
