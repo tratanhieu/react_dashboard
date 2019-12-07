@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, Radio } from 'semantic-ui-react'
 
 const ToggleActive = ({
@@ -18,6 +18,10 @@ const ToggleActive = ({
         setActive(activeStatus)
         onChangeStatus(activeStatus)
     }
+
+    useEffect(() => {
+        setActive(checked)
+    }, [checked])
 
     return (
         <Form.Field inline={inline}>

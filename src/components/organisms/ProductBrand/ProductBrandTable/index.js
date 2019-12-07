@@ -40,15 +40,14 @@ const Render = ({
         <TableModule
             loading={loading}
             showCheckbox 
-            header={<TableHeader />} 
-            paginationColspan={4}
+            header={<TableHeader />}
             currentItems={dataSources.length}
             totalPages={totalPages}
             defaultActivePage={defaultActivePage}
             checkAllItem={checkAllItem}
             onCheckAllItem={checked => onCheckAllItem(checked)}
             onChangePage={onChangePage}
-            emptyColSpan={3}
+            emptyColSpan={5}
         >
         {
             dataSources.map((item, index) => (

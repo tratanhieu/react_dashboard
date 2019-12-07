@@ -11,13 +11,6 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
             text: 'Dashboard',
             active: true
         },
-        ,
-        {
-            path: '/product',
-            icon: 'grid layout',
-            text: 'Product',
-            active: false
-        },
         {
             path: '/product',
             icon: 'grid layout',
@@ -40,12 +33,6 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
                     },
                 ]
             }
-        },
-        {
-            path: '/product/brand',
-            icon: 'grid layout',
-            text: 'Product Brand',
-            active: false
         },
         {
             path: '/user',

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Popup } from "semantic-ui-react";
+import { Button, Popup, Icon } from "semantic-ui-react";
 
 const ConfirmPopup = ({
     message = "Are you sure want to do this action?",
@@ -11,12 +11,13 @@ const ConfirmPopup = ({
     return (
         <Popup
             wide
+            className="confirm-popup"
             open={open}
-            position="top center"
+            position="top right"
             onClose={_ => setOpen(false)}
             hideOnScroll
             trigger={
-                <Button
+                <Icon
                 {...rest}
                 onClick={_ => {
                     setOpen(true);

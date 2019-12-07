@@ -25,7 +25,7 @@ export const handleErrors = (errors = {}, pageErrorAction) => {
 export const resetSystemErrors = () => ({ type: RESET_SYSTEM_ERRORS })
 
 export default function(state = initialState, action) {
-    console.log(action.type)
+    // console.log(action.type)
     try {
         switch (action.type) {
             case HANDLE_SYSTEM_ERROR: return {

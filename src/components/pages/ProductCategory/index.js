@@ -1,30 +1,47 @@
 import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 
 import ProductCategoryHeader from '../../organisms/ProductCategory/ProductCategoryHeader';
 import ProductCategoryTable from '../../organisms/ProductCategory/ProductCategoryTable';
 import ProductCategoryModal from '../../organisms/ProductCategory/ProductCategoryModal';
 import ProductCategoryFilter from '../../organisms/ProductCategory/ProductCategoryFilter';
 import ProductCategoryAction from '../../organisms/ProductCategory/ProductCategoryAction';
-import { resetSystemErrors } from '../../../redux/reducers/rootReducer';
+import { fetchWithPaginationAndFilter } from '../../../redux/reducers/productCategoryReducer';
+
+const Render = ({ loading, reload, productCategoryList, page, totalPages, filters }) => (
+    <>
+        <ProductCategoryHeader />
+        <ProductCategoryFilter filters={filters} />
+        <ProductCategoryAction />
+        <ProductCategoryTable
+            loading={loading}
+            reload={reload}
+            filters={filters}
+            defaultActivePage={page}
+            totalPages={totalPages}
+            dataSource={productCategoryList}
+        />
+        <ProductCategoryModal />
+    </>
+)
 
 const ProductCategory = () => {
+    const selector = useSelector(({
+        productCategoryReducer: { productCategoryList, page, totalPages, filters, loading, reload } 
+    }) => ({ productCategoryList, loading, page, totalPages, filters, reload }), shallowEqual)
+
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(resetSystemErrors())
+        dispatch(fetchWithPaginationAndFilter(selector.filters, 1))
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    return (
-        <>
-            <ProductCategoryHeader />
-            <ProductCategoryFilter />
-            <ProductCategoryAction />
-            <ProductCategoryTable />
-            <ProductCategoryModal />
-        </>
-    )
+    const renderProps = {
+        ...selector
+    }
+
+    return <Render {...renderProps} />
 }
 
 export default ProductCategory

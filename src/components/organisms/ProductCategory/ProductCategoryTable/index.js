@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector, useDispatch, shallowEqual } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Label } from 'semantic-ui-react'
 
 import {
@@ -9,35 +9,34 @@ import {
     TableHeaderCell,
     calcCellWidth
 } from "../../../atoms/TableModule";
+import Slug from '../../../atoms/Slug';
 
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 // REDUX
 import {
     setCheckedItems, fetchWithPaginationAndFilter, getUpdateAction
 } from '../../../../redux/reducers/productCategoryReducer';
+import { formatDateTime } from '../../../../commons/utils';
 
 const Render = ({
     dataSources, loading, totalPages, defaultActivePage, checkAllItem,
-    onChange, onDelete, onChangePage, onCheckItem, onCheckAllItem, 
-    cellWidth
+    onChange, onDelete, onChangePage, onCheckItem, onCheckAllItem
 }) => {
+    const cellWidth = calcCellWidth([50, 15, 15, 20])
 
     const TableHeader = () => (
         <>
             <TableHeaderCell width={cellWidth[0]}>
-                Tên loại sản phẩm
+                Product Category Name
             </TableHeaderCell>
             <TableHeaderCell width={cellWidth[1]}>
-                Slug Name
-            </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[2]}>
                 Create Date
             </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[3]}>
+            <TableHeaderCell width={cellWidth[2]}>
                 Update Date
             </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[4]} textAlign="center">
-                Trạng thái
+            <TableHeaderCell width={cellWidth[3]} textAlign="center">
+                Status
             </TableHeaderCell>
         </>
     )
@@ -45,7 +44,6 @@ const Render = ({
     return (
         <TableModule
             loading={loading}
-            showCheckbox 
             header={<TableHeader />}
             currentItems={dataSources.length}
             totalPages={totalPages}
@@ -53,7 +51,7 @@ const Render = ({
             checkAllItem={checkAllItem}
             onCheckAllItem={checked => onCheckAllItem(checked)}
             onChangePage={onChangePage}
-            emptyColSpan={7}
+            emptyColSpan={6}
         >
         {
             dataSources.map((item, index) => (
@@ -67,17 +65,15 @@ const Render = ({
                 >
                     <TableCell width={cellWidth[0]}>
                         {item.name}
+                        <Slug>{item.slugName}</Slug>
                     </TableCell>
                     <TableCell width={cellWidth[1]}>
-                        {item.slugName}
+                        {formatDateTime(item.createDate)}
                     </TableCell>
                     <TableCell width={cellWidth[2]}>
-                        {item.createDate}
+                        {formatDateTime(item.updateDate)}
                     </TableCell>
-                    <TableCell width={cellWidth[3]}>
-                        {item.updateDate}
-                    </TableCell>
-                    <TableCell width={cellWidth[4]} textAlign="center">
+                    <TableCell width={cellWidth[3]} textAlign="center">
                         <Label color={DEFAULT_STATUS[item.status].color}>
                             {DEFAULT_STATUS[item.status].text}
                         </Label>
@@ -89,17 +85,12 @@ const Render = ({
     )
 }
 
-const ProductCategoryTable = () => {
-    const selector = useSelector(({
-        productCategoryReducer: { productCategoryList, page, totalPage: totalPages, filters, loading, reload } 
-    }) => ({ productCategoryList, loading, page, totalPages, filters, reload}), shallowEqual)
-
+const ProductCategoryTable = ({ loading, reload,
+    dataSource = [], filters = {}, defaultActivePage, totalPages }) => {
     const [state, setState] = useState({
         checkAllItem: false,
         dataSources: []
     });
-
-    const [cellWidth, setCellWidth] = useState([]);
 
     const dispatch = useDispatch();
 
@@ -107,39 +98,32 @@ const ProductCategoryTable = () => {
         setState({
             ...state,
             checkAllItem: false,
-            dataSources: selector.productCategoryList.map(item => ({
+            dataSources: dataSource.map(item => ({
                 ...item,
                 checked: false
             }))
         })
-
-        setCellWidth(calcCellWidth([25, 25, 15, 15, 20], true))
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selector.productCategoryList])
+    }, [dataSource])
 
     useEffect(() => {
-        dispatch(fetchWithPaginationAndFilter(selector.filters, 1))
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selector.filters, dispatch])
-
-    useEffect(() => {
-        if (selector.reload) {
-            dispatch(fetchWithPaginationAndFilter(selector.filters, selector.page))
+        if (reload) {
+            dispatch(fetchWithPaginationAndFilter(filters, defaultActivePage))
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selector.reload])
+    }, [reload])
 
     const renderProps = {
         ...state,
-        ...selector,
-        cellWidth,
-        defaultActivePage: selector.page,
-        onChangePage: page => dispatch(fetchWithPaginationAndFilter(selector.filters, page)),
+        loading,
+        defaultActivePage,
+        totalPages,
+        onChangePage: pageValue => dispatch(fetchWithPaginationAndFilter(filters, pageValue)),
         onCheckItem: (index, checked) => {
             let checkedItems = [];
             state.dataSources[index].checked = checked;
             state.dataSources.forEach(item =>
-                item.checked === true ? checkedItems.push(item.productCategoryId) : null
+                item.checked ? checkedItems.push(item.productCategoryId) : null
             );
             state.checkAllItem = checkedItems.length === state.dataSources.length
             setState({ ...state })

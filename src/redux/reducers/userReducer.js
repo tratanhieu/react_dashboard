@@ -146,7 +146,7 @@ export const setFilters = filters => ({ type: UPDATE_FILTERS, filters })
 export const setCheckedItems = checkedItems => ({ type: SET_CHECKED_ITEMS, checkedItems })
 
 export default function(state = initialState, action) {
-    console.log(action.type)
+    // console.log(action.type)
     try {
         switch (action.type) {
             case LIST_LOADING: return {

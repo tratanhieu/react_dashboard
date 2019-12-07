@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector, shallowEqual, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Form } from "semantic-ui-react";
 
 import PageSearch from "../../../molecules/PageSearch";
@@ -20,7 +20,7 @@ const listStatus = [
     { key: "DELETE", label: "Delete" }
 ];
 
-const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
+const Render = ({ filters = {}, onSearch, onFilterByStatus, onChangeSortValue }) => (
     <Form>
         <PageSearch defaultValue={filters.search} onSearch={onSearch} />
         <FilterBar
@@ -34,23 +34,14 @@ const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
     </Form>
 )
 
-const ProductCategoryFilter = () => {
-    const selector = useSelector(({ productCategoryReducer: { filters } }) => ({ filters }), shallowEqual)
-
+const ProductCategoryFilter = ({ filters = {} }) => {
     const dispatch = useDispatch()
 
     const renderProps = {
-        ...selector,
-        onSearch: search => {
-            dispatch(setFilters({ ...selector.filters, search }))
-        }, 
-        onFilterByStatus: status => {
-            dispatch(setFilters({ ...selector.filters, status }))
-        },
-        onChangeSortValue: sort => {
-            console.log(sort)
-            dispatch(setFilters({ ...selector.filters, sort }))
-        }
+        filters,
+        onSearch: search => dispatch(setFilters({ ...filters, search })),
+        onFilterByStatus: status => dispatch(setFilters({ ...filters, status })),
+        onChangeSortValue: sort => dispatch(setFilters({ ...filters, sort }))
     }
 
     return <Render {...renderProps} />
