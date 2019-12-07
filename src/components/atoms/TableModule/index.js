@@ -9,7 +9,6 @@ import "./style.css";
 import ConfirmPopup from "../../atoms/ConfirmPopup";
 import TablePagination from "../TablePagination";
 
-const TABLE_WIDTH = 1000;
 const CHECKBOX_CELL_WIDTH = 50;
 const ACTION_CELL_WIDTH = 100;
 
@@ -23,7 +22,6 @@ const TableModule = ({
     currentItems,
     emptyColSpan = 1,
     emptyMessage = "Table data is empty...",
-    paginationColSpan,
     totalPages,
     defaultActivePage,
     onChangePage,
@@ -56,7 +54,7 @@ const TableModule = ({
         <Table.Footer>
             <Table.Row>
                 { currentItems > 0 ?
-                <Table.HeaderCell colSpan={paginationColSpan}>
+                <Table.HeaderCell colSpan={emptyColSpan}>
                     <TablePagination
                         disabled={loading}
                         totalPages={totalPages}
@@ -125,9 +123,11 @@ const TableHeaderCell = ({ width, style, children, ...rest }) => (
 );
 
 const calcCellWidth = (cellWidths, showCheckbox) => {
+    const windowWidth = document.body.clientWidth;
+    const tableWidth = windowWidth - 104;
     const perCell = showCheckbox
-        ? TABLE_WIDTH - CHECKBOX_CELL_WIDTH - ACTION_CELL_WIDTH
-        : TABLE_WIDTH - ACTION_CELL_WIDTH;
+        ? tableWidth - CHECKBOX_CELL_WIDTH - ACTION_CELL_WIDTH
+        : tableWidth - ACTION_CELL_WIDTH;
     return cellWidths.map(item => `${(item / 100) * perCell}px`);
 };
 

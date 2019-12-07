@@ -45,7 +45,7 @@ const Render = ({
             loading={loading}
             showCheckbox 
             header={<TableHeader />} 
-            paginationColspan={4}
+            emptyColSpan={7}
             currentItems={dataSources.length}
             totalPages={totalPages}
             defaultActivePage={defaultActivePage}
