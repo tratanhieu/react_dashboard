@@ -123,7 +123,7 @@ const doCreate = productBrand => async dispatch => {
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(_ => dispatch(modalFormSuccessMessage("Product Category is created successfully!!")))
+    }).then(_ => dispatch(modalFormSuccessMessage("Product Brand is created successfully!!")))
     .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(formLoading(false)))
 }
@@ -146,7 +146,7 @@ export const setFilters = filters => ({ type: UPDATE_FILTERS, filters })
 export const setCheckedItems = checkedItems => ({ type: SET_CHECKED_ITEMS, checkedItems })
 
 export default function(state = initialState, action) {
-    console.log(action.type)
+    // console.log(action.type)
     try {
         switch (action.type) {
             case LIST_LOADING: return {

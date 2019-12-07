@@ -3,8 +3,12 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Button, Modal, Form } from "semantic-ui-react";
 import FormInputSlug from "../../../atoms/FormInputSlug";
 import ImageUploads from "../../../atoms/ImageUploads";
-import { closeModal } from "../../../../redux/reducers/productBrandReducer";
 import ModalModule from "../../../atoms/ModalModule";
+
+
+import {
+    doSave, getCreateAction, closeModal, initialState 
+} from '../../../../redux/reducers/productBrandReducer';
 
 const Render = ({
     openModal,
@@ -65,13 +69,13 @@ const ProductBrandModal = ({ onPositive, ...rest }) => {
         }),
         onChangeImage: (_, images) => setProductBrand({
             ...productBrand,
-            image: images[0]
+            image: images
         }),
         onChangeStatus: (_, checkbox) => setProductBrand({
             ...productBrand,
             status: checkbox.checked
         }),
-        onPositive: _ => onPositive(productBrand),
+        onPositive: _ => dispatch(doSave(productBrand)),
         onClose: _ => dispatch(closeModal())
     }
 
