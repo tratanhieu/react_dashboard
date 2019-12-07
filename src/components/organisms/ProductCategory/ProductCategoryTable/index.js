@@ -18,9 +18,9 @@ import {
 
 const Render = ({
     dataSources, loading, totalPages, defaultActivePage, checkAllItem,
-    onChange, onDelete, onChangePage, onCheckItem, onCheckAllItem
+    onChange, onDelete, onChangePage, onCheckItem, onCheckAllItem, 
+    cellWidth
 }) => {
-    const cellWidth = calcCellWidth([40, 40, 20], true)
 
     const TableHeader = () => (
         <>
@@ -30,7 +30,13 @@ const Render = ({
             <TableHeaderCell width={cellWidth[1]}>
                 Slug Name
             </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[2]} textAlign="center">
+            <TableHeaderCell width={cellWidth[2]}>
+                Create Date
+            </TableHeaderCell>
+            <TableHeaderCell width={cellWidth[3]}>
+                Update Date
+            </TableHeaderCell>
+            <TableHeaderCell width={cellWidth[4]} textAlign="center">
                 Trạng thái
             </TableHeaderCell>
         </>
@@ -40,15 +46,14 @@ const Render = ({
         <TableModule
             loading={loading}
             showCheckbox 
-            header={<TableHeader />} 
-            paginationColspan={4}
+            header={<TableHeader />}
             currentItems={dataSources.length}
             totalPages={totalPages}
             defaultActivePage={defaultActivePage}
             checkAllItem={checkAllItem}
             onCheckAllItem={checked => onCheckAllItem(checked)}
             onChangePage={onChangePage}
-            emptyColSpan={3}
+            emptyColSpan={7}
         >
         {
             dataSources.map((item, index) => (
@@ -66,7 +71,13 @@ const Render = ({
                     <TableCell width={cellWidth[1]}>
                         {item.slugName}
                     </TableCell>
-                    <TableCell width={cellWidth[2]} textAlign="center">
+                    <TableCell width={cellWidth[2]}>
+                        {item.createDate}
+                    </TableCell>
+                    <TableCell width={cellWidth[3]}>
+                        {item.updateDate}
+                    </TableCell>
+                    <TableCell width={cellWidth[4]} textAlign="center">
                         <Label color={DEFAULT_STATUS[item.status].color}>
                             {DEFAULT_STATUS[item.status].text}
                         </Label>
@@ -88,6 +99,8 @@ const ProductCategoryTable = () => {
         dataSources: []
     });
 
+    const [cellWidth, setCellWidth] = useState([]);
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -99,6 +112,8 @@ const ProductCategoryTable = () => {
                 checked: false
             }))
         })
+
+        setCellWidth(calcCellWidth([25, 25, 15, 15, 20], true))
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selector.productCategoryList])
 
@@ -117,6 +132,7 @@ const ProductCategoryTable = () => {
     const renderProps = {
         ...state,
         ...selector,
+        cellWidth,
         defaultActivePage: selector.page,
         onChangePage: page => dispatch(fetchWithPaginationAndFilter(selector.filters, page)),
         onCheckItem: (index, checked) => {

@@ -1,17 +1,10 @@
 import React from "react";
 import { useSelector, shallowEqual, useDispatch } from 'react-redux'
-import { Form, Select, Button, Icon } from "semantic-ui-react";
+import { Form } from 'semantic-ui-react'
 
-import Fieldset from "../../../atoms/Fieldset";
 import PageSearch from "../../../molecules/PageSearch";
 import FilterBar from "../../../molecules/FilterBar";
 import { setFilters } from "../../../../redux/reducers/productCategoryReducer";
-
-const options = [
-    { key: "m", text: "Male", value: "male" },
-    { key: "f", text: "Female", value: "female" },
-    { key: "o", text: "Other", value: "other" }
-];
 
 const sorts = [
     { key: "name,desc", text: "Name Descending", value: "name,desc" },
@@ -38,22 +31,6 @@ const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
             onFilterByStatus={onFilterByStatus}
             onChangeSortValue={onChangeSortValue}
         />
-        <Fieldset icon="hand point down outline" title="Actions">
-            <div style={{ display: "flex", justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <div style={{ display: "flex" }}>
-                    <Select style={{ minWidth: 160, marginRight: 8 }} fluid options={options} placeholder="Type" />
-                    <Button primary>Execute</Button>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button primary>
-                        <Icon name="cloud upload" inverted />Import
-                    </Button>
-                    <Button primary>
-                        <Icon name="cloud download" inverted />Export
-                    </Button>
-                </div>
-            </div>
-        </Fieldset>
     </Form>
 )
 

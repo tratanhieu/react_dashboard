@@ -34,7 +34,7 @@ class App extends React.Component {
 					<Route path="/product/brand">
 						<ProductBrand />
 					</Route>
-					<Route path="/user">
+					<Route exact path="/user">
 						<User />
 					</Route>
 					<Route path="/user/group">
