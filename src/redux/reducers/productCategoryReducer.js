@@ -94,15 +94,16 @@ export const fetchWithPaginationAndFilter = (filters, page) => async dispatch =>
 }
 
 export const doSave = productCategory => async dispatch => {
-    dispatch(resetSystemErrors())
-    dispatch(formLoading(true))
-    const { productCategoryId, name, slugName, status } = productCategory
+    console.log(productCategory)
+    // dispatch(resetSystemErrors())
+    // dispatch(formLoading(true))
+    // const { productCategoryId, name, slugName, status } = productCategory
 
-    if (!productCategoryId) {
-        dispatch(doCreate({ name, slugName, status }))
-    } else {
-        dispatch(doUpdate({ productCategoryId, name, slugName, status }))
-    }
+    // if (!productCategoryId) {
+    //     dispatch(doCreate({ name, slugName, status }))
+    // } else {
+    //     dispatch(doUpdate({ productCategoryId, name, slugName, status }))
+    // }
 }
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })

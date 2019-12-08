@@ -19,9 +19,9 @@ export const initialState = {
     checkedItems: [],
     totalPages: 0,
     page: 1,
-    productBrand: {
-        status: ACTIVE
-    },
+    // productBrand: {
+    //     status: ACTIVE
+    // },
     errors: {
         name: '',
         slugName: ''
@@ -82,27 +82,26 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
 }
 
 export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
-    dispatch(resetSystemErrors())
-    dispatch(listLoading(true))
-    return axios.get(`${PATH_PRODUCT_BRAND}?search=${filters.search}&status=${filters.status}&`
-            + `sort=${filters.sort}&page=${page}`,
-        { timeout: 5000 }
-    )
-    .then(response => dispatch(prepareData(response.data)))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(listLoading(false)))
+    // dispatch(resetSystemErrors())
+    // dispatch(listLoading(true))
+    // return axios.get(`${PATH_PRODUCT_BRAND}?search=${filters.search}&status=${filters.status}&`
+    //         + `sort=${filters.sort}&page=${page}`,
+    //     { timeout: 5000 }
+    // )
+    // .then(response => dispatch(prepareData(response.data)))
+    // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    // .finally(_ => dispatch(listLoading(false)))
 }
 
 export const doSave = productBrand => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(formLoading(true))
     const { productBrandId, name, slugName, status } = productBrand
-
-    if (!productBrandId) {
-        dispatch(doCreate({ name, slugName, status }))
-    } else {
-        dispatch(doUpdate({ productBrandId, name, slugName, status }))
-    }
+    // if (!productBrandId) {
+    //     dispatch(doCreate({ name, slugName, status }))
+    // } else {
+    //     dispatch(doUpdate({ productBrandId, name, slugName, status }))
+    // }
 }
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
