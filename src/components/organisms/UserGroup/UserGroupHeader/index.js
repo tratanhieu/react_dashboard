@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux'
 import { Grid, Button, Icon } from 'semantic-ui-react'
-import { getCreateAction } from '../../../../redux/reducers/userReducer'
+import { getCreateAction } from '../../../../redux/reducers/userGroupReducer'
 
 const Render = ({ onClickNew }) => {
     return (
@@ -22,7 +22,7 @@ const Render = ({ onClickNew }) => {
     )
 }
 
-const UserHeader = () => {
+const UserGroupHeader = () => {
     const dispatch = useDispatch();
     const renderProps = {
         onClickNew: _ => dispatch(getCreateAction())
@@ -30,4 +30,4 @@ const UserHeader = () => {
     return <Render {...renderProps} />
 }
 
-export default UserHeader
+export default UserGroupHeader

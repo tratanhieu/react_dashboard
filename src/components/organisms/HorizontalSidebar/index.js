@@ -19,10 +19,27 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
             active: false
         },
         {
-            path: '/product/category',
+            path: '/product',
             icon: 'grid layout',
-            text: 'Product Category',
-            active: false
+            text: 'Product',
+            active: false,
+            subMenu: {
+                open: false,
+                items: [
+                    {
+                        path: '/product/category',
+                        icon: 'grid layout',
+                        text: 'Product Category',
+                        active: false
+                    },
+                    {
+                        path: '/product/brand',
+                        icon: 'grid layout',
+                        text: 'Product Brand',
+                        active: false
+                    },
+                ]
+            }
         },
         {
             path: '/product/brand',
@@ -34,15 +51,25 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
             path: '/user',
             icon: 'group',
             text: 'User',
-            active: false
-        },
-        {
-            path: '/user/group',
-            icon: 'user',
-            text: 'User Group',
-            active: false
+            active: false,
+            subMenu: {
+                open: false,
+                items: [
+                    {
+                        path: '/user/group',
+                        icon: 'user',
+                        text: 'User Group',
+                        active: false
+                    }
+                ]
+            }
         }
     ])
+
+    const handleOpenSubMenu = index => {
+        menu[index].subMenu.open = !menu[index].subMenu.open
+        setMenu([ ...menu ])
+    }
 
     return (
         <div className={`main-layout--sidebar ${statusNav}`}>
@@ -58,9 +85,28 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
                 menu.map((item, index) => (
                     <li key={index}>
                         <Link to={item.path}>
-                            <Icon name={item.icon} />                        
-                            {navOpen ? <span> {item.text}</span> : null}
+                            <div>
+                                <Icon name={item.icon} />                        
+                                {navOpen && <span> {item.text}</span>}
+                            </div>
+                            {(navOpen && item.hasOwnProperty('subMenu')) &&
+                                <Icon name={`angle ${item.subMenu.open ? 'down' : 'up'}`}
+                                    onClick={() => handleOpenSubMenu(index)}
+                                />
+                            }
                         </Link>
+                        {(navOpen && item.hasOwnProperty('subMenu') && item.subMenu.open) &&
+                            <ul className="main-layout--sidebar sub-menu">
+                                {item.subMenu.items.map((item, index) => ( 
+                                    <li key={index}>
+                                        <Link to={item.path}>
+                                            <Icon name={item.icon} />                        
+                                            <span> {item.text}</span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        }
                     </li>
                 ))
             }
