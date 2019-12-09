@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 export const makeSlug = str => {
     str = str.toLowerCase();
 
@@ -21,3 +23,13 @@ export const makeSlug = str => {
     str = str.replace(/@-|-@|@/gi, "");
     return str;
 };
+
+export const isFormError = errors => Object.keys(errors).length > 0
+
+export const formErrorsHandle = (errors, target, error) => {
+    if (error) errors[target] = error
+    else delete errors[target]
+    return errors
+}
+
+export const formatDateTime = (date, pattern = "HH:mm:ss DD/MM/YYYY") => moment(date).format(pattern)

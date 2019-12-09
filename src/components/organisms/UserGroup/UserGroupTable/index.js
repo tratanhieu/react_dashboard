@@ -43,6 +43,7 @@ const Render = ({
     return (
         <TableModule
             loading={loading}
+            showCheckbox={false}
             header={<TableHeader />} 
             currentItems={dataSources.length}
             emptyColSpan={6}

@@ -2,7 +2,7 @@ import React from "react";
 import {
     Table,
     Checkbox,
-    Button
+    Icon
 } from "semantic-ui-react";
 
 import "./style.css";
@@ -16,7 +16,7 @@ const TableModule = ({
     loading = false,
     checkAllItem = false,
     onCheckAllItem,
-    showCheckbox = false,
+    showCheckbox = true,
     header,
     children,
     currentItems,
@@ -27,45 +27,45 @@ const TableModule = ({
     onChangePage,
 }) => {
     return (
-    <Table celled selectable className={loading ? `table-data loading` : `table-data`}>
-        <Table.Header>
-            <Table.Row>
-                {showCheckbox ? (
+        <Table celled selectable className={loading ? `table-data loading` : `table-data`}>
+            <Table.Header>
+                <Table.Row>
+                    {showCheckbox && (
+                        <Table.HeaderCell
+                            style={{ width: `${CHECKBOX_CELL_WIDTH}px`, minWidth: `${CHECKBOX_CELL_WIDTH}px`, maxWidth: `${CHECKBOX_CELL_WIDTH}px` }}
+                            textAlign="center"
+                        >
+                            <Checkbox
+                                checked={checkAllItem}
+                                onChange={(_, checkbox) => onCheckAllItem(checkbox.checked)}
+                            />
+                        </Table.HeaderCell>
+                    )}
+                    {header}
                     <Table.HeaderCell
-                        style={{ width: `${CHECKBOX_CELL_WIDTH}px`, minWidth: `${CHECKBOX_CELL_WIDTH}px`, maxWidth: `${CHECKBOX_CELL_WIDTH}px` }}
+                        style={{ width: `${ACTION_CELL_WIDTH}px`, minWidth: `${ACTION_CELL_WIDTH}px`, maxWidth: `${ACTION_CELL_WIDTH}px` }}
                         textAlign="center"
                     >
-                        <Checkbox
-                            checked={checkAllItem}
-                            onChange={(_, checkbox) => onCheckAllItem(checkbox.checked)}
+                        Actions
+                    </Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>{children}</Table.Body>
+            <Table.Footer>
+                <Table.Row>
+                    {currentItems > 0 ?
+                    <Table.HeaderCell colSpan={emptyColSpan}>
+                        <TablePagination
+                            disabled={loading}
+                            totalPages={totalPages}
+                            defaultActivePage={defaultActivePage}
+                            onPageChange={onChangePage}
                         />
                     </Table.HeaderCell>
-                ) : null}
-                {header}
-                <Table.HeaderCell
-                    style={{ width: `${ACTION_CELL_WIDTH}px`, minWidth: `${ACTION_CELL_WIDTH}px`, maxWidth: `${ACTION_CELL_WIDTH}px` }}
-                    textAlign="center"
-                >
-                    Actions
-                </Table.HeaderCell>
-            </Table.Row>
-        </Table.Header>
-        <Table.Body>{children}</Table.Body>
-        <Table.Footer>
-            <Table.Row>
-                { currentItems > 0 ?
-                <Table.HeaderCell colSpan={emptyColSpan}>
-                    <TablePagination
-                        disabled={loading}
-                        totalPages={totalPages}
-                        defaultActivePage={defaultActivePage}
-                        onPageChange={onChangePage}
-                    />
-                </Table.HeaderCell>
-                : <EmptyRow colSpan={emptyColSpan} message={emptyMessage} />
-                }
-            </Table.Row>
-        </Table.Footer>
+                    : (!loading && <EmptyRow colSpan={emptyColSpan} message={emptyMessage} />)
+                    }
+                </Table.Row>
+            </Table.Footer>
         </Table>
     );
 };
@@ -86,7 +86,7 @@ const TableRow = ({
     ...rest
 }) => (
     <Table.Row {...rest}>
-        {showCheckbox ? (
+        {showCheckbox && (
         <Table.Cell
             style={{ width: `${CHECKBOX_CELL_WIDTH}px`, minWidth: `${CHECKBOX_CELL_WIDTH}px`, maxWidth: `${CHECKBOX_CELL_WIDTH}px` }}
             textAlign="center"
@@ -96,14 +96,14 @@ const TableRow = ({
                 onChange={(_, checkbox) => onCheckItem(checkbox.checked)} 
             />
         </Table.Cell>
-        ) : null}
+        )}
         {children}
         <Table.Cell style={{ width: `${ACTION_CELL_WIDTH}px`, minWidth: `${ACTION_CELL_WIDTH}px`, maxWidth: `${ACTION_CELL_WIDTH}px` }} textAlign="center">
-            <Button size="mini" color="orange" icon="edit" onClick={onChange} />
+            <Icon className="action-icon-button" color="orange" name="edit outline" onClick={onChange} />
             <ConfirmPopup
-                size="mini"
+                className="action-icon-button"
                 color="red"
-                icon="trash"
+                name="trash alternate"
                 onPositive={onDelete}
             />
         </Table.Cell>
@@ -122,7 +122,7 @@ const TableHeaderCell = ({ width, style, children, ...rest }) => (
     </Table.HeaderCell>
 );
 
-const calcCellWidth = (cellWidths, showCheckbox) => {
+const calcCellWidth = (cellWidths, showCheckbox = true) => {
     const windowWidth = document.body.clientWidth;
     const tableWidth = windowWidth - 104;
     const perCell = showCheckbox

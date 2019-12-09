@@ -3,6 +3,11 @@ import axios from 'axios'
 import { ACTIVE } from '../../constants/entites';
 import { handleErrors, resetSystemErrors } from './rootReducer';
 
+// API
+const URL_PATH = `${REDUX_API_URL}/product/category`
+
+const prefix = 'PRODUCT_CATEGORY_'
+
 export const initialState = {
     loading: true,
     reload: false,
@@ -23,12 +28,9 @@ export const initialState = {
         status: ACTIVE
     },
     errors: {
-        name: '',
-        slugName: ''
+        name: ''
     }
 }
-
-const prefix = 'PRODUCT_CATEGORY_'
 
 const createAction = action => `${prefix}${action}`
 
@@ -45,16 +47,13 @@ const CLOSE_MODAL = createAction("CLOSE_MODAL")
 const MULTIPLE_EXECUTE_LOADING = createAction("MULTIPLE_EXECUTE_LOADING")
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 
-// API
-const PATH_PRODUCT_CATEGORY = `${REDUX_API_URL}/product/category`
-
 const listLoading = loading => ({ type: LIST_LOADING, loading })
-const prepareData = data => ({
+const prepareData = ({ listData: productCategoryList, totalPage, pageSize, page }) => ({
     type: PREPARE_DATA,
-    productCategoryList: data.listData,
-    totalPage: data.totalPage,
-    pageSize: data.pageSize,
-    page: data.page
+    productCategoryList,
+    totalPage,
+    pageSize,
+    page
 })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
@@ -64,13 +63,39 @@ const setProductCategory = (productCategory, openModal) => ({ type: SET_PRODUCT_
 
 const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
 
-export const closeModal = () => ({ type: CLOSE_MODAL })
+const doCreate = productCategory => async dispatch => {
+    const params = JSON.stringify(productCategory)
+    axios.post(`${URL_PATH}/create`, params, {
+        timeout: 5000,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(_ => dispatch(modalFormSuccessMessage("Product Category is created successfully!!")))
+    .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(_ => dispatch(formLoading(false)))
+}
+
+const doUpdate = productCategory => async dispatch => {
+    const params = JSON.stringify(productCategory)
+    return axios.post(
+        `${URL_PATH}/${productCategory.productCategoryId}/update`, params, { 
+            timeout: 5000,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+    ).then(_ => dispatch(modalFormSuccessMessage("Product Category is update successfully!!")))
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(_ => dispatch(formLoading(false)))
+}
+
+const updateFilters = filters => ({ type: UPDATE_FILTERS, filters })
 
 export const doMultipleExecute = (listId, status) => async dispatch =>{
     const params = { listId, status }
     dispatch(resetSystemErrors())
     dispatch(setMultipleExecuteLoading(true))
-    return axios.post(`${PATH_PRODUCT_CATEGORY}/execute`, params, {
+    return axios.post(`${URL_PATH}/execute`, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
@@ -82,13 +107,14 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
 }
 
 export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
+    console.log(filters, page)
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${PATH_PRODUCT_CATEGORY}?search=${filters.search}&status=${filters.status}&`
+    return axios.get(`${URL_PATH}?search=${filters.search}&status=${filters.status}&`
             + `sort=${filters.sort}&page=${page}`,
         { timeout: 5000 }
     )
-    .then(response => dispatch(prepareData(response.data)))
+    .then(response => dispatch(prepareData(response.data, filters)))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(listLoading(false)))
 }
@@ -110,44 +136,24 @@ export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
 export const getUpdateAction = productCategoryId => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${PATH_PRODUCT_CATEGORY}/${productCategoryId}`, {
+    return axios.get(`${URL_PATH}/${productCategoryId}`, {
         timeout: 5000
     }).then(response => dispatch(setProductCategory(response.data, true)))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(listLoading(false)))
 }
 
-const doCreate = productCategory => async dispatch => {
-    const params = JSON.stringify(productCategory)
-    axios.post(`${PATH_PRODUCT_CATEGORY}/create`, params, {
-        timeout: 5000,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(_ => dispatch(modalFormSuccessMessage("Product Category is created successfully!!")))
-    .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(formLoading(false)))
+export const setFilters = filters => async dispatch => {
+    dispatch(updateFilters(filters))
+    dispatch(fetchWithPaginationAndFilter(filters, 1))
 }
 
-const doUpdate = productCategory => async dispatch => {
-    const params = JSON.stringify(productCategory)
-    return axios.post(
-        `${PATH_PRODUCT_CATEGORY}/${productCategory.productCategoryId}/update`, params, { 
-            timeout: 5000,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-    ).then(_ => dispatch(modalFormSuccessMessage("Product Category is update successfully!!")))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(formLoading(false)))
-}
+export const closeModal = () => ({ type: CLOSE_MODAL })
 
-export const setFilters = filters => ({ type: UPDATE_FILTERS, filters })
 export const setCheckedItems = checkedItems => ({ type: SET_CHECKED_ITEMS, checkedItems })
 
 export default function(state = initialState, action) {
-    // console.log(action.type)
+    console.log(action.type)
     try {
         switch (action.type) {
             case LIST_LOADING: return {
@@ -170,7 +176,7 @@ export default function(state = initialState, action) {
             case PREPARE_DATA: return {
                 ...state,
                 productCategoryList: action.productCategoryList,
-                totalPage: action.totalPage,
+                totalPages: action.totalPage,
                 page: action.page,
                 loading: false,
                 reload: false

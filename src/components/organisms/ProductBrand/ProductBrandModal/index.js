@@ -1,16 +1,13 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch, shallowEqual } from "react-redux";
-import { Button, Modal, Form } from "semantic-ui-react";
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { Form } from "semantic-ui-react";
 import FormInputSlug from "../../../atoms/FormInputSlug";
 import ImageUploads from "../../../atoms/ImageUploads";
 import ModalModule from "../../../atoms/ModalModule";
 
 import {
-  doSave,
-  getCreateAction,
-  closeModal,
-  initialState
-} from "../../../../redux/reducers/productBrandReducer";
+    doSave, closeModal 
+} from '../../../../redux/reducers/productBrandReducer';
 
 const Render = ({
   productBrand: { productBrandId, name, slugName, image = [], status },
