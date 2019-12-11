@@ -48,7 +48,7 @@ const Render = ({
             <ToggleActive
                 tabIndex={2}
                 checked={status === ACTIVE} 
-                onChangeStatus={onChangeStatus} />
+                onChange={onChangeStatus} />
         </Form>
     </ModalModule>
 )

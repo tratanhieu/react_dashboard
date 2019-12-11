@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import FormInput from "../FormInput";
+import Slug from "../Slug";
 import { makeSlug } from "../../../commons/utils";
 import './style.css'
 
@@ -80,9 +81,7 @@ const FormInputSlug = ({
                         state.slugValueError ? "error" : ""
                         }`}
                     >
-                        <b>Slug: </b>
-                        <i className="slug-text">{state.slugValue}</i>
-                        &nbsp;&nbsp;
+                        <Slug>{state.tempSlugValue}</Slug>
                         <ButtonLink
                             onClick={_ =>
                                 setState({

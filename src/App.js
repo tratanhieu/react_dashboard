@@ -9,6 +9,8 @@ import Main from './components/templates/layouts/Main';
 import User from './components/pages/User';
 import ProductBrand from './components/pages/ProductBrand';
 import UserGroup from './components/pages/UserGroup';
+import ProductTypeGroup from './components/pages/ProductTypeGroup';
+import ProductType from './components/pages/ProductType';
 
 
 class App extends React.Component {
@@ -25,11 +27,17 @@ class App extends React.Component {
 		return (
 			<Main>
 				<Switch>
+					<Route exact path="/product">
+						<h2>OK</h2>
+					</Route>
 					<Route path="/product/category">
 						<ProductCategory />
 					</Route>
-					<Route exact path="/product">
-						<h2>OK</h2>
+					<Route path="/product/type_group">
+						<ProductTypeGroup />
+					</Route>
+					<Route path="/product/type">
+						<ProductType />
 					</Route>
 					<Route path="/product/brand">
 						<ProductBrand />
@@ -40,7 +48,7 @@ class App extends React.Component {
 					<Route path="/user/group">
 						<UserGroup />
 					</Route>
-					<Route path="/">
+					<Route exact path="/">
 						<h2>Main</h2>
 					</Route>
 				</Switch>
