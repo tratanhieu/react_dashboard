@@ -9,6 +9,7 @@ import Main from './components/templates/layouts/Main';
 import User from './components/pages/User';
 import ProductBrand from './components/pages/ProductBrand';
 import UserGroup from './components/pages/UserGroup';
+import SaleManagement from './components/pages/SaleManagement';
 
 
 class App extends React.Component {
@@ -39,6 +40,9 @@ class App extends React.Component {
 					</Route>
 					<Route path="/user/group">
 						<UserGroup />
+					</Route>
+					<Route path="/sale">
+						<SaleManagement />
 					</Route>
 					<Route path="/">
 						<h2>Main</h2>

@@ -74,7 +74,6 @@ const ImageUploads = ({
                     src: image
                 });
                 setImages([...images]);
-                console.log(images)
                 onChange(images);
             });
         },

@@ -24,9 +24,6 @@ const initialState = {
     checkedItems: [],
     totalPages: 0,
     page: 1,
-    // productBrand: {
-    //     status: ACTIVE
-    // },
     errors: {
         name: '',
         slugName: ''
@@ -108,7 +105,6 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
 }
 
 export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
-    console.log(filters, page)
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
     return axios.get(`${URL_PATH}?search=${filters.search}&status=${filters.status}&`
@@ -124,11 +120,11 @@ export const doSave = productBrand => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(formLoading(true))
     const { productBrandId, name, slugName, status } = productBrand
-    // if (!productBrandId) {
-    //     dispatch(doCreate({ name, slugName, status }))
-    // } else {
-    //     dispatch(doUpdate({ productBrandId, name, slugName, status }))
-    // }
+    if (!productBrandId) {
+        dispatch(doCreate({ name, slugName, status }))
+    } else {
+        dispatch(doUpdate({ productBrandId, name, slugName, status }))
+    }
 }
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
