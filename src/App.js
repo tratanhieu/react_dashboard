@@ -11,6 +11,7 @@ import ProductBrand from './components/pages/ProductBrand';
 import UserGroup from './components/pages/UserGroup';
 import ProductTypeGroup from './components/pages/ProductTypeGroup';
 import ProductType from './components/pages/ProductType';
+import Product from './components/pages/Product';
 
 
 class App extends React.Component {
@@ -28,7 +29,7 @@ class App extends React.Component {
 			<Main>
 				<Switch>
 					<Route exact path="/product">
-						<h2>OK</h2>
+						<Product />
 					</Route>
 					<Route path="/product/category">
 						<ProductCategory />

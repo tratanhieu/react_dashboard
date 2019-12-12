@@ -42,7 +42,7 @@ const Render = ({
     );
 };
 
-const ProductOptions = ({ onChange, ...rest }) => {
+const ProductOptions = ({ openOptionModal, onChange, onOpenOptionModal, ...rest }) => {
     const initOption = {
         packageName: "",
         quantity: 1,
@@ -51,7 +51,6 @@ const ProductOptions = ({ onChange, ...rest }) => {
     };
 
     const [state, setState] = useState({
-        openModal: false,
         option: initOption,
         options: []
     });

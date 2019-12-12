@@ -1,9 +1,14 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Form, Button, Icon, Table } from "semantic-ui-react";
 import FormSelect from "../../../atoms/FormSelect";
+import ModalModule from '../../../atoms/ModalModule';
 import Fieldset from "../../../atoms/Fieldset";
 import PropertyTableRow from "./PropertyTableRow";
 import ProductOptions from "./ProductOptions";
+
+import { closeModal } from '../../../../redux/reducers/productReducer';
+import OptionModal from "./ProductOptions/OptionModal";
 
 const options = [
     { key: "1", text: "Car", value: "car" },
@@ -12,6 +17,7 @@ const options = [
 ];
 
 const Render = ({
+    openModal = false,
     property = {},
     properties = [],
     onChangePropetyName,
@@ -19,9 +25,10 @@ const Render = ({
     onAddProperty,
     onUpdateProperty,
     onRemoveProperty,
+    onClose,
     ...rest
 }) => (
-    <>
+    <ModalModule title="Thêm sản phẩm" open={openModal} onClose={onClose}>
         <Form>
             <Form.Input label="Name: " placeholder="Input name" />
             <Form.Group widths="equal">
@@ -107,14 +114,19 @@ const Render = ({
             </Fieldset>
             <Fieldset label="Product Package" icon="box">
                 <ProductOptions />
+                <OptionModal />
             </Fieldset>
             <Form.TextArea label="Description: " placeholder="Input name.." />
             <Form.Checkbox label="Active" />
         </Form>
-    </>
+    </ModalModule>
 );
 
 const ProductModal = () => {
+    const selector = useSelector(({
+        productReducer: { openModal, modalFormSuccessMessage, formLoading, product, errors } 
+    }) => ({ openModal, formLoading, modalFormSuccessMessage, product, errors }), shallowEqual)
+
     const [state, setState] = useState({
         property: {
             name: "",
@@ -123,7 +135,10 @@ const ProductModal = () => {
         properties: []
     });
 
+    const dispatch = useDispatch();
+
     const renderProps = {
+        ...selector,
         ...state,
         onChangePropetyName: (_, input) =>
         setState({
@@ -153,7 +168,8 @@ const ProductModal = () => {
         onRemoveProperty: index => {
             state.properties.splice(index, 1);
             setState({ ...state });
-        }
+        },
+        onClose: _ => dispatch(closeModal())
     };
     return <Render {...renderProps} />;
     };

@@ -1,11 +1,10 @@
 import React from 'react'
-// import { useSelector, shallowEqual, useDispatch } from 'react-redux'
-// import { useDispatch } from 'react-redux'
+import { useSelector, shallowEqual, useDispatch } from 'react-redux'
 import { Button, Icon } from 'semantic-ui-react'
 import Fieldset from '../../../atoms/Fieldset'
 import { ACTIVE, HIDDEN, DELETED } from '../../../../constants/entites';
 import MultipleExecute from '../../../molecules/MultipleExecute';
-// import { doMultipleExecute } from '../../../../redux/reducers/productTypeReducer';
+import { doMultipleExecute } from '../../../../redux/reducers/productCategoryReducer';
 
 const options = [
     { key: ACTIVE, text: "Display", value: ACTIVE },
@@ -33,19 +32,19 @@ const Render = ({ multipleExecuteLoading, checkedItems = [], onExecuteMultiple }
     </Fieldset>
 )
 
-const ProductTypeAction = () => {
+const ProductAction = () => {
     // const selector = useSelector(({ 
-    //     productTypeReducer: { multipleExecuteLoading, checkedItems } }) => ({ multipleExecuteLoading, checkedItems })
+    //     productCategoryReducer: { multipleExecuteLoading, checkedItems } }) => ({ multipleExecuteLoading, checkedItems })
     // , shallowEqual)
 
-    // const dispatch = useDispatch()
+    const dispatch = useDispatch()
 
     const renderProps = {
-        // ...selector,
-        // onExecuteMultiple: actionValue => dispatch(doMultipleExecute(selector.checkedItems, actionValue))
+        ...selector,
+        onExecuteMultiple: actionValue => dispatch(doMultipleExecute(selector.checkedItems, actionValue))
     }
 
     return <Render {...renderProps} />
 }
 
-export default ProductTypeAction
+export default ProductAction
