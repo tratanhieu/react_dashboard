@@ -64,7 +64,6 @@ const ImageUploads = ({
     ...rest
 }) => {
     const [images, setImages] = useState(dataSources);
-
     const renderProps = {
         ...rest,
         images,
@@ -103,7 +102,6 @@ const ImageUploads = ({
             onChange(images);
         }
     };
-
     return <Render {...renderProps} />;
 };
 
