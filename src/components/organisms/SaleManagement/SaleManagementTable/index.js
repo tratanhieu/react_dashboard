@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { Label } from 'semantic-ui-react'
 import { Image as Img} from "semantic-ui-react";
-impor
+import { formatDateTime } from "../../../../commons/utils";
 
 import {
     TableModule,
@@ -12,7 +12,7 @@ import {
     calcCellWidth
 } from "../../../atoms/TableModule";
 
-import { DEFAULT_STATUS } from '../../../../constants/entites'
+import { SALE_STATUS } from '../../../../constants/entites'
 // REDUX
 import {
     setCheckedItems, fetchWithPaginationAndFilter, getUpdateAction
@@ -22,23 +22,23 @@ const Render = ({
     dataSources, loading, totalPages, defaultActivePage, checkAllItem,
     onChange, onDelete, onChangePage, onCheckItem, onCheckAllItem
 }) => {
-    const cellWidth = calcCellWidth([25, 10, 10, 10, 10, 25, 10], true)
+    const cellWidth = calcCellWidth([25, 10, 10, 10, 10, 20, 15], true)
 
     const TableHeader = () => (
         <>
             <TableHeaderCell width={cellWidth[0]}>
                 Tên Chương trình
             </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[1]} textAlign="center">
+            <TableHeaderCell width={cellWidth[1]}>
                 Ngày BĐ
             </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[2]} textAlign="center">
+            <TableHeaderCell width={cellWidth[2]}>
                 Ngày KT
             </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[3]} textAlign="center">
-                %
+            <TableHeaderCell width={cellWidth[3]}>
+                Phần trăm giảm giá
             </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[4]} textAlign="center">
+            <TableHeaderCell width={cellWidth[4]}>
                 Sản Phẩm Áp Dụng
             </TableHeaderCell>
             <TableHeaderCell width={cellWidth[5]}>
@@ -77,23 +77,23 @@ const Render = ({
                         {item.saleName}
                     </TableCell>
                     <TableCell width={cellWidth[1]}>
-                        {item.startDate.}
+                        {formatDateTime(item.startDate)}
                     </TableCell>
                     <TableCell width={cellWidth[2]}>
-                        {item.endDate}
+                        {formatDateTime(item.endDate)}
                     </TableCell>
                     <TableCell width={cellWidth[3]}>
                         {item.percent}
                     </TableCell>
                     <TableCell width={cellWidth[4]}>
-                        {item.productsSale}
+                        {item.productsSale.length}
                     </TableCell>
                     <TableCell width={cellWidth[5]}>
                         {item.saleCode}
                     </TableCell>
                     <TableCell width={cellWidth[6]} textAlign="center">
-                        <Label color={DEFAULT_STATUS[item.status].color}>
-                            {DEFAULT_STATUS[item.status].text}
+                        <Label color={SALE_STATUS[item.status].color}>
+                            {SALE_STATUS[item.status].text}
                         </Label>
                     </TableCell>
                 </TableRow>
@@ -113,16 +113,32 @@ const ProductBrandTable = () => {
             {
                 saleId: "001",
                 saleName: "Black Friday",
-                startDate: new Date(2019, 11, 26),
-                endDate: new Date(2019, 12, 30),
+                startDate: new Date(2019, 10, 26),
+                endDate: new Date(2019, 11, 30),
                 percent: 20,
                 productsSale: [1, 2, 3, 4],
                 saleCode: "alksjhdacASD",
-                status: "ACTIVE" 
-                // status : {
-                //     color: "red",
-                //     text: "Stop"
-                // }
+                status: "STOP"
+            },
+            {
+                saleId: "002",
+                saleName: "Xmas",
+                startDate: new Date(2019, 11, 5),
+                endDate: new Date(2019, 11, 31),
+                percent: 35,
+                productsSale: [1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+                saleCode: "alksjhdacAS123D",
+                status: "AVAILABLE"
+            },
+            {
+                saleId: "003",
+                saleName: "New Year",
+                startDate: new Date(2020, 0, 1),
+                endDate: new Date(2020, 0, 12),
+                percent: 20,
+                productsSale: [1, 2, 3, 4, 5, 5, 5, 5],
+                saleCode: "alksjhdacAsssSD",
+                status: "UNAVAILABLE"
             }
         ],
         loading: false,

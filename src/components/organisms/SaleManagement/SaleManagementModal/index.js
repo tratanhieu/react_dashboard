@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { Form } from "semantic-ui-react";
-import FormInputSlug from "../../../atoms/FormInputSlug";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import { Form, List } from "semantic-ui-react";
+import FormInput from "../../../atoms/FormInput";
 import ImageUploads from "../../../atoms/ImageUploads";
 import ModalModule from "../../../atoms/ModalModule";
 
 import {
-    doSave, closeModal 
-} from '../../../../redux/reducers/productBrandReducer';
+  doSave,
+  closeModal
+} from "../../../../redux/reducers/productBrandReducer";
 
 const Render = ({
   productBrand: { productBrandId, name, slugName, image = [], status },
@@ -31,27 +32,22 @@ const Render = ({
     onPositive={onPositive}
     {...rest}
   >
-    <Form>
-      <FormInputSlug
-        tabIndex={0}
-        fluid
-        type="text"
-        label="Name"
-        defaultValue={name}
-        defaultSlugValue={slugName}
-        placeholder="Enter name..."
-        valueError={errors.name}
-        slugValueError={errors.slugName}
-        onChange={onChangeName}
-        onChangeSlugValue={onChangeSlugValue}
-        required
-      />
-      <ImageUploads dataSources={image} onChange={onChangeImage} />
-      <Form.Checkbox
-        label="Active"
-        checked={status}
-        onChange={onChangeStatus}
-      />
+    <Form widths="100%">
+      <List horizontal>
+        <List.Item>
+          <FormInput label="Tên chương trình: " />
+        </List.Item>
+        <List.Item>
+          <FormInput
+            type="number"
+            min="1"
+            max="100"
+            label="Phần trăm giảm giá: "
+          />
+        </List.Item>
+      </List>
+      <FormInput type="datetime-local" label="Ngày bắt đầu: " />
+      <FormInput type="datetime-local" label="Ngày kết thúc: " />
     </Form>
   </ModalModule>
 );
@@ -94,7 +90,7 @@ const ProductBrandModal = ({ onPositive, ...rest }) => {
         ...productBrand,
         name: input.value,
         slugName: slugName ? slugName : productBrand.slugName
-      })
+      });
     },
     onChangeSlugValue: (slugName, error) => {
       setProductBrand({
@@ -102,12 +98,12 @@ const ProductBrandModal = ({ onPositive, ...rest }) => {
         slugName
       });
     },
-    onChangeImage: images =>{
+    onChangeImage: images => {
       setProductBrand({
         ...productBrand,
         image: images
-      })
-  },
+      });
+    },
     onChangeStatus: (_, checkbox) =>
       setProductBrand({
         ...productBrand,

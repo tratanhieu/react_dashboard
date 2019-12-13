@@ -8,7 +8,7 @@ const Render = ({ onClickNew }) => {
         <Grid columns="equal" padded="vertically">
             <Grid.Row>
                 <Grid.Column textAlign="left" verticalAlign="middle">
-                    <h1>Danh sách</h1>
+                    <h1>Danh sách chương trình khuyến mãi</h1>
                 </Grid.Column>
                 <Grid.Column>
                     <Button icon primary floated="right" labelPosition="left"
