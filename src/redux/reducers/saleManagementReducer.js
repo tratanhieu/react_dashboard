@@ -29,12 +29,57 @@ const initialState = {
     percent: 0,
     startDate: new Date(),
     endDate: new Date(),
-    applyAll: false,
     selectedItem: []
   },
-  SaleList: [],
+  applyStatus: "",
+  codeStatus: false,
+  saleList: [],
   checkedItems: [],
   totalPages: 0,
+  dataSources: [
+    {
+      brand_id: 10,
+      name: "Samsung",
+      slugName: "/samsung",
+      email: "sjhdj@gmail.com",
+      status: "ACTIVE"
+    },
+    {
+      brand_id: 10,
+      name: "Samsung",
+      slugName: "/samsung",
+      email: "sjhdj@gmail.com",
+      status: "ACTIVE"
+    },
+    {
+      brand_id: 10,
+      name: "Samsung",
+      slugName: "/samsung",
+      email: "sjhdj@gmail.com",
+      status: "ACTIVE"
+    },
+    {
+      brand_id: 10,
+      name: "Samsung",
+      slugName: "/samsung",
+      email: "sjhdj@gmail.com",
+      status: "ACTIVE"
+    },
+    {
+      brand_id: 10,
+      name: "Samsung",
+      slugName: "/samsung",
+      email: "sjhdj@gmail.com",
+      status: "ACTIVE"
+    },
+    {
+      brand_id: 10,
+      name: "Samsung",
+      slugName: "/samsung",
+      email: "sjhdj@gmail.com",
+      status: "ACTIVE"
+    }
+  ],
   page: 1,
   errors: {
     name: "",
@@ -48,6 +93,8 @@ const LIST_LOADING = createAction("LIST_LOADING");
 const RELOAD = createAction("RELOAD");
 const PREPARE_DATA = createAction("PREPARE_DATA");
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS");
+const UPDATE_APPLY_STATUS = createAction("UPDATE_APPLY_STATUS");
+const UPDATE_CODE_STATUS = createAction("UPDATE_CODE_STATUS");
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS");
 const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING");
 const MODAL_FORM_GET_CREATE_ACTION = createAction(
@@ -113,6 +160,10 @@ const doUpdate = sale => async dispatch => {
 
 const updateFilters = filters => ({ type: UPDATE_FILTERS, filters });
 
+const updateApplyStatus = status => ({ type: UPDATE_APPLY_STATUS, status });
+
+const updateCodeStatus = status => ({ type: UPDATE_CODE_STATUS, status });
+
 export const doMultipleExecute = (listId, status) => async dispatch => {
   const params = { listId, status };
   dispatch(resetSystemErrors());
@@ -170,6 +221,14 @@ export const setFilters = filters => async dispatch => {
   dispatch(fetchWithPaginationAndFilter(filters, 1));
 };
 
+export const setApplyStatus = status => async dispatch => {
+  dispatch(updateApplyStatus(status));
+};
+
+export const setCodeStatus = status => async dispatch => {
+  dispatch(updateCodeStatus(status));
+};
+
 export const closeModal = () => ({ type: CLOSE_MODAL });
 
 export const setCheckedItems = checkedItems => ({
@@ -178,7 +237,7 @@ export const setCheckedItems = checkedItems => ({
 });
 
 export default function(state = initialState, action) {
-//   console.log(action.type);
+  //   console.log(action.type);
   try {
     switch (action.type) {
       case LIST_LOADING:
@@ -256,6 +315,16 @@ export default function(state = initialState, action) {
             ...state.errors,
             ...action.errors.response.data
           }
+        };
+      case UPDATE_APPLY_STATUS:
+        return {
+          ...state,
+          applyStatus: action.status
+        };
+      case UPDATE_CODE_STATUS:
+        return {
+          ...state,
+          codeStatus: action.status
         };
       default:
         return {

@@ -8,7 +8,7 @@ const DatePickerModule = ({
     label,
     fluid = false,
     onChange,
-    value = new Date(),
+    value,
     ...rest
 }) => {
     const datePicker = useRef(null);

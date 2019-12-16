@@ -19,27 +19,31 @@ import {
   doSave,
   closeModal
 } from "../../../../redux/reducers/saleManagementReducer";
+import {
+  setApplyStatus,
+  setCodeStatus
+} from "../../../../redux/reducers/saleManagementReducer";
 
+const listApplyStatus = [
+  { key: "ALL", label: "Áp dụng cho tất cả sản phẩm" },
+  { key: "CUSTOM", label: "Chọn sản phẩm áp dụng" }
+];
 const Render = ({
-  sale: {
-    saleId,
-    name,
-    codeStatus,
-    codeDetails,
-    percent,
-    startDate,
-    endDate,
-    applyAll,
-    selectedItem
-  },
+  sale: { saleId, name, code, percent, startDate, endDate, selectedItem },
+  applyStatus,
   openModal,
+  codeStatus,
   formLoading,
   modalFormSuccessMessage,
   onPositive,
   onClose,
   onChangeName,
   onChangeStatusCode,
-  onChangeStatus,
+  onChangeCode,
+  onChangeApplyStatus,
+  onChangeStartDate,
+  onChangeEndDate,
+  onChangePercent,
   onChangeSlugValue,
   errors = {},
   dataSources,
@@ -73,7 +77,8 @@ const Render = ({
               label="Mã giảm giá: "
               placeholder="Nhập mã giảm giá"
               style={{ paddingBottom: "10px" }}
-              disabled={codeStatus ? "true" : "false"}
+              disabled={codeStatus ? false : true}
+              onChange={onChangeCode}
             />
             <Form.Group inline={true}>
               <Form.Checkbox
@@ -84,7 +89,7 @@ const Render = ({
               <Form.Button
                 icon
                 size="mini"
-                disabled={codeStatus ? "true" : "false"}
+                disabled={codeStatus ? false : true}
               >
                 Ngẫu nhiên
               </Form.Button>
@@ -97,37 +102,61 @@ const Render = ({
             label="Phần trăm: "
             placeholder="%"
             width={4}
+            onChange={onChangePercent}
           />
         </Form.Group>
         <Form.Group widths={2}>
-          <DatePickerModule label="Thời điểm bắt đầu: " />
-          <DatePickerModule label="Thời điểm kết thúc: " />
+          <DatePickerModule
+            label="Thời điểm bắt đầu: "
+            onChange={onChangeStartDate}
+            onSelected={onChangeStartDate}
+            value={startDate}
+          />
+          <DatePickerModule
+            label="Thời điểm kết thúc: "
+            onChange={onChangeEndDate}
+            onSelected={onChangeEndDate}
+            value={endDate}
+          />
         </Form.Group>
         <Form.Group>
-          <Form.Radio label="Áp dụng cho tất cả sản phẩm" value="all" />
-          <Form.Radio label="Chọn sản phẩm áp dụng" value="single" />
+          {listApplyStatus.map(item => (
+            <Form.Radio
+              key={item.key}
+              label={item.label}
+              value={item.key}
+              checked={applyStatus === item.key}
+              onChange={onChangeApplyStatus}
+            />
+          ))}
         </Form.Group>
-        <Form.Group widths={3}>
-          <Form.Select label="Theo danh mục" />
-          <Form.Select label="Theo nhóm loại sản phẩm" />
-          <Form.Select label="Theo loại sản phẩm" />
-        </Form.Group>
+        {applyStatus === "CUSTOM" ? (
+          <div>
+            <Form.Group widths={3}>
+              <Form.Select label="Theo danh mục" />
+              <Form.Select label="Theo nhóm loại sản phẩm" />
+              <Form.Select label="Theo loại sản phẩm" />
+            </Form.Group>
+            <SaleTable
+              loading={false}
+              showCheckbox
+              header={<TableHeader />}
+              currentItems={dataSources.length}
+              emptyColSpan={3}
+              counter={selectedItem.length}
+              style={{ height: "200px" }}
+            >
+              {dataSources.map((item, index) => (
+                <TableRow key={index} showCheckbox checked={item.checked}>
+                  <TableCell width={cellWidth[0]}>{item.name}</TableCell>
+                </TableRow>
+              ))}
+            </SaleTable>
+          </div>
+        ) : (
+          ""
+        )}
       </Form>
-      <SaleTable
-        loading={false}
-        showCheckbox
-        header={<TableHeader />}
-        currentItems={dataSources.length}
-        emptyColSpan={3}
-        counter={selectedItem.length}
-        style={{ height: "200px" }}
-      >
-        {dataSources.map((item, index) => (
-          <TableRow key={index} showCheckbox checked={item.checked}>
-            <TableCell width={cellWidth[0]}>{item.name}</TableCell>
-          </TableRow>
-        ))}
-      </SaleTable>
     </ModalModule>
   );
 };
@@ -139,14 +168,20 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
         openModal,
         modalFormSuccessMessage,
         formLoading,
-        sale,
+        // sale,
+        dataSources,
+        applyStatus,
+        codeStatus,
         errors
       }
     }) => ({
       openModal,
       formLoading,
       modalFormSuccessMessage,
-      sale,
+      // sale,
+      dataSources,
+      applyStatus,
+      codeStatus,
       errors
     }),
     shallowEqual
@@ -154,69 +189,19 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
 
   const [sale, setSale] = useState({
     name: "",
-    codeStatus: false,
-    codeDetails: "",
+    code: "",
     percent: 0,
     startDate: new Date(),
-    endDate: new Date(),
-    applyAll: false,
-    selectedItem: [],
-    dataSources: [
-      {
-        brand_id: 10,
-        name: "Samsung",
-        slugName: "/samsung",
-        email: "sjhdj@gmail.com",
-        status: "ACTIVE"
-      },
-      {
-        brand_id: 10,
-        name: "Samsung",
-        slugName: "/samsung",
-        email: "sjhdj@gmail.com",
-        status: "ACTIVE"
-      },
-      {
-        brand_id: 10,
-        name: "Samsung",
-        slugName: "/samsung",
-        email: "sjhdj@gmail.com",
-        status: "ACTIVE"
-      },
-      {
-        brand_id: 10,
-        name: "Samsung",
-        slugName: "/samsung",
-        email: "sjhdj@gmail.com",
-        status: "ACTIVE"
-      },
-      {
-        brand_id: 10,
-        name: "Samsung",
-        slugName: "/samsung",
-        email: "sjhdj@gmail.com",
-        status: "ACTIVE"
-      },
-      {
-        brand_id: 10,
-        name: "Samsung",
-        slugName: "/samsung",
-        email: "sjhdj@gmail.com",
-        status: "ACTIVE"
-      }
-    ]
+    endDate: new Date("2020/02/20"),
+    selectedItem: []
   });
 
   const dispatch = useDispatch();
 
-  useEffect( () => {
-    console.log("aaa")
-  })
-
   const renderProps = {
     ...rest,
     ...selector,
-    ...sale,
+    sale,
     onChangeName: (_, input) =>
       setSale({
         ...sale,
@@ -224,23 +209,50 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
       }),
 
     onChangeStatusCode: (_, checkbox) =>
+      dispatch(setCodeStatus(checkbox.checked)),
+
+    onChangeCode: (_, input) =>
       setSale({
         ...sale,
-        codeStatus: checkbox.checked,
+        code: input.value
       }),
+
+    onChangePercent: (_, input) =>
+      setSale({
+        ...sale,
+        percent: input.value
+      }),
+
+    onChangeStartDate: date => {
+      setSale({
+        ...sale,
+        startDate: date
+      });
+    },
+
+    onChangeEndDate: date => {
+      setSale({
+        ...sale,
+        endDate: date
+      });
+    },
+
+    onChangeApplyStatus: (_, radio) => dispatch(setApplyStatus(radio.value)),
+
     onChangeImage: images =>
       setSale({
         ...sale,
         image: images
       }),
+
     onChangeStatus: (_, checkbox) =>
       setSale({
-        ...sale,
+        ...sale
       }),
-    // onPositive: _ => dispatch(doSave(sale)),
+    onPositive: _ => dispatch(doSave(sale)),
     onClose: _ => dispatch(closeModal())
   };
-  console.log(sale);
+  console.log(renderProps);
   return <Render {...renderProps} />;
 };
 

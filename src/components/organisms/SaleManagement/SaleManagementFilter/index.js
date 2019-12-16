@@ -5,7 +5,7 @@ import { Form, Select, Button, Icon } from "semantic-ui-react";
 import Fieldset from "../../../atoms/Fieldset";
 import PageSearch from "../../../molecules/PageSearch";
 import FilterBar from "../../../molecules/FilterBar";
-import { setFilters } from "../../../../redux/reducers/productCategoryReducer";
+import { setFilters } from "../../../../redux/reducers/saleManagementReducer";
 
 const options = [
     { key: "m", text: "Male", value: "male" },
