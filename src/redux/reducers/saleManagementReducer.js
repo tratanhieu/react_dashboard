@@ -29,14 +29,14 @@ const initialState = {
     percent: 0,
     startDate: new Date(),
     endDate: new Date(),
-    selectedItem: []
+    selectedItems: []
   },
-  applyStatus: "",
+  applyStatus: "ALL",
   codeStatus: false,
   saleList: [],
   checkedItems: [],
   totalPages: 0,
-  dataSources: [
+  listItems: [
     {
       brand_id: 10,
       name: "Samsung",
@@ -80,7 +80,25 @@ const initialState = {
       status: "ACTIVE"
     }
   ],
+  selectBox: {
+    categories: [
+      { key: "d", text: "Drinks", value: "drinks" },
+      { key: "e", text: "Electrical", value: "electrical" },
+      { key: "f", text: "Foods", value: "foods" }
+    ],
+    groupTypes: [
+      { key: "m", text: "Male", value: "male" },
+      { key: "f", text: "Female", value: "female" },
+      { key: "o", text: "Other", value: "other" }
+    ],
+    groups:[
+      { key: "m", text: "Male", value: "male" },
+      { key: "f", text: "Female", value: "female" },
+      { key: "o", text: "Other", value: "other" }
+    ]
+  },
   page: 1,
+
   errors: {
     name: "",
     slugName: ""
@@ -96,6 +114,7 @@ const UPDATE_FILTERS = createAction("UPDATE_FILTERS");
 const UPDATE_APPLY_STATUS = createAction("UPDATE_APPLY_STATUS");
 const UPDATE_CODE_STATUS = createAction("UPDATE_CODE_STATUS");
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS");
+const SET_SELECTED_ITEMS = createAction("SET_SELECTED_ITEMS");
 const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING");
 const MODAL_FORM_GET_CREATE_ACTION = createAction(
   "MODAL_FORM_GET_CREATE_ACTION"
@@ -236,6 +255,11 @@ export const setCheckedItems = checkedItems => ({
   checkedItems
 });
 
+export const setSelectedItems = selectedItems => ({
+  type: SET_SELECTED_ITEMS,
+  selectedItems
+});
+
 export default function(state = initialState, action) {
   //   console.log(action.type);
   try {
@@ -275,11 +299,16 @@ export default function(state = initialState, action) {
           ...state,
           filters: action.filters
         };
-      case SET_CHECKED_ITEMS:
-        return {
-          ...state,
-          checkedItems: action.checkedItems
-        };
+        case SET_CHECKED_ITEMS:
+          return {
+            ...state,
+            checkedItems: action.checkedItems
+          };
+          case SET_SELECTED_ITEMS:
+            return {
+              ...state,
+              selectedItems: action.selectedItems
+            };
       case MODAL_FORM_GET_CREATE_ACTION:
         return {
           ...state,

@@ -17,11 +17,10 @@ import { DEFAULT_STATUS } from "../../../../constants/entites";
 
 import {
   doSave,
-  closeModal
-} from "../../../../redux/reducers/saleManagementReducer";
-import {
+  closeModal,
   setApplyStatus,
-  setCodeStatus
+  setCodeStatus,
+  setSelectedItems
 } from "../../../../redux/reducers/saleManagementReducer";
 
 const listApplyStatus = [
@@ -29,9 +28,11 @@ const listApplyStatus = [
   { key: "CUSTOM", label: "Chọn sản phẩm áp dụng" }
 ];
 const Render = ({
-  sale: { saleId, name, code, percent, startDate, endDate, selectedItem },
+  sale: { saleId, name, code, percent, startDate, endDate, selectedItems },
   applyStatus,
   openModal,
+  loading,
+  checkAllItem,
   codeStatus,
   formLoading,
   modalFormSuccessMessage,
@@ -44,7 +45,10 @@ const Render = ({
   onChangeStartDate,
   onChangeEndDate,
   onChangePercent,
-  onChangeSlugValue,
+  onClickRandomCode,
+  onCheckAllItem,
+  onCheckItem,
+  selectBox,
   errors = {},
   dataSources,
   ...rest
@@ -77,6 +81,7 @@ const Render = ({
               label="Mã giảm giá: "
               placeholder="Nhập mã giảm giá"
               style={{ paddingBottom: "10px" }}
+              value={code}
               disabled={codeStatus ? false : true}
               onChange={onChangeCode}
             />
@@ -90,6 +95,7 @@ const Render = ({
                 icon
                 size="mini"
                 disabled={codeStatus ? false : true}
+                onClick={onClickRandomCode}
               >
                 Ngẫu nhiên
               </Form.Button>
@@ -131,28 +137,42 @@ const Render = ({
           ))}
         </Form.Group>
         {applyStatus === "CUSTOM" ? (
-          <div>
+          <Form.Field>
             <Form.Group widths={3}>
-              <Form.Select label="Theo danh mục" />
-              <Form.Select label="Theo nhóm loại sản phẩm" />
-              <Form.Select label="Theo loại sản phẩm" />
+              <Form.Select
+                label="Theo danh mục"
+                options={selectBox.categories}
+                placeholder="Danh mục"
+              />
+              <Form.Select
+                label="Theo nhóm loại sản phẩm"
+                options={selectBox.groupTypes}
+                placeholder="Nhóm loại sản phẩm"
+              />
+              <Form.Select
+                label="Theo loại sản phẩm"
+                options={selectBox.groups}
+                placeholder="Loại sản phẩm"
+              />
             </Form.Group>
             <SaleTable
-              loading={false}
+              loading={loading}
               showCheckbox
               header={<TableHeader />}
               currentItems={dataSources.length}
               emptyColSpan={3}
-              counter={selectedItem.length}
-              style={{ height: "200px" }}
+              counter={selectedItems.length}
+              checkAllItem={checkAllItem}
+              onCheckAllItem={checked => onCheckAllItem(checked)}
             >
               {dataSources.map((item, index) => (
-                <TableRow key={index} showCheckbox checked={item.checked}>
+                <TableRow key={index} showCheckbox checked={item.checked} 
+                onChange={onCheckItem} >
                   <TableCell width={cellWidth[0]}>{item.name}</TableCell>
                 </TableRow>
               ))}
             </SaleTable>
-          </div>
+          </Form.Field>
         ) : (
           ""
         )}
@@ -168,20 +188,24 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
         openModal,
         modalFormSuccessMessage,
         formLoading,
-        // sale,
-        dataSources,
+        sale,
+        listItems,
         applyStatus,
+        // loading,
         codeStatus,
+        selectBox,
         errors
       }
     }) => ({
       openModal,
       formLoading,
       modalFormSuccessMessage,
-      // sale,
-      dataSources,
+      sale,
+      listItems,
       applyStatus,
+      // loading,
       codeStatus,
+      selectBox,
       errors
     }),
     shallowEqual
@@ -192,14 +216,33 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
     code: "",
     percent: 0,
     startDate: new Date(),
-    endDate: new Date("2020/02/20"),
-    selectedItem: []
+    endDate: new Date(),
+    selectedItems: []
+  });
+
+  const [state, setState] = useState({
+    checkAllItem: true,
+    dataSources: [],
+    loading: false
   });
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    setState({
+      ...state,
+      checkAllItem: false,
+      dataSources: selector.listItems.map(item => ({
+        ...item,
+        checked: false
+      }))
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selector.listItems]);
+
   const renderProps = {
     ...rest,
+    ...state,
     ...selector,
     sale,
     onChangeName: (_, input) =>
@@ -220,39 +263,62 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
     onChangePercent: (_, input) =>
       setSale({
         ...sale,
-        percent: input.value
+        percent: parseInt(input.value)
       }),
 
-    onChangeStartDate: date => {
+    onChangeStartDate: date =>
       setSale({
         ...sale,
         startDate: date
-      });
-    },
+      }),
 
-    onChangeEndDate: date => {
+    onChangeEndDate: date =>
       setSale({
         ...sale,
         endDate: date
-      });
-    },
+      }),
 
     onChangeApplyStatus: (_, radio) => dispatch(setApplyStatus(radio.value)),
 
-    onChangeImage: images =>
+    onClickRandomCode: () =>
       setSale({
         ...sale,
-        image: images
+        code: Math.random()
+          .toString(36)
+          .substring(3)
+          .toUpperCase()
       }),
-
-    onChangeStatus: (_, checkbox) =>
-      setSale({
-        ...sale
-      }),
+    onCheckItem: (index, checked) => {
+      let selectedItems = [];
+      state.dataSources[index].checked = checked;
+      state.dataSources.forEach(item =>
+        item.checked === true ? selectedItems.push(item.productBrandId) : null
+      );
+      state.checkAllItem = selectedItems.length === state.dataSources.length;
+      setState({ ...state });
+      dispatch(setSelectedItems(selectedItems));
+    },
+    onCheckAllItem: checkAllItem => {
+      let selectedItems = [];
+      setState({
+        ...state,
+        checkAllItem,
+        dataSources: state.dataSources.map(item => {
+          if (checkAllItem) {
+            selectedItems.push(item.productBrandId);
+          }
+          return {
+            ...item,
+            checked: item.checked !== checkAllItem ? checkAllItem : item.checked
+          };
+        })
+      });
+      dispatch(setSelectedItems(selectedItems));
+    },
     onPositive: _ => dispatch(doSave(sale)),
     onClose: _ => dispatch(closeModal())
   };
-  console.log(renderProps);
+  console.log(sale);
   return <Render {...renderProps} />;
 };
 
