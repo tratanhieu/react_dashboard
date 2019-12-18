@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
-import { Form, Label } from "semantic-ui-react";
+import { Form } from "semantic-ui-react";
 import FormInput from "../../../atoms/FormInput";
 import ModalModule from "../../../atoms/ModalModule";
 import DatePickerModule from "../../../atoms/DatePickerModule";
@@ -13,14 +13,11 @@ import {
   calcCellWidth
 } from "../../../atoms/SaleTable";
 
-import { DEFAULT_STATUS } from "../../../../constants/entites";
-
 import {
   doSave,
   closeModal,
   setApplyStatus,
-  setCodeStatus,
-  setSelectedItems
+  setCodeStatus
 } from "../../../../redux/reducers/saleManagementReducer";
 
 const listApplyStatus = [
@@ -63,7 +60,11 @@ const Render = ({
   return (
     <ModalModule
       size="small"
-      title={saleId ? "Update" : "Create"}
+      title={
+        saleId
+          ? "Cập nhật chương trình khuyến mãi"
+          : "Tạo chương trình khuyến mãi"
+      }
       open={openModal}
       onClose={onClose}
       onPositive={onPositive}
@@ -73,7 +74,9 @@ const Render = ({
         <FormInput
           label="Tên chương trình: "
           placeholder="Nhập tên chương trình"
+          value={name}
           onChange={onChangeName}
+          required
         />
         <Form.Group>
           <Form.Field width={12}>
@@ -109,6 +112,8 @@ const Render = ({
             placeholder="%"
             width={4}
             onChange={onChangePercent}
+            value={percent}
+            required
           />
         </Form.Group>
         <Form.Group widths={2}>
@@ -166,8 +171,13 @@ const Render = ({
               onCheckAllItem={checked => onCheckAllItem(checked)}
             >
               {dataSources.map((item, index) => (
-                <TableRow key={index} showCheckbox checked={item.checked} 
-                onChange={onCheckItem} >
+                <TableRow
+                  key={index}
+                  showCheckbox
+                  checked={item.checked}
+                  onChange={onCheckItem}
+                  onCheckItem={checked => onCheckItem(index, checked)}
+                >
                   <TableCell width={cellWidth[0]}>{item.name}</TableCell>
                 </TableRow>
               ))}
@@ -190,9 +200,7 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
         formLoading,
         sale,
         listItems,
-        applyStatus,
         // loading,
-        codeStatus,
         selectBox,
         errors
       }
@@ -202,28 +210,34 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
       modalFormSuccessMessage,
       sale,
       listItems,
-      applyStatus,
       // loading,
-      codeStatus,
       selectBox,
       errors
     }),
     shallowEqual
   );
 
-  const [sale, setSale] = useState({
-    name: "",
-    code: "",
-    percent: 0,
-    startDate: new Date(),
-    endDate: new Date(),
-    selectedItems: []
-  });
+  const [sale, setSale] = useState(
+    Object.keys(selector.sale).length
+      ? {
+          ...selector.sale
+        }
+      : {
+          name: "",
+          code: "",
+          percent: "",
+          startDate: new Date(),
+          endDate: new Date(),
+          selectedItems: []
+        }
+  );
 
   const [state, setState] = useState({
-    checkAllItem: true,
-    dataSources: [],
-    loading: false
+    checkAllItem: false,
+    dataSources: {},
+    loading: false,
+    applyStatus: "ALL",
+    codeStatus: false,
   });
 
   const dispatch = useDispatch();
@@ -231,14 +245,24 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
   useEffect(() => {
     setState({
       ...state,
-      checkAllItem: false,
-      dataSources: selector.listItems.map(item => ({
-        ...item,
-        checked: false
-      }))
+      checkAllItem: sale.selectedItems.length === selector.listItems.length ? true : false,
+      dataSources: selector.listItems.map(item => {
+        let boolean = false;
+        sale.selectedItems.forEach(sItem => {
+          if (sItem === item.saleId) {
+            boolean = true;
+          }
+        });
+        return {
+          ...item,
+          checked: boolean
+        };
+      }),
+      codeStatus: sale.code ? true : false,
+      applyStatus: sale.selectedItems.length === 0 ? "ALL" : "CUSTOM",
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selector.listItems]);
+  }, [selector.listItems, sale.selectedItems, sale.code]);
 
   const renderProps = {
     ...rest,
@@ -251,8 +275,7 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
         name: input.value
       }),
 
-    onChangeStatusCode: (_, checkbox) =>
-      dispatch(setCodeStatus(checkbox.checked)),
+    onChangeStatusCode: (_, checkbox) => setState({...state, codeStatus: checkbox.checked}),
 
     onChangeCode: (_, input) =>
       setSale({
@@ -278,7 +301,7 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
         endDate: date
       }),
 
-    onChangeApplyStatus: (_, radio) => dispatch(setApplyStatus(radio.value)),
+    onChangeApplyStatus: (_, radio) => setState({...state, applyStatus: radio.value}),
 
     onClickRandomCode: () =>
       setSale({
@@ -289,14 +312,14 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
           .toUpperCase()
       }),
     onCheckItem: (index, checked) => {
-      let selectedItems = [];
+      let arr = [];
       state.dataSources[index].checked = checked;
       state.dataSources.forEach(item =>
-        item.checked === true ? selectedItems.push(item.productBrandId) : null
+        item.checked === true ? arr.push(item.saleId) : null
       );
-      state.checkAllItem = selectedItems.length === state.dataSources.length;
+      state.checkAllItem = arr.length === state.dataSources.length;
       setState({ ...state });
-      dispatch(setSelectedItems(selectedItems));
+      setSale({ ...sale, selectedItems: arr });
     },
     onCheckAllItem: checkAllItem => {
       let selectedItems = [];
@@ -305,7 +328,7 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
         checkAllItem,
         dataSources: state.dataSources.map(item => {
           if (checkAllItem) {
-            selectedItems.push(item.productBrandId);
+            selectedItems.push(item.saleId);
           }
           return {
             ...item,
@@ -313,12 +336,19 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
           };
         })
       });
-      dispatch(setSelectedItems(selectedItems));
+      setSale({ ...sale, selectedItems });
     },
-    onPositive: _ => dispatch(doSave(sale)),
+    onPositive: _ => {
+      if (!selector.codeStatus) {
+        setSale({ ...sale, code: "" });
+      }
+      if (selector.applyStatus === "ALL") {
+        setSale({ ...sale, selectedItems: [] });
+      }
+      return dispatch(doSave(sale));
+    },
     onClose: _ => dispatch(closeModal())
   };
-  console.log(sale);
   return <Render {...renderProps} />;
 };
 

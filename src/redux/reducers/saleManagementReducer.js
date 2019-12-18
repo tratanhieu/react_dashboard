@@ -21,59 +21,48 @@ const initialState = {
   formLoading: false,
   openModal: true,
   sale: {
-    name: "",
-    code: {
-      status: false,
-      details: ""
-    },
-    percent: 0,
-    startDate: new Date(),
-    endDate: new Date(),
-    selectedItems: []
   },
-  applyStatus: "ALL",
-  codeStatus: false,
   saleList: [],
   checkedItems: [],
   totalPages: 0,
   listItems: [
     {
-      brand_id: 10,
+      saleId: 10,
       name: "Samsung",
       slugName: "/samsung",
       email: "sjhdj@gmail.com",
       status: "ACTIVE"
     },
     {
-      brand_id: 10,
+      saleId: 11,
       name: "Samsung",
       slugName: "/samsung",
       email: "sjhdj@gmail.com",
       status: "ACTIVE"
     },
     {
-      brand_id: 10,
+      saleId: 12,
       name: "Samsung",
       slugName: "/samsung",
       email: "sjhdj@gmail.com",
       status: "ACTIVE"
     },
     {
-      brand_id: 10,
+      saleId: 13,
       name: "Samsung",
       slugName: "/samsung",
       email: "sjhdj@gmail.com",
       status: "ACTIVE"
     },
     {
-      brand_id: 10,
+      saleId: 15,
       name: "Samsung",
       slugName: "/samsung",
       email: "sjhdj@gmail.com",
       status: "ACTIVE"
     },
     {
-      brand_id: 10,
+      saleId: 14,
       name: "Samsung",
       slugName: "/samsung",
       email: "sjhdj@gmail.com",
@@ -91,7 +80,7 @@ const initialState = {
       { key: "f", text: "Female", value: "female" },
       { key: "o", text: "Other", value: "other" }
     ],
-    groups:[
+    groups: [
       { key: "m", text: "Male", value: "male" },
       { key: "f", text: "Female", value: "female" },
       { key: "o", text: "Other", value: "other" }
@@ -216,7 +205,8 @@ export const fetchWithPaginationAndFilter = (
 export const doSave = sale => async dispatch => {
   dispatch(resetSystemErrors());
   dispatch(formLoading(true));
-  const { saleId, name, slugName, status } = sale;
+  const { saleId, code, percent, startDate, endDate, selectedItems } = sale;
+  console.log(sale);
   // if (!saleId) {
   //     dispatch(doCreate({ name, slugName, status }))
   // } else {
@@ -299,16 +289,16 @@ export default function(state = initialState, action) {
           ...state,
           filters: action.filters
         };
-        case SET_CHECKED_ITEMS:
-          return {
-            ...state,
-            checkedItems: action.checkedItems
-          };
-          case SET_SELECTED_ITEMS:
-            return {
-              ...state,
-              selectedItems: action.selectedItems
-            };
+      case SET_CHECKED_ITEMS:
+        return {
+          ...state,
+          checkedItems: action.checkedItems
+        };
+      case SET_SELECTED_ITEMS:
+        return {
+          ...state,
+          selectedItems: action.selectedItems
+        };
       case MODAL_FORM_GET_CREATE_ACTION:
         return {
           ...state,
@@ -344,16 +334,6 @@ export default function(state = initialState, action) {
             ...state.errors,
             ...action.errors.response.data
           }
-        };
-      case UPDATE_APPLY_STATUS:
-        return {
-          ...state,
-          applyStatus: action.status
-        };
-      case UPDATE_CODE_STATUS:
-        return {
-          ...state,
-          codeStatus: action.status
         };
       default:
         return {
