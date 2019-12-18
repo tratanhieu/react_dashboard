@@ -107,7 +107,6 @@ const ImageUploads = ({
             onChange(images);
         }
     };
-
     return <Render {...renderProps} />;
 };
 

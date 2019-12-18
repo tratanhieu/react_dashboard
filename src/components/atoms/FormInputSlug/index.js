@@ -31,7 +31,8 @@ const FormInputSlug = ({
         if (!state.tempSlugValue) {
             setState({ ...state, slugValue, valueError: "", slugValueError: "" });
         }
-        onChange(e, input, error);
+        state.tempSlugValue ? onChange(e, input, error) : onChange(e, input, slugValue, error);
+        
     };
 
     const handleChangeSlugValue = (_, input, error) => {
@@ -40,7 +41,10 @@ const FormInputSlug = ({
         onChangeSlugValue(tempSlugValue, error);
     };
 
-    const handleCancel = () => setState({ ...state, edit: false });
+    const handleCancel = () => {
+        onChangeSlugValue(state.slugValue);
+        setState({ ...state, edit: false });
+    }
 
     const ButtonLink = props => (
         <button {...props}>

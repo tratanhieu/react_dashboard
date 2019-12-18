@@ -4,11 +4,11 @@ import { ACTIVE } from '../../constants/entites';
 import { handleErrors, resetSystemErrors } from './rootReducer';
 
 // API
-const URL_PATH = `${REDUX_API_URL}/product/category`
+const URL_PATH = `${REDUX_API_URL}/sale`
 
-const prefix = 'PRODUCT_CATEGORY_'
+const prefix = 'SALE_'
 
-export const initialState = {
+const initialState = {
     loading: true,
     reload: false,
     modalFormSuccessMessage: '',
@@ -20,15 +20,13 @@ export const initialState = {
     multipleExecuteLoading: false,
     formLoading: false,
     openModal: false,
-    productCategoryList: [],
+    SaleManagementList: [],
     checkedItems: [],
     totalPages: 0,
     page: 1,
-    productCategory: {
-        status: ACTIVE
-    },
     errors: {
-        name: ''
+        name: '',
+        slugName: ''
     }
 }
 
@@ -48,9 +46,9 @@ const MULTIPLE_EXECUTE_LOADING = createAction("MULTIPLE_EXECUTE_LOADING")
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 
 const listLoading = loading => ({ type: LIST_LOADING, loading })
-const prepareData = ({ listData: productCategoryList, totalPage, pageSize, page }) => ({
+const prepareData = ({ listData: saleList, totalPage, pageSize, page }) => ({
     type: PREPARE_DATA,
-    productCategoryList,
+    saleList,
     totalPage,
     pageSize,
     page
@@ -59,34 +57,34 @@ const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
 
-const setProductCategory = (productCategory, openModal) => ({ type: SET_PRODUCT_CATEGORY, productCategory, openModal})
+const setsale = (sale, openModal) => ({ type: SET_PRODUCT_CATEGORY, sale, openModal})
 
 const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
 
-const doCreate = productCategory => async dispatch => {
-    const params = JSON.stringify(productCategory)
-    axios.post(`${URL_PATH}/create`, params, {
-        timeout: 5000,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(_ => dispatch(modalFormSuccessMessage("Product Category is created successfully!!")))
-    .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(formLoading(false)))
+const doCreate = sale => async dispatch => {
+    const params = JSON.stringify(sale)
+    // axios.post(`${URL_PATH}/create`, params, {
+    //     timeout: 5000,
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     }
+    // }).then(_ => dispatch(modalFormSuccessMessage("Product Category is created successfully!!")))
+    // .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
+    // .finally(_ => dispatch(formLoading(false)))
 }
 
-const doUpdate = productCategory => async dispatch => {
-    const params = JSON.stringify(productCategory)
-    return axios.post(
-        `${URL_PATH}/${productCategory.productCategoryId}/update`, params, { 
-            timeout: 5000,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-    ).then(_ => dispatch(modalFormSuccessMessage("Product Category is update successfully!!")))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(formLoading(false)))
+const doUpdate = sale => async dispatch => {
+    const params = JSON.stringify(sale)
+    // return axios.post(
+    //     `${URL_PATH}/${sale.saleId}/update`, params, { 
+    //         timeout: 5000,
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         }
+    //     }
+    // ).then(_ => dispatch(modalFormSuccessMessage("Product Category is update successfully!!")))
+    // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    // .finally(_ => dispatch(formLoading(false)))
 }
 
 const updateFilters = filters => ({ type: UPDATE_FILTERS, filters })
@@ -95,51 +93,49 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
     const params = { listId, status }
     dispatch(resetSystemErrors())
     dispatch(setMultipleExecuteLoading(true))
-    return axios.post(`${URL_PATH}/execute`, params, {
-        timeout: 5000,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(_ => dispatch(setCheckedItems([])))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(setMultipleExecuteLoading(false)))
+    // return axios.post(`${URL_PATH}/execute`, params, {
+    //     timeout: 5000,
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     }
+    // })
+    // .then(_ => dispatch(setCheckedItems([])))
+    // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    // .finally(_ => dispatch(setMultipleExecuteLoading(false)))
 }
 
 export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
-    // console.log(filters, page)
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${URL_PATH}?search=${filters.search}&status=${filters.status}&`
-            + `sort=${filters.sort}&page=${page}`,
-        { timeout: 5000 }
-    )
-    .then(response => dispatch(prepareData(response.data, filters)))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(listLoading(false)))
+    // return axios.get(`${URL_PATH}?search=${filters.search}&status=${filters.status}&`
+    //         + `sort=${filters.sort}&page=${page}`,
+    //     { timeout: 5000 }
+    // )
+    // .then(response => dispatch(prepareData(response.data, filters)))
+    // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    // .finally(_ => dispatch(listLoading(false)))
 }
 
-export const doSave = productCategory => async dispatch => {
+export const doSave = sale => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(formLoading(true))
-    const { productCategoryId, name, slugName, status } = productCategory
-
-    if (!productCategoryId) {
-        dispatch(doCreate({ name, slugName, status }))
-    } else {
-        dispatch(doUpdate({ productCategoryId, name, slugName, status }))
-    }
+    const { saleId, name, slugName, status } = sale
+    // if (!saleId) {
+    //     dispatch(doCreate({ name, slugName, status }))
+    // } else {
+    //     dispatch(doUpdate({ saleId, name, slugName, status }))
+    // }
 }
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
-export const getUpdateAction = productCategoryId => async dispatch => {
+export const getUpdateAction = saleId => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${URL_PATH}/${productCategoryId}`, {
-        timeout: 5000
-    }).then(response => dispatch(setProductCategory(response.data, true)))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(listLoading(false)))
+    // return axios.get(`${URL_PATH}/${saleId}`, {
+    //     timeout: 5000
+    // }).then(response => dispatch(setsale(response.data, true)))
+    // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    // .finally(_ => dispatch(listLoading(false)))
 }
 
 export const setFilters = filters => async dispatch => {
@@ -152,7 +148,7 @@ export const closeModal = () => ({ type: CLOSE_MODAL })
 export const setCheckedItems = checkedItems => ({ type: SET_CHECKED_ITEMS, checkedItems })
 
 export default function(state = initialState, action) {
-    // console.log(action.type)
+    console.log(action.type)
     try {
         switch (action.type) {
             case LIST_LOADING: return {
@@ -174,7 +170,7 @@ export default function(state = initialState, action) {
             }
             case PREPARE_DATA: return {
                 ...state,
-                productCategoryList: action.productCategoryList,
+                saleList: action.saleList,
                 totalPages: action.totalPage,
                 page: action.page,
                 loading: false,
@@ -190,7 +186,7 @@ export default function(state = initialState, action) {
             }
             case MODAL_FORM_GET_CREATE_ACTION: return {
                 ...state,
-                productCategory: initialState.productCategory,
+                sale: initialState.sale,
                 openModal: true,
                 modalFormSuccessMessage: initialState.modalFormSuccessMessage
             }
@@ -200,7 +196,7 @@ export default function(state = initialState, action) {
             }
             case SET_PRODUCT_CATEGORY: return {
                 ...state,
-                productCategory: action.productCategory,
+                sale: action.sale,
                 openModal: action.openModal,
                 modalFormSuccessMessage: initialState.modalFormSuccessMessage
             }
@@ -208,7 +204,7 @@ export default function(state = initialState, action) {
                 ...state,
                 openModal: false,
                 listLoading: false,
-                productCategory: initialState.productCategory,
+                sale: initialState.sale,
                 formLoading: initialState.formLoading,
                 errors: initialState.errors,
             }
