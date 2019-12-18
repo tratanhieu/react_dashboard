@@ -1,8 +1,8 @@
 import React from "react";
 import { Table, Image, Checkbox, Button } from "semantic-ui-react";
 
-const OptionTableRow = ({
-    option,
+const ProductPackageTableRow = ({
+    productPackage: { name, quantity, images, active },
     index,
     styles,
     onChangeOptionActive,
@@ -10,10 +10,10 @@ const OptionTableRow = ({
     onRemove
 }) => (
     <Table.Row>
-        <Table.Cell>{option.packageName}</Table.Cell>
-        <Table.Cell>{option.quantity}</Table.Cell>
+        <Table.Cell>{name}</Table.Cell>
+        <Table.Cell>{quantity}</Table.Cell>
         <Table.Cell className={styles.imageCell}>
-            {option.images.map((image, key) => (
+            {images.map((image, key) => (
                 <Image
                 key={key}
                 className={`${styles.tableImage}${
@@ -25,7 +25,7 @@ const OptionTableRow = ({
         </Table.Cell>
         <Table.Cell textAlign="center">
             <Checkbox
-                checked={option.active}
+                checked={active}
                 onChange={(_, checkbox) =>
                     onChangeOptionActive(index, checkbox.checked)
                 }
@@ -43,4 +43,4 @@ const OptionTableRow = ({
     </Table.Row>
 );
 
-export default OptionTableRow;
+export default ProductPackageTableRow;

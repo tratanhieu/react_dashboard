@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form } from "semantic-ui-react";
 import ImageUploads from "../../../../atoms/ImageUploads";
 import ModalModule from "../../../../atoms/ModalModule";
+import FormInput from "../../../../atoms/FormInput";
 
 const Render = ({
     openOptionModal,
@@ -13,18 +14,16 @@ const Render = ({
     onPositive,
     onCloseModal
 }) => (
-    <ModalModule size="small" open={openOptionModal} onClose={onCloseModal} 
+    <ModalModule size="small" closeIcon={false} open={openOptionModal} onNegative={onCloseModal} 
         onPositive={onPositive}
         actionDisable={!packageName || quantity <= 0 || images.length === 0}>
         <Form>
             <Form.Group widths="equal">
-                <Form.Input
-                    label="Package"
+                <FormInput
                     placeholder="Package Type..."
                     value={packageName}
                     onChange={onChangePackageName} />
-                <Form.Input
-                    label="Quantity/Product"
+                <FormInput
                     placeholder="0"
                     value={quantity}
                     onChange={onChangeQuantity} />

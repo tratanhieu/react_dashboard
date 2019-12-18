@@ -1,112 +1,132 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { Table, Checkbox, Button } from 'semantic-ui-react'
 import styles from "./styles.module.css";
-import OptionTableRow from "./OptionTableRow";
+import ProductPackageTableRow from "./ProductPackageTableRow";
 import TableRowEmpty from "../../../../atoms/TableRowEmpty";
-import OptionModal from "./OptionModal";
-import OptionTable from "./OptionTable";
+// import ProductPackageModal from "./ProductPackageModal";
+import ProductPackageTable from "./ProductPackageTable";
+import { formErrorsHandle } from "../../../../../commons/utils";
+import FormInput from "../../../../atoms/FormInput";
+import ImageUploads from "../../../../atoms/ImageUploads";
 
 const Render = ({
-    openModal,
-    option,
-    options,
-    onOpenModal,
-    onCloseModal,
-    onPositive,
-    onChangeOptionActive,
+    productPackage: {
+        name, quantity, images, active
+    },
+    productPackages,
+    onChangeFormData,
+    onCreate,
+    onChangeFormDataActive,
     onRemove
 }) => {
+    useEffect(() => {
+        console.log(name)
+    }, [name])
     return (
         <>
-            <OptionTable onOpenModal={onOpenModal}>
-                {options.map((option, index) => (
-                    <OptionTableRow
-                        option={option}
+            <ProductPackageTable
+                onChangeFormData={onChangeFormData}
+                onCreate={onCreate}
+            >
+                {productPackages.map((productPackage, index) => (
+                    <ProductPackageTableRow
+                        productPackage={productPackage}
                         key={index}
                         index={index}
                         styles={styles}
-                        onChangeOptionActive={onChangeOptionActive}
-                        onOpenChangeModal={_ => onOpenModal(index)}
                         onRemove={_ => onRemove(index)}
                     />
                 ))}
-                {options.length <= 0 ? <TableRowEmpty /> : null}
-            </OptionTable>
-            <OptionModal
-                option={option}
-                openModal={openModal}
-                onCloseModal={onCloseModal}
-                onPositive={onPositive}
-            />
+                {productPackages.length <= 0 && <TableRowEmpty />}
+                <Table.Row>
+                    <Table.Cell>
+                        <FormInput
+                            name="name"
+                            placeholder="Package Type..."
+                            value={name}
+                            onChange={onChangeFormData}
+                        />
+                    </Table.Cell>
+                    <Table.Cell>
+                        <FormInput
+                            name="quantity"
+                            placeholder="Package Quantity..."
+                            value={quantity}
+                            onChange={onChangeFormData}
+                        />
+                    </Table.Cell>
+                    <Table.Cell>
+                        <ImageUploads
+                            width="50px"
+                            height="70px"
+                            dataSources={images}
+                            onChange={items => console.log(items)}
+                        />
+                    </Table.Cell>
+                    <Table.Cell textAlign="center">
+                        <Checkbox checked={active} onChange={onChangeFormDataActive} />
+                    </Table.Cell>
+                    <Table.Cell textAlign="center">
+                        <Button size="small" icon="plus" color="blue" onClick={onCreate} />
+                    </Table.Cell>
+                </Table.Row>
+            </ProductPackageTable>
         </>
     );
 };
 
-const ProductOptions = ({ openOptionModal, onChange, onOpenOptionModal, ...rest }) => {
-    const initOption = {
-        packageName: "",
-        quantity: 1,
-        images: [],
-        active: true
-    };
+const ProductProductPackages = ({ onChange }) => {
 
     const [state, setState] = useState({
-        option: initOption,
-        options: []
+        productPackage: {
+            name: "",
+            quantity: 1,
+            images: [],
+            active: true
+        },
+        productPackages: [],
+        errors: {}
     });
 
     const renderProps = {
-        ...rest,
         ...state,
-        onCloseModal: _ =>
+        onCreate: () => {
             setState({
                 ...state,
-                openModal: false
-            }),
-        onOpenModal: index =>
-            setState({
-                ...state,
-                openModal: true,
-                option: index
-                ? {
-                    ...state.options[index],
-                    index
-                }
-                : initOption
-            }),
-        onPositive: option => {
-            if (option.key) {
-                state.options[state.options.findIndex(item => item.key === option.key)] = {
-                    ...option
-                }
-                setState({
-                    ...state,
-                    option,
-                    openModal: false
-                });
-            } else {
-                setState({
-                    ...state,
-                    option,
-                    options: [...state.options, option],
-                    openModal: false
-                });
-            }
+                productPackages: [ ...state.productPackages, state.productPackage ],
+                productPackage: {
+                    name: "",
+                    quantity: 1,
+                    images: [],
+                    active: true
+                },
+            })
         },
-        onNegative: _ =>
+        onUpdate: (index, productPackage) => {
+            state.productPackages[index] = { ...productPackage }
+            setState({ ...state })
+        },
+        onChangeFormData: (_, { name, value }, error) => {
             setState({
                 ...state,
-                openModal: false
-            }),
-        onChangeOptionActive: (index, checked) => {
-            state.options[index] = {
-                ...state.options[index],
-                active: checked
-            };
-            setState({ ...state });
+                productPackage: {
+                    ...state.productPackage,
+                    [name]: value
+                },
+                errors: { ...formErrorsHandle(state.errors, name, error) }
+            });
+        },
+        onChangeFormDataActive: (_, checkbox) => {
+            setState({
+                ...state,
+                productPackage: {
+                    ...state.productPackage,
+                    active: checkbox.checked
+                }
+            });
         },
         onRemove: index => {
-            state.options.splice(index, 1);
+            state.productPackages.splice(index, 1);
             setState({ ...state });
         }
     };
@@ -114,4 +134,4 @@ const ProductOptions = ({ openOptionModal, onChange, onOpenOptionModal, ...rest 
     return <Render {...renderProps} />;
 };
 
-export default ProductOptions;
+export default ProductProductPackages;
