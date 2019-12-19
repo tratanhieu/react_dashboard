@@ -3,7 +3,6 @@ import { Table, Checkbox, Button } from 'semantic-ui-react'
 import styles from "./styles.module.css";
 import ProductPackageTableRow from "./ProductPackageTableRow";
 import TableRowEmpty from "../../../../atoms/TableRowEmpty";
-// import ProductPackageModal from "./ProductPackageModal";
 import ProductPackageTable from "./ProductPackageTable";
 import { formErrorsHandle } from "../../../../../commons/utils";
 import FormInput from "../../../../atoms/FormInput";

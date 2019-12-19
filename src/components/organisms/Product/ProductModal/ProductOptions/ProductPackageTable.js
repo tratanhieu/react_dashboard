@@ -1,7 +1,5 @@
 import React from "react";
-import { Table, Button, Checkbox } from "semantic-ui-react";
-import FormInput from '../../../../atoms/FormInput';
-import ImageUploads from "../../../../atoms/ImageUploads";
+import { Table } from "semantic-ui-react";
 
 const ProductPackageTable = ({
     children

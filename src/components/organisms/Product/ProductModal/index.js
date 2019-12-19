@@ -8,7 +8,6 @@ import PropertyTableRow from "./PropertyTableRow";
 import ProductOptions from "./ProductOptions";
 
 import { closeModal } from '../../../../redux/reducers/productReducer';
-import OptionModal from "./ProductOptions/OptionModal";
 import { formErrorsHandle } from "../../../../commons/utils";
 
 const options = [
