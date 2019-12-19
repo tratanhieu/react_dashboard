@@ -107,7 +107,7 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
 }
 
 export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
-    console.log(filters, page)
+    // console.log(filters, page)
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
     return axios.get(`${URL_PATH}?search=${filters.search}&status=${filters.status}&`
@@ -152,7 +152,7 @@ export const closeModal = () => ({ type: CLOSE_MODAL })
 export const setCheckedItems = checkedItems => ({ type: SET_CHECKED_ITEMS, checkedItems })
 
 export default function(state = initialState, action) {
-    console.log(action.type)
+    // console.log(action.type)
     try {
         switch (action.type) {
             case LIST_LOADING: return {

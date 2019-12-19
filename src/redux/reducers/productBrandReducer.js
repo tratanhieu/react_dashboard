@@ -24,9 +24,6 @@ const initialState = {
     checkedItems: [],
     totalPages: 0,
     page: 1,
-    productBrand: {
-        status: ACTIVE
-    },
     errors: {
         name: '',
         slugName: ''
@@ -108,23 +105,21 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
 }
 
 export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
-    console.log(filters, page)
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${URL_PATH}?search=${filters.search}&status=${filters.status}&`
-            + `sort=${filters.sort}&page=${page}`,
-        { timeout: 5000 }
-    )
-    .then(response => dispatch(prepareData(response.data, filters)))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(listLoading(false)))
+    // return axios.get(`${URL_PATH}?search=${filters.search}&status=${filters.status}&`
+    //         + `sort=${filters.sort}&page=${page}`,
+    //     { timeout: 5000 }
+    // )
+    // .then(response => dispatch(prepareData(response.data, filters)))
+    // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    // .finally(_ => dispatch(listLoading(false)))
 }
 
 export const doSave = productBrand => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(formLoading(true))
     const { productBrandId, name, slugName, status } = productBrand
-
     if (!productBrandId) {
         dispatch(doCreate({ name, slugName, status }))
     } else {
@@ -153,7 +148,7 @@ export const closeModal = () => ({ type: CLOSE_MODAL })
 export const setCheckedItems = checkedItems => ({ type: SET_CHECKED_ITEMS, checkedItems })
 
 export default function(state = initialState, action) {
-    console.log(action.type)
+    // console.log(action.type)
     try {
         switch (action.type) {
             case LIST_LOADING: return {

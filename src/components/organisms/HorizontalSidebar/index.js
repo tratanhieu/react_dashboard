@@ -26,6 +26,18 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
                         active: false
                     },
                     {
+                        path: '/product/type_group',
+                        icon: 'grid layout',
+                        text: 'Product Type Group',
+                        active: false
+                    },
+                    {
+                        path: '/product/type',
+                        icon: 'grid layout',
+                        text: 'Product Type',
+                        active: false
+                    },
+                    {
                         path: '/product/brand',
                         icon: 'grid layout',
                         text: 'Product Brand',
@@ -50,6 +62,12 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
                     }
                 ]
             }
+        },
+        {
+            path: '/sale',
+            icon: 'dollar sign',
+            text: 'Sale',
+            active: false
         }
     ])
 

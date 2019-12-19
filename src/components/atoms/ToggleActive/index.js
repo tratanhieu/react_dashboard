@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Form, Radio } from 'semantic-ui-react'
 
 const ToggleActive = ({
-    label='Trạng thái: ',
-    onChangeStatus,
+    label = 'Trạng thái: ',
+    onChange,
     inline = true,
     checked=false,
     ...rest
@@ -11,12 +11,10 @@ const ToggleActive = ({
 
     const [active, setActive] = useState(checked)
 
-    const status = active ? 'Hiển thị' : 'Ẩn'
-
     const handleToggle = () => {
         const activeStatus = !active
         setActive(activeStatus)
-        onChangeStatus(activeStatus)
+        onChange(activeStatus)
     }
 
     useEffect(() => {
@@ -26,7 +24,11 @@ const ToggleActive = ({
     return (
         <Form.Field inline={inline}>
             <label>{label}</label>
-            <Radio label={status} onChange={handleToggle} checked={active} toggle {...rest} />
+            <Radio
+                label={active ? 'Hiển thị' : 'Ẩn'}
+                checked={active}
+                toggle
+                onChange={handleToggle} {...rest} />
         </Form.Field>
     )
 }
