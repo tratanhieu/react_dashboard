@@ -74,7 +74,7 @@ const Render = ({
                     onDelete={_ => onDelete(item.productBrandId)}
                 >
                     <TableCell width={cellWidth[0]}>
-                        {item.saleName}
+                        {item.name}
                     </TableCell>
                     <TableCell width={cellWidth[1]}>
                         {formatDateTime(item.startDate)}
@@ -112,7 +112,7 @@ const ProductBrandTable = () => {
         productBrandList: [
             {
                 saleId: "001",
-                saleName: "Black Friday",
+                name: "Black Friday",
                 startDate: new Date(2019, 10, 26),
                 endDate: new Date(2019, 11, 30),
                 percent: 20,
@@ -122,7 +122,7 @@ const ProductBrandTable = () => {
             },
             {
                 saleId: "002",
-                saleName: "Xmas",
+                name: "Xmas",
                 startDate: new Date(2019, 11, 5),
                 endDate: new Date(2019, 11, 31),
                 percent: 35,
@@ -132,7 +132,7 @@ const ProductBrandTable = () => {
             },
             {
                 saleId: "003",
-                saleName: "New Year",
+                name: "New Year",
                 startDate: new Date(2020, 0, 1),
                 endDate: new Date(2020, 0, 12),
                 percent: 20,
