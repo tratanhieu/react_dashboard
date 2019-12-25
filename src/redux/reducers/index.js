@@ -8,6 +8,7 @@ import productBrandReducer from './productBrandReducer'
 import userReducer from './userReducer'
 import userGroupReducer from './userGroupReducer'
 import saleManagementReducer from './saleManagementReducer'
+import guestReducer from './guestReducer'
 
 export default combineReducers({
     rootReducer,
@@ -18,5 +19,6 @@ export default combineReducers({
     productBrandReducer,
     userReducer,
     userGroupReducer,
-    saleManagementReducer
+    saleManagementReducer,
+    guestReducer
 });

@@ -64,6 +64,12 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
             }
         },
         {
+            path: '/guest',
+            icon: 'user secret',
+            text: 'Guest',
+            active: false
+        },
+        {
             path: '/sale',
             icon: 'dollar sign',
             text: 'Sale',
