@@ -13,6 +13,7 @@ import ProductTypeGroup from './components/pages/ProductTypeGroup';
 import ProductType from './components/pages/ProductType';
 import Product from './components/pages/Product';
 import SaleManagement from './components/pages/SaleManagement';
+import Producer from './components/pages/Producer';
 
 
 class App extends React.Component {
@@ -43,6 +44,9 @@ class App extends React.Component {
 					</Route>
 					<Route path="/product/brand">
 						<ProductBrand />
+					</Route>
+					<Route path="/product/producer">
+						<Producer />
 					</Route>
 					<Route exact path="/user">
 						<User />

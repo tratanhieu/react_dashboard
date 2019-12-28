@@ -5,7 +5,7 @@ import { Form, Select, Button, Icon } from "semantic-ui-react";
 import Fieldset from "../../../atoms/Fieldset";
 import PageSearch from "../../../molecules/PageSearch";
 import FilterBar from "../../../molecules/FilterBar";
-import { setFilters } from "../../../../redux/reducers/saleManagementReducer";
+import { setFilters } from "../../../../redux/reducers/producerReducer";
 
 const options = [
     { key: "m", text: "Male", value: "male" },
@@ -57,8 +57,8 @@ const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
     </Form>
 )
 
-const SaleManagementFilter = () => {
-    const selector = useSelector(({ saleManagementReducer: { filters } }) => 
+const ProducerFilter = () => {
+    const selector = useSelector(({ producerReducer: { filters } }) => 
     ({ filters }), shallowEqual)
 
     const dispatch = useDispatch()
@@ -73,4 +73,4 @@ const SaleManagementFilter = () => {
     return <Render {...renderProps} />
 }
 
-export default SaleManagementFilter
+export default ProducerFilter
