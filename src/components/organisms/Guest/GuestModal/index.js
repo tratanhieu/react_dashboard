@@ -39,17 +39,6 @@ const Render = ({
   modalFormSuccessMessage,
   onPositive,
   onClose,
-  // onChangeName,
-  // onChangeStatusCode,
-  // onChangeCode,
-  // onChangeApplyStatus,
-  // onChangeStartDate,
-  // onChangeEndDate,
-  // onChangePercent,
-  // onClickRandomCode,
-  // onCheckAllItem,
-  // onCheckItem,
-  // selectBox,
   errors = {},
   dataSources,
   ...rest
@@ -61,7 +50,7 @@ const Render = ({
       open={openModal}
       onClose={onClose}
       onPositive={onPositive}
-      noFooter={true}
+      justClose={true}
       {...rest}
     >
       <Grid>
@@ -134,126 +123,11 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
     shallowEqual
   );
 
-  // const [guest, setGuest] = useState(...selector.sale);
-
-  // const [state, setState] = useState({
-  //   checkAllItem: false,
-  //   dataSources: {},
-  //   loading: false,
-  //   applyStatus: "ALL",
-  //   codeStatus: false
-  // });
-
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   setState({
-  //     ...state,
-  //     checkAllItem:
-  //       sale.selectedItems.length === selector.listItems.length ? true : false,
-  //     dataSources: selector.listItems.map(item => {
-  //       let boolean = false;
-  //       sale.selectedItems.forEach(sItem => {
-  //         if (sItem === item.saleId) {
-  //           boolean = true;
-  //         }
-  //       });
-  //       return {
-  //         ...item,
-  //         checked: boolean
-  //       };
-  //     }),
-  //     codeStatus: sale.code ? true : false,
-  //     applyStatus: sale.selectedItems.length === 0 ? "ALL" : "CUSTOM"
-  //   });
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [selector.listItems, sale.selectedItems, sale.code]);
 
   const renderProps = {
     ...rest,
-    // ...state,
     ...selector,
-    // sale,
-    // onChangeName: (_, input) =>
-    //   setSale({
-    //     ...sale,
-    //     name: input.value
-    //   }),
-
-    // onChangeStatusCode: (_, checkbox) =>
-    //   setState({ ...state, codeStatus: checkbox.checked }),
-
-    // onChangeCode: (_, input) =>
-    //   setSale({
-    //     ...sale,
-    //     code: input.value
-    //   }),
-
-    // onChangePercent: (_, input) =>
-    //   setSale({
-    //     ...sale,
-    //     percent: parseInt(input.value)
-    //   }),
-
-    // onChangeStartDate: date =>
-    //   setSale({
-    //     ...sale,
-    //     startDate: date
-    //   }),
-
-    // onChangeEndDate: date =>
-    //   setSale({
-    //     ...sale,
-    //     endDate: date
-    //   }),
-
-    // onChangeApplyStatus: (_, radio) =>
-    //   setState({ ...state, applyStatus: radio.value }),
-
-    // onClickRandomCode: () =>
-    //   setSale({
-    //     ...sale,
-    //     code: Math.random()
-    //       .toString(36)
-    //       .substring(3)
-    //       .toUpperCase()
-    //   }),
-    // onCheckItem: (index, checked) => {
-    //   let arr = [];
-    //   state.dataSources[index].checked = checked;
-    //   state.dataSources.forEach(item =>
-    //     item.checked === true ? arr.push(item.saleId) : null
-    //   );
-    //   state.checkAllItem = arr.length === state.dataSources.length;
-    //   setState({ ...state });
-    //   setSale({ ...sale, selectedItems: arr });
-    // },
-    // onCheckAllItem: checkAllItem => {
-    //   let selectedItems = [];
-    //   setState({
-    //     ...state,
-    //     checkAllItem,
-    //     dataSources: state.dataSources.map(item => {
-    //       if (checkAllItem) {
-    //         selectedItems.push(item.saleId);
-    //       }
-    //       return {
-    //         ...item,
-    //         checked: item.checked !== checkAllItem ? checkAllItem : item.checked
-    //       };
-    //     })
-    //   });
-    //   setSale({ ...sale, selectedItems });
-    // },
-    // onPositive: _ => {
-    //   if (!selector.codeStatus) {
-    //     setSale({ ...sale, code: "" });
-    //   }
-    //   if (selector.applyStatus === "ALL") {
-    //     setSale({ ...sale, selectedItems: [] });
-    //   }
-    //   return dispatch(doSave(sale));
-    // },
     onClose: _ => dispatch(closeModal())
   };
   console.log(renderProps);

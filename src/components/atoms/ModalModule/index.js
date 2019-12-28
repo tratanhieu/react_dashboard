@@ -17,7 +17,7 @@ const ModalModule = ({
   onPositive,
   onNegative,
   onContinue,
-  noFooter,
+  justClose,
   ...rest
 }) => (
   <TransitionablePortal onClose={onClose} open={open} transition={transition}>
@@ -46,7 +46,7 @@ const ModalModule = ({
         )}
       </Modal.Content>
       {!modalSuccessMessage ? (
-        !noFooter ? (
+        !justClose ? (
           <Modal.Actions>
             <Button
               positive
@@ -63,7 +63,16 @@ const ModalModule = ({
               onClick={onNegative ? onNegative : onClose}
             />
           </Modal.Actions>
-        ) : null
+        ) : (
+          <Modal.Actions>
+            <Button
+              disabled={actionLoading}
+              color="grey"
+              content={negativeLabel}
+              onClick={onNegative ? onNegative : onClose}
+            />
+          </Modal.Actions>
+        )
       ) : null}
     </Modal>
   </TransitionablePortal>
