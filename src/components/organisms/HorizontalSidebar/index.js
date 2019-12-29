@@ -46,6 +46,24 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
                 ]
             }
         },
+
+        {
+            path: '/post',
+            icon: 'newspaper outline',
+            text: 'News',
+            active: false,
+            subMenu: {
+                open: false,
+                items: [
+                    {
+                        path: '/post/type',
+                        icon: 'grid layout',
+                        text: 'Post Type',
+                        active: false
+                    }
+                ]
+            }
+        },
         {
             path: '/user',
             icon: 'group',

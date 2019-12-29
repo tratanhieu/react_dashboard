@@ -13,17 +13,14 @@ import ProductTypeGroup from './components/pages/ProductTypeGroup';
 import ProductType from './components/pages/ProductType';
 import Product from './components/pages/Product';
 import SaleManagement from './components/pages/SaleManagement';
-
+import Post from './components/pages/Post';
+import PostType from './components/pages/PostType';
 
 class App extends React.Component {
 
 	componentDidCatch(error) {
 		console.log(error)
 	}
-
-	// componentDidMount() {
-		
-	// }
 
 	render() {
 		return (
@@ -52,6 +49,12 @@ class App extends React.Component {
 					</Route>
 					<Route path="/sale">
 						<SaleManagement />
+					</Route>
+					<Route exact path="/post">
+						<Post />
+					</Route>
+					<Route path="/post/type">
+						<PostType />
 					</Route>
 					<Route exact path="/">
 						<h2>Main</h2>
