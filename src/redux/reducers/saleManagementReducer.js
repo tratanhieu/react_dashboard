@@ -20,8 +20,7 @@ const initialState = {
   multipleExecuteLoading: false,
   formLoading: false,
   openModal: true,
-  sale: {
-  },
+  sale: {},
   saleList: [],
   checkedItems: [],
   totalPages: 0,
@@ -69,6 +68,11 @@ const initialState = {
       status: "ACTIVE"
     }
   ],
+  selectList: {
+    category: "",
+    groupType: "",
+    type: ""
+  },
   selectBox: {
     categories: [
       { key: "d", text: "Drinks", value: "drinks" },
@@ -100,6 +104,9 @@ const LIST_LOADING = createAction("LIST_LOADING");
 const RELOAD = createAction("RELOAD");
 const PREPARE_DATA = createAction("PREPARE_DATA");
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS");
+const UPDATE_CATEGORY = createAction("UPDATE_CATEGORY");
+const UPDATE_GROUPTYPE = createAction("UPDATE_GROUPTYPE");
+const UPDATE_TYPE = createAction("UPDATE_TYPE");
 const UPDATE_APPLY_STATUS = createAction("UPDATE_APPLY_STATUS");
 const UPDATE_CODE_STATUS = createAction("UPDATE_CODE_STATUS");
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS");
@@ -168,9 +175,11 @@ const doUpdate = sale => async dispatch => {
 
 const updateFilters = filters => ({ type: UPDATE_FILTERS, filters });
 
-const updateApplyStatus = status => ({ type: UPDATE_APPLY_STATUS, status });
+export const updateCategory = category => ({ type: UPDATE_CATEGORY, category });
 
-const updateCodeStatus = status => ({ type: UPDATE_CODE_STATUS, status });
+export const updateGroupType = groupType => ({ type: UPDATE_GROUPTYPE, groupType });
+
+export const updateType = type => ({ type: UPDATE_TYPE, type });
 
 export const doMultipleExecute = (listId, status) => async dispatch => {
   const params = { listId, status };
@@ -230,14 +239,6 @@ export const setFilters = filters => async dispatch => {
   dispatch(fetchWithPaginationAndFilter(filters, 1));
 };
 
-export const setApplyStatus = status => async dispatch => {
-  dispatch(updateApplyStatus(status));
-};
-
-export const setCodeStatus = status => async dispatch => {
-  dispatch(updateCodeStatus(status));
-};
-
 export const closeModal = () => ({ type: CLOSE_MODAL });
 
 export const setCheckedItems = checkedItems => ({
@@ -288,6 +289,21 @@ export default function(state = initialState, action) {
         return {
           ...state,
           filters: action.filters
+        };
+      case UPDATE_CATEGORY:
+        return {
+          ...state,
+          selectList: { ...state.selectList, category: action.category }
+        };
+      case UPDATE_GROUPTYPE:
+        return {
+          ...state,
+          selectList: { ...state.selectList, groupType: action.groupType }
+        };
+      case UPDATE_TYPE:
+        return {
+          ...state,
+          selectList: { ...state.selectList, type: action.type }
         };
       case SET_CHECKED_ITEMS:
         return {

@@ -16,6 +16,9 @@ import {
 import {
   doSave,
   closeModal,
+  updateCategory,
+  updateGroupType,
+  updateType,
   setApplyStatus,
   setCodeStatus
 } from "../../../../redux/reducers/saleManagementReducer";
@@ -29,6 +32,7 @@ const Render = ({
   applyStatus,
   openModal,
   loading,
+  selectList,
   checkAllItem,
   codeStatus,
   formLoading,
@@ -45,6 +49,9 @@ const Render = ({
   onClickRandomCode,
   onCheckAllItem,
   onCheckItem,
+  onChangeCategories,
+  onChangeGroupTypes,
+  onChangeGroups,
   selectBox,
   errors = {},
   dataSources,
@@ -148,16 +155,21 @@ const Render = ({
                 label="Theo danh mục"
                 options={selectBox.categories}
                 placeholder="Danh mục"
+                onChange={(_, select) => onChangeCategories(select.value)}
               />
               <Form.Select
                 label="Theo nhóm loại sản phẩm"
                 options={selectBox.groupTypes}
                 placeholder="Nhóm loại sản phẩm"
+                disabled={!selectList.category ? true : false}
+                onChange={(_, select) => onChangeGroupTypes(select.value)}
               />
               <Form.Select
                 label="Theo loại sản phẩm"
                 options={selectBox.groups}
                 placeholder="Loại sản phẩm"
+                disabled={!selectList.groupType ? true : false}
+                onChange={(_, select) => onChangeGroups(select.value)}
               />
             </Form.Group>
             <SaleTable
@@ -200,6 +212,7 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
         formLoading,
         sale,
         listItems,
+        selectList,
         // loading,
         selectBox,
         errors
@@ -210,6 +223,7 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
       modalFormSuccessMessage,
       sale,
       listItems,
+      selectList,
       // loading,
       selectBox,
       errors
@@ -237,7 +251,7 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
     dataSources: {},
     loading: false,
     applyStatus: "ALL",
-    codeStatus: false,
+    codeStatus: false
   });
 
   const dispatch = useDispatch();
@@ -245,7 +259,8 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
   useEffect(() => {
     setState({
       ...state,
-      checkAllItem: sale.selectedItems.length === selector.listItems.length ? true : false,
+      checkAllItem:
+        sale.selectedItems.length === selector.listItems.length ? true : false,
       dataSources: selector.listItems.map(item => {
         let boolean = false;
         sale.selectedItems.forEach(sItem => {
@@ -259,7 +274,7 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
         };
       }),
       codeStatus: sale.code ? true : false,
-      applyStatus: sale.selectedItems.length === 0 ? "ALL" : "CUSTOM",
+      applyStatus: sale.selectedItems.length === 0 ? "ALL" : "CUSTOM"
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selector.listItems, sale.selectedItems, sale.code]);
@@ -275,7 +290,8 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
         name: input.value
       }),
 
-    onChangeStatusCode: (_, checkbox) => setState({...state, codeStatus: checkbox.checked}),
+    onChangeStatusCode: (_, checkbox) =>
+      setState({ ...state, codeStatus: checkbox.checked }),
 
     onChangeCode: (_, input) =>
       setSale({
@@ -301,7 +317,14 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
         endDate: date
       }),
 
-    onChangeApplyStatus: (_, radio) => setState({...state, applyStatus: radio.value}),
+    onChangeCategories: select => dispatch(updateCategory(select)),
+
+    onChangeGroupTypes: select => dispatch(updateGroupType(select)),
+
+    onChangeTypes: select => dispatch(updateType(select)),
+
+    onChangeApplyStatus: (_, radio) =>
+      setState({ ...state, applyStatus: radio.value }),
 
     onClickRandomCode: () =>
       setSale({
