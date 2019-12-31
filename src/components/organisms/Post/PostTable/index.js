@@ -14,12 +14,13 @@ import { DEFAULT_STATUS } from '../../../../constants/entites'
 // REDUX
 import { setCheckedItems, fetchWithPaginationAndFilter } from '../../../../redux/reducers/userReducer';
 import Slug from '../../../atoms/Slug';
+import { formatDateTime } from '../../../../commons/utils';
 
 const Render = ({
     dataSources, loading, totalPages, defaultActivePage, checkAllItem,
     onChange, onDelete, onChangePage, onCheckItem, onCheckAllItem
 }) => {
-    const cellWidth = calcCellWidth([40, 35, 25, 10], true)
+    const cellWidth = calcCellWidth([30, 25, 15, 10, 10, 10], true)
 
     const TableHeader = () => (
         <>
@@ -32,7 +33,13 @@ const Render = ({
             <TableHeaderCell width={cellWidth[2]}>
                 Post Type
             </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[3]} textAlign="center">
+            <TableHeaderCell width={cellWidth[3]}>
+                Create Date
+            </TableHeaderCell>
+            <TableHeaderCell width={cellWidth[4]}>
+                Update Date
+            </TableHeaderCell>
+            <TableHeaderCell width={cellWidth[5]} textAlign="center">
                 Status
             </TableHeaderCell>
         </>
@@ -43,7 +50,7 @@ const Render = ({
             loading={loading}
             showCheckbox 
             header={<TableHeader />} 
-            emptyColSpan={7}
+            emptyColSpan={cellWidth.length + 2}
             currentItems={dataSources.length}
             totalPages={totalPages}
             defaultActivePage={defaultActivePage}
@@ -76,7 +83,13 @@ const Render = ({
                     <TableCell width={cellWidth[2]}>
                         {item.postType.name}
                     </TableCell>
-                    <TableCell width={cellWidth[3]} textAlign="center">
+                    <TableCell width={cellWidth[3]}>
+                        {formatDateTime(item.createDate)}
+                    </TableCell>
+                    <TableCell width={cellWidth[4]}>
+                        {formatDateTime(item.updateDate)}
+                    </TableCell>
+                    <TableCell width={cellWidth[5]} textAlign="center">
                         <Label color={DEFAULT_STATUS[item.status].color}>
                             {DEFAULT_STATUS[item.status].text}
                         </Label>

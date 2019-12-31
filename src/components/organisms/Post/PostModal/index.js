@@ -3,9 +3,11 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Form } from "semantic-ui-react";
 import ModalModule from "../../../atoms/ModalModule";
 import FormInput from "../../../atoms/FormInput";
+import FormInputSlug from "../../../atoms/FormInputSlug";
 import FormSelect from "../../../atoms/FormSelect";
 import { initialState, closeModal } from '../../../../redux/reducers/userReducer'
 import _ from "lodash";
+import RichText from "../../../atoms/RichText";
 
 const userGroups = [
     { key: 12345, value: 12345, text: "Administrator" },
@@ -25,66 +27,28 @@ const Render = ({
     <ModalModule
         title="Create User"
         open={openModal}
-        size="tiny"
+        size="big"
         actionDisable={!_.isEqual(initialState.errors, errors)}
         onPositive={onPositive}
         onClose={onClose}
     >
         <Form>
-            <Form.Group widths="equal">
-                <FormInput
-                    required
-                    label="First Name: "
-                    name="firstName"
-                    fluid
-                    defaultValue={user.firstName}
-                    onChange={onChangeUserInfo}
-                    error={errors.firstName}
-                />
-                <FormInput
-                    required
-                    label="Middle Name: "
-                    name="lastName"
-                    fluid
-                    defaultValue={user.lastName}
-                    onChange={onChangeUserInfo}
-                    error={errors.lastName}
-                />
-                <FormInput
-                    required
-                    label="Name: "
-                    name="name"
-                    fluid
-                    defaultValue={user.name}
-                    onChange={onChangeUserInfo}
-                    error={errors.name}
-                />
-            </Form.Group>
-            <Form.Group widths="equal">
-                <FormInput
-                    required
-                    label="Phone: "
-                    name="phone"
-                    fluid
-                    defaultValue={user.phone}
-                    onChange={onChangeUserInfo}
-                    error={errors.phone}
-                />
-                <FormInput
-                    required
-                    label="Email: "
-                    name="email"
-                    fluid
-                    defaultValue={user.email}
-                    onChange={onChangeUserInfo}
-                    error={errors.email}
-                />
-            </Form.Group>
+            <FormInputSlug
+                required
+                label="Title: "
+                name="title"
+                fluid
+                defaultValue={user.firstName}
+                onChange={onChangeUserInfo}
+                error={errors.firstName}
+            />
+            <RichText label="Description" height={200} />
+            <RichText label="Content" />
             <FormSelect
-                label="User Group: "
+                label="Post Type: "
                 required
                 defaultValue={user.userGroup}
-                name="userGroup"
+                name="postType"
                 options={userGroups}
                 onChange={onChangeUserInfo}
             />
