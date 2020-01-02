@@ -1,5 +1,4 @@
 import React from 'react';
-import { Grid } from 'semantic-ui-react'
 import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({

@@ -5,6 +5,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Icon, Image, Dropdown } from 'semantic-ui-react'
 import HorizontalSidebar from '../../../organisms/HorizontalSidebar';
 import { reload, resetSystemErrors } from '../../../../redux/reducers/rootReducer';
+import { ReportProblemOutlined, Close } from '@material-ui/icons';
 
 const trigger = (
     <span>
@@ -39,12 +40,12 @@ const Render = ({ navOpen, setNavOpen, children, systemErrors, onCloseSystemErro
                     statusNav={statusNav} />
                 <div className={`main-layout--body ${statusNav}-nav`}>
                     <div className="main-layout--body---header">
-                        <Image
+                        <img
                             src="http://localhost:3000/images/logo.png"
                             alt="logo"
                             style={{ height: 36 }}
                         />
-                        <DropdownUser />
+                        {/* <DropdownUser /> */}
                     </div>
                     <div className="main-layout--body---content">
                         <div className="main-layout--body---main-content">
@@ -54,14 +55,14 @@ const Render = ({ navOpen, setNavOpen, children, systemErrors, onCloseSystemErro
                 </div>
             </div>
             {
-                systemErrors.message ?
-                    <div className="error-system">
-                        <span>
-                            <Icon name="warning sign" />
-                            &nbsp;{systemErrors.message}
-                        </span>
-                        <Icon name="close" className="error-system--close-icon" onClick={onCloseSystemErrors} />
-                    </div> : null
+                systemErrors.message &
+                <div className="error-system">
+                    <span>
+                        <ReportProblemOutlined />
+                        &nbsp;{systemErrors.message}
+                    </span>
+                    <Close name="close" className="error-system--close-icon" onClick={onCloseSystemErrors} />
+                </div>
             }
         </>
     )

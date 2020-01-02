@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
+import { ExpandMoreOutlined, ExpandLessOutlined, MenuOutlined } from '@material-ui/icons';
 
 const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
 
@@ -96,11 +97,10 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
 
     return (
         <div className={`main-layout--sidebar ${statusNav}`}>
-            <Icon
-                name="bars"
+            <MenuOutlined
                 className={`open-close-icon ${statusNav}-nav`}
                 size="large"
-                inverted
+                color="secondary"
                 onClick={() => setNavOpen(!navOpen)}
             />
             <ul style={{ textAlign: `${navOpen ? "left" : "center"}` }}>
@@ -113,9 +113,8 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
                                 {navOpen && <span> {item.text}</span>}
                             </div>
                             {(navOpen && item.hasOwnProperty('subMenu')) &&
-                                <Icon name={`angle ${item.subMenu.open ? 'down' : 'up'}`}
-                                    onClick={() => handleOpenSubMenu(index)}
-                                />
+                                (item.subMenu.open ? <ExpandMoreOutlined onClick={() => handleOpenSubMenu(index)} /> : 
+                                <ExpandLessOutlined onClick={() => handleOpenSubMenu(index)} />)
                             }
                         </Link>
                         {(navOpen && item.hasOwnProperty('subMenu') && item.subMenu.open) &&

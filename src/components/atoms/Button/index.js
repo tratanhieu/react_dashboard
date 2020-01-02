@@ -1,35 +1,39 @@
 import React from 'react'
-import { Button as ButtonSematic, Icon } from 'semantic-ui-react'
+import { Button as ButtonSematic } from 'semantic-ui-react'
 import MaterialButton from '@material-ui/core/Button';
-import AddBoxIcon from '@material-ui/icons/AddBox';
+import { AddBox, DeleteForeverOutlined } from '@material-ui/icons';
+import Icon from '../Icon';
+import { CircularProgress } from '@material-ui/core';
 
 const Button = ({
     loading,
     color = 'primary',
     variant = 'contained',
     iconLabel = false,
-    iconName,
+    icon,
     content,
     children,
     ...rest
 }) => {
-    const Icon = icons[iconName]
-    return (
+    return loading ? <LoadingButton content={content ? content : children} /> : (
         <MaterialButton 
             color={color}
             variant={variant}
-            startIcon={<Icon />}
+            startIcon={icon}
             {...rest}
         >
-            {/* {loading && <><Icon loading name="spinner" />&nbsp;&nbsp;</>} */}
-            {/* {!loading && iconName && <Icon name={iconName} />} */}
             {content ? content : children}
         </MaterialButton>
     )
 }
 
-const icons = {
-    addBoxIcon: AddBoxIcon
-}
+const LoadingButton = ({ content }) => (
+    <MaterialButton
+        disabled
+        variant="contained"
+    >
+        <CircularProgress size={15} />&nbsp;&nbsp;{content}
+    </MaterialButton>
+)
 
 export default Button

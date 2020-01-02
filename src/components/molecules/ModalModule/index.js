@@ -1,5 +1,4 @@
 import React, { Children } from 'react';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -7,6 +6,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import { makeStyles } from '@material-ui/styles';
+import Button from '../../atoms/Button';
+import { Close, Check } from '@material-ui/icons';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
@@ -21,6 +22,7 @@ const useStyles = makeStyles(theme => ({
 export default function ModalModule({
     title,
     children,
+    minWidth = "320px", 
     onPositive,
     onClose,
     ...rest
@@ -34,18 +36,23 @@ export default function ModalModule({
             {...rest}
         >
             <DialogTitle>{title}</DialogTitle>
-            <DialogContent>
+            <DialogContent style={{ minWidth }}>
                 {children}
             </DialogContent>
             <DialogActions 
                 className={classes.bottom}
             >
-                <Button variant="contained" color="primary" onClick={onPositive} >
-                    Ok
-                </Button>
-                <Button variant="contained" color="default" onClick={onClose} >
-                    Cancel
-                </Button>
+                <Button
+                    icon={<Check />}
+                    onClick={onPositive}
+                    content="Ok"
+                />
+                <Button
+                    icon={<Close />}
+                    color="default"
+                    onClick={onClose}
+                    content="Cancel"
+                />
             </DialogActions>
         </Dialog>
     );

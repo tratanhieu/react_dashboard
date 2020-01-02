@@ -18,6 +18,7 @@ import { formatDateTime } from '../../../../commons/utils'
 // REDUX
 import { setCheckedItems, fetchWithPaginationAndFilter } from '../../../../redux/reducers/userReducer';
 import Slug from '../../../atoms/Slug';
+import { Chip } from '@material-ui/core';
 
 const headCells = [
     { id: "name", label: "Name" },
@@ -37,9 +38,10 @@ const TableRowModule = ({ name, slugName, total, createDate, updateDate, status 
         <TableCell>{formatDateTime(createDate)}</TableCell>
         <TableCell>{formatDateTime(updateDate)}</TableCell>
         <TableCell>
-            <Label color={DEFAULT_STATUS[status].color}>
-                {DEFAULT_STATUS[status].text}
-            </Label>
+            <Chip
+                style={{ color: "#fff", backgroundColor: DEFAULT_STATUS[status].color }}
+                label={DEFAULT_STATUS[status].text} 
+            />
         </TableCell>
     </>
 );

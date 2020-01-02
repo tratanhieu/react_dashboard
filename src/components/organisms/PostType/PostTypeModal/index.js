@@ -10,6 +10,7 @@ import { ACTIVE } from "../../../../constants/entites";
 import { formErrorsHandle, isFormError } from "../../../../commons/utils";
 import ToggleActive from "../../../atoms/ToggleActive";
 import ModalModule from "../../../molecules/ModalModule";
+import Input from "../../../atoms/Input";
 
 const Render = ({
     openModal,
@@ -29,15 +30,20 @@ const Render = ({
         onClose={onClose}
     >
         <Form>
-            <FormInputSlug
+            <Input
+                label="Name"
                 required
-                label="Name: "
                 name="name"
-                fluid
-                defaultValue={name}
                 onChange={onChangePostTypeInfo}
+                defaultValue={name}
                 error={errors.name}
             />
+            {/* <FormInputSlug
+                label="Name"
+                fluid
+                defaultValue={name}
+                error={errors.name}
+            /> */}
             <ToggleActive
                 label="Status"
                 checked={status}
@@ -66,14 +72,14 @@ const PostTypeModal = ({ onPositive }) => {
         ...selector,
         postType,
         errors,
-        onChangePostTypeInfo: (_, { name, value }, error) => {
-            console.log(errors)
+        onChangePostTypeInfo: (_, { name, value }) => {
+            // console.log(errors)
             setPostType({ ...postType, [name]: value });
-            setErrors({ ...formErrorsHandle(errors, name, error) });
+            // setErrors({ ...formErrorsHandle(errors, name, error) });
         },
-        onChangeStatus: (_, checkbox) => setPostType({
+        onChangeStatus: (_, { checked }) => setPostType({
             ...postType,
-            status: checkbox.checked
+            status: checked
         }),
         onPositive: _ => { console.log(postType) },
         onClose: _ => dispatch(closeModal())

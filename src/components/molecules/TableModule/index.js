@@ -18,7 +18,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
-import DeleteIcon from "@material-ui/icons/Delete";
+import { DeleteForever, BorderColorOutlined } from '@material-ui/icons';
 import FilterListIcon from "@material-ui/icons/FilterList";
 
 function desc(a, b, orderBy) {
@@ -95,6 +95,7 @@ function EnhancedTableHead( {
                         </TableSortLabel>
                     </TableCell>
                 ))}
+                <TableCell>Actions</TableCell>
             </TableRow>
         </TableHead>
     );
@@ -119,6 +120,9 @@ const useToolbarStyles = makeStyles(theme => ({
     },
     title: {
         flex: "1 1 100%"
+    },
+    deleteButton: {
+        marginRight: "11px"
     }
 }));
 
@@ -143,8 +147,8 @@ const EnhancedTableToolbar = props => {
         )}
         {numSelected > 0 && (
             <Tooltip title="Delete">
-                <IconButton aria-label="delete" onClick={onDelete}>
-                    <DeleteIcon color="error" />
+                <IconButton className={classes.deleteButton} aria-label="delete" onClick={onDelete}>
+                    <DeleteForever color="error" />
                 </IconButton>
             </Tooltip>
         )}
@@ -178,6 +182,9 @@ const useStyles = makeStyles(theme => ({
         position: "absolute",
         top: 20,
         width: 1
+    },
+    editIcon: {
+        color: "#f2711c"
     }
 }));
 
@@ -290,6 +297,13 @@ export default function TableModule({
                                             />
                                         </TableCell>
                                         <TableRowModule {...row} />
+                                        <TableCell align="center">
+                                            <Tooltip title="Edit">
+                                                <IconButton onClick={onDelete}>
+                                                    <BorderColorOutlined className={classes.editIcon} />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </TableCell>
                                     </TableRow>
                                 );
                             })}

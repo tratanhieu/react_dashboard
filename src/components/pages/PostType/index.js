@@ -8,14 +8,14 @@ import { resetSystemErrors } from '../../../redux/reducers/rootReducer';
 import ContentHeader from '../../organisms/ContentHeader';
 import { getCreateAction } from '../../../redux/reducers/postTypeReducer';
 import Button from '../../atoms/Button';
+import { AddBox } from '@material-ui/icons';
 
 const Render = ({ onOpenCreate }) => (
     <>
         <ContentHeader>
-            <h1>Post Type</h1>
+            <h2>Post Type</h2>
             <Button
-                labelPosition="left"
-                iconName="addBoxIcon"
+                icon={<AddBox />}
                 loading={false}
                 content="Create"
                 onClick={onOpenCreate}

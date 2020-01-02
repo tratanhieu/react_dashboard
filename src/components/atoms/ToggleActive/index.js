@@ -1,21 +1,25 @@
 import React from 'react'
-import { Form, Radio } from 'semantic-ui-react'
+import { Switch, FormGroup, FormControlLabel } from '@material-ui/core';
 
 const ToggleActive = ({
-    label = 'Trạng thái: ',
-    inline = true,
+    color = "primary",
     checked = false,
+    onChange,
     ...rest
 }) => (
-    <Form.Field inline={inline}>
-        <label>{label}</label>
-        <Radio
+    <FormGroup>
+        <FormControlLabel
+            control={
+                <Switch
+                    checked={checked}
+                    color={color}
+                    onChange={e => onChange(e, e.currentTarget)}
+                    {...rest}
+                />
+            }
             label={checked ? 'Hiển thị' : 'Ẩn'}
-            checked={checked}
-            toggle
-            {...rest}
         />
-    </Form.Field>
+    </FormGroup>
 )
 
 export default ToggleActive

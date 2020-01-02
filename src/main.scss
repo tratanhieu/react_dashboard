@@ -127,6 +127,7 @@ body {
                     padding: 16px;
 
                     .main-layout--body---main-content {
+                        box-sizing: border-box;
                         width: 100%;
                         height: 100%;
                         background-color: #fff;
