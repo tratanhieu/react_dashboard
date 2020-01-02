@@ -8,7 +8,7 @@ const prefix = 'POST_'
 export const initialState = {
     loading: true,
     reload: false,
-    modalFormSuccessMessage: '',
+    formSuccessMessage: '',
     filters: {
         search: '',
         status: '',
@@ -16,7 +16,7 @@ export const initialState = {
     },
     multipleExecuteLoading: false,
     formLoading: false,
-    openModal: false,
+    openForm: false,
     postList: [],
     checkedItems: [],
     totalPages: 0,
@@ -60,9 +60,9 @@ const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
 
-const setpost = (post, openModal) => ({ type: SET_POST, post, openModal})
+const setpost = (post, openForm) => ({ type: SET_POST, post, openForm})
 
-const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
+const formSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
 
 export const closeModal = () => ({ type: CLOSE_MODAL })
 
@@ -123,7 +123,7 @@ const doCreate = post => async dispatch => {
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(_ => dispatch(modalFormSuccessMessage("Product Category is created successfully!!")))
+    }).then(_ => dispatch(formSuccessMessage("Product Category is created successfully!!")))
     .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(formLoading(false)))
 }
@@ -137,7 +137,7 @@ const doUpdate = post => async dispatch => {
                 'Content-Type': 'application/json'
             }
         }
-    ).then(_ => dispatch(modalFormSuccessMessage("Product Category is update successfully!!")))
+    ).then(_ => dispatch(formSuccessMessage("Product Category is update successfully!!")))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(formLoading(false)))
 }
@@ -185,22 +185,22 @@ export default function(state = initialState, action) {
             case MODAL_FORM_GET_CREATE_ACTION: return {
                 ...state,
                 post: initialState.post,
-                openModal: true,
-                modalFormSuccessMessage: initialState.modalFormSuccessMessage
+                openForm: true,
+                formSuccessMessage: initialState.formSuccessMessage
             }
             case MODAL_FORM_UPDATE_SUCCESS: return {
                 ...state,
-                modalFormSuccessMessage: action.message
+                formSuccessMessage: action.message
             }
             case SET_POST: return {
                 ...state,
                 post: action.post,
-                openModal: action.openModal,
-                modalFormSuccessMessage: initialState.modalFormSuccessMessage
+                openForm: action.openForm,
+                formSuccessMessage: initialState.formSuccessMessage
             }
             case CLOSE_MODAL: return {
                 ...state,
-                openModal: false,
+                openForm: false,
                 listLoading: false,
                 post: initialState.post,
                 formLoading: initialState.formLoading,

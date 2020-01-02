@@ -1,108 +1,50 @@
 import React, { useState, useEffect } from "react";
-import FormInput from "../FormInput";
+import { Form } from 'semantic-ui-react'
 import Slug from "../Slug";
 import { makeSlug } from "../../../commons/utils";
 import './style.css'
 
 const FormInputSlug = ({
-    defaultValue,
-    defaultSlugValue,
-    valueError = '',
-    slugValueError = '',
     onChange,
-    onChangeSlugValue,
+    required = false,
+    defaultValue = '',
+    slugValue = '',
+    error = '',
+    slugError = '',
     ...rest
 }) => {
+
     const [state, setState] = useState({
-        tempSlugValue: "",
-        slugValue: defaultSlugValue,
-        valueError: valueError,
-        slugValueError: slugValueError,
-        edit: false
-    });
+        defaultValue,
+        tempSlugValue: '',
+        slugValue,
+        error,
+        slugError
+    })
 
     useEffect(() => {
-        setState({ ...state, valueError, slugValueError })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [valueError, slugValueError])
-
-    const handleChangeValue = (e, input, error) => {
-        const slugValue = makeSlug(input.value);
-        if (!state.tempSlugValue) {
-            setState({ ...state, slugValue, valueError: "", slugValueError: "" });
+        setState({ ...state, defaultValue, error })
+    }, [defaultValue, error, slugValue, slugError])
+    
+    const handleChangeValue = (e, input) => {
+        setState({ ...state, tempSlugValue: makeSlug(input.value)})
+        if (required && !input.value) {
+            setState({ ...state, error: "Field is required" })
+            onChange(e, input, "Field is required", slugValue, '')
+        } else {
+            onChange(e, input, '', slugValue, '')
         }
-        state.tempSlugValue ? onChange(e, input, error) : onChange(e, input, slugValue, error);
-        
-    };
-
-    const handleChangeSlugValue = (_, input, error) => {
-        const tempSlugValue = makeSlug(input.value);
-        setState({ ...state, tempSlugValue, slugValueError: "" });
-        onChangeSlugValue(tempSlugValue, error);
-    };
-
-    const handleCancel = () => {
-        onChangeSlugValue(state.slugValue);
-        setState({ ...state, edit: false });
     }
-
-    const ButtonLink = props => (
-        <button {...props}>
-            {props.children}
-        </button>
-    );
-
-    const handleClickOk = () => {
-        setState({ ...state, slugValue: state.tempSlugValue, edit: false });
-    };
     
     return (
         <div className="input-slug">
-            <FormInput
-                defaultValue={defaultValue}
-                error={state.valueError}
+            <Form.Input
                 onChange={handleChangeValue}
+                defaultValue={defaultValue}
+                error={error ? error : false}
                 {...rest}
             />
-            {state.edit ? (
-                <div className="edit-area">
-                    <FormInput
-                        label="Slug: "
-                        defaultValue={state.slugValue}
-                        error={state.slugValueError}
-                        onChange={handleChangeSlugValue}
-                    />
-                    <p>
-                        <ButtonLink onClick={handleClickOk}>Ok</ButtonLink>
-                        &nbsp;&nbsp;
-                        <ButtonLink onClick={handleCancel}>Cancel</ButtonLink>
-                    </p>
-                </div>
-            ) : state.slugValue ? (
-                <>
-                    <p
-                        className={`slug-input--display ${
-                        state.slugValueError ? "error" : ""
-                        }`}
-                    >
-                        <Slug>{state.tempSlugValue}</Slug>
-                        <ButtonLink
-                            onClick={_ =>
-                                setState({
-                                ...state,
-                                tempSlugValue: state.slugValue,
-                                edit: true
-                                })
-                            }
-                        >
-                        Edit
-                        </ButtonLink>
-                        {state.slugValueError ? (
-                        <span className="slug-input--error">{state.slugValueError}</span>
-                        ) : null}
-                    </p>
-                </>
-            ) : null}
+            {state.tempSlugValue && <Slug>{state.tempSlugValue}</Slug>}
         </div>
     );
 }

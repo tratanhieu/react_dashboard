@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { Label } from 'semantic-ui-react'
-
-import {
-    TableModule,
-    TableRow,
-    TableCell,
-    TableHeaderCell,
-    calcCellWidth
-} from "../../../atoms/TableModule";
+import TableCell from "@material-ui/core/TableCell";
+import TableRow from "@material-ui/core/TableRow";
+import Checkbox from "@material-ui/core/Checkbox";
+import TableModule from "../../../molecules/TableModule";
+// import {
+//     TableModule,
+//     TableRow,
+//     TableCell,
+//     TableHeaderCell,
+//     calcCellWidth
+// } from "../../../atoms/TableModule";
 
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 import { formatDateTime } from '../../../../commons/utils'
@@ -16,77 +19,44 @@ import { formatDateTime } from '../../../../commons/utils'
 import { setCheckedItems, fetchWithPaginationAndFilter } from '../../../../redux/reducers/userReducer';
 import Slug from '../../../atoms/Slug';
 
+const headCells = [
+    { id: "name", label: "Name" },
+    { id: "total", label: "Total" },
+    { id: "createDate", label: "Create Date" },
+    { id: "updateDate", label: "Update Date" },
+    { id: "status", label: "Create Date" }
+];
+
+const TableRowModule = ({ name, slugName, total, createDate, updateDate, status }) => (
+    <>
+        <TableCell>
+            {name}
+            <Slug>{slugName}</Slug>
+        </TableCell>
+        <TableCell>{total}</TableCell>
+        <TableCell>{formatDateTime(createDate)}</TableCell>
+        <TableCell>{formatDateTime(updateDate)}</TableCell>
+        <TableCell>
+            <Label color={DEFAULT_STATUS[status].color}>
+                {DEFAULT_STATUS[status].text}
+            </Label>
+        </TableCell>
+    </>
+);
+
 const Render = ({
-    dataSources, loading, totalPages, defaultActivePage, checkAllItem,
+    postTypeList, loading, totalPages, defaultActivePage, checkAllItem,
     onChange, onDelete, onChangePage, onCheckItem, onCheckAllItem
 }) => {
-    const cellWidth = calcCellWidth([50, 10, 15, 15, 10], true)
-
-    const TableHeader = () => (
-        <>
-            <TableHeaderCell width={cellWidth[0]}>
-                Name
-            </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[1]} textAlign="center">
-                Total Post
-            </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[2]}>
-                Create Date
-            </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[3]}>
-                Update Date
-            </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[4]} textAlign="center">
-                Status
-            </TableHeaderCell>
-        </>
-    )
 
     return (
         <TableModule
-            loading={loading}
-            showCheckbox 
-            header={<TableHeader />} 
-            emptyColSpan={7}
-            currentItems={dataSources.length}
-            totalPages={totalPages}
-            defaultActivePage={defaultActivePage}
-            checkAllItem={checkAllItem}
-            onCheckAllItem={checked => onCheckAllItem(checked)}
-            onChangePage={onChangePage}
-        >
-        {
-            dataSources.map((item, index) => (
-                <TableRow
-                    key={index}
-                    showCheckbox
-                    checked={item.checked}
-                    onCheckItem={checked => onCheckItem(index, checked)}
-                    onChange={_ => onChange(item.id)}
-                    onDelete={onDelete}
-                >
-                    <TableCell width={cellWidth[0]}>
-                        {item.name}
-                        <Slug>{item.slugName}</Slug>
-                    </TableCell>
-                    <TableCell width={cellWidth[1]} textAlign="center">
-                        {item.total}
-                    </TableCell>
-                    <TableCell width={cellWidth[2]}>
-                        {formatDateTime(item.createDate)}
-                    </TableCell>
-                    <TableCell width={cellWidth[3]}>
-                        {formatDateTime(item.updateDate)}
-                    </TableCell>
-                    <TableCell width={cellWidth[4]} textAlign="center">
-                        <Label color={DEFAULT_STATUS[item.status].color}>
-                            {DEFAULT_STATUS[item.status].text}
-                        </Label>
-                    </TableCell>
-                </TableRow>
-            ))
-        }
-        </TableModule>
+            selectKey="postTypeId"
+            headCells={headCells}
+            dataSources={postTypeList}
+            row={TableRowModule}
+            onDelete={selected => console.log(selected)}
+        />
     )
 }
 
@@ -96,7 +66,7 @@ const UserTable = () => {
     // }) => ({ productCategoryList, loading, page, totalPages, filters }), shallowEqual)
 
     const selector = {
-        userList: [
+        postTypeList: [
             { 
                 postTypeId: 10,
                 name: "Hai vui vẻ",
@@ -124,17 +94,17 @@ const UserTable = () => {
 
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        setState({
-            ...state,
-            checkAllItem: false,
-            dataSources: selector.userList.map(item => ({
-                ...item,
-                checked: false
-            }))
-        })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selector.userList])
+    // useEffect(() => {
+    //     setState({
+    //         ...state,
+    //         checkAllItem: false,
+    //         dataSources: selector.userList.map(item => ({
+    //             ...item,
+    //             checked: false
+    //         }))
+    //     })
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [selector.postTypeList])
 
     // useEffect(() => {
     //     dispatch(fetchWithPaginationAndFilter(selector.filters, 1))

@@ -22,7 +22,7 @@ const Render = ({ onClickNew }) => {
     )
 }
 
-const UserHeader = () => {
+const PostHeader = () => {
     const dispatch = useDispatch();
     const renderProps = {
         onClickNew: _ => dispatch(getCreateAction())
@@ -30,4 +30,4 @@ const UserHeader = () => {
     return <Render {...renderProps} />
 }
 
-export default UserHeader
+export default PostHeader

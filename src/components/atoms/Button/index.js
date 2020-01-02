@@ -1,13 +1,35 @@
 import React from 'react'
 import { Button as ButtonSematic, Icon } from 'semantic-ui-react'
+import MaterialButton from '@material-ui/core/Button';
+import AddBoxIcon from '@material-ui/icons/AddBox';
 
-const Button = ({ loading, content, children, rest} ) => {
+const Button = ({
+    loading,
+    color = 'primary',
+    variant = 'contained',
+    iconLabel = false,
+    iconName,
+    content,
+    children,
+    ...rest
+}) => {
+    const Icon = icons[iconName]
     return (
-        <ButtonSematic disabled={loading} {...rest}>
-            {loading ? <><Icon loading name="spinner" />&nbsp;&nbsp;</> : null}
+        <MaterialButton 
+            color={color}
+            variant={variant}
+            startIcon={<Icon />}
+            {...rest}
+        >
+            {/* {loading && <><Icon loading name="spinner" />&nbsp;&nbsp;</>} */}
+            {/* {!loading && iconName && <Icon name={iconName} />} */}
             {content ? content : children}
-        </ButtonSematic>
+        </MaterialButton>
     )
+}
+
+const icons = {
+    addBoxIcon: AddBoxIcon
 }
 
 export default Button

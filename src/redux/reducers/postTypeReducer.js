@@ -24,10 +24,7 @@ export const initialState = {
     postType: {
         status: ACTIVE
     },
-    errors: {
-        name: '',
-        slugName: ''
-    }
+    errors: {}
 }
 
 const createAction = action => `${prefix}${action}`

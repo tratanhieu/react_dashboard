@@ -10,16 +10,19 @@ const RichText = ({ label, height = 500 }) => {
                 initialValue="<p>This is the initial content of the editor</p>"
                 init={{
                     height: height,
-                    menubar: false,
+                    menubar: true,
                     plugins: [
                         'advlist autolink lists link image charmap print preview anchor',
                         'searchreplace visualblocks code fullscreen',
                         'insertdatetime media table paste code help wordcount'
                     ],
-                    toolbar:
-                        'undo redo | formatselect | bold italic backcolor | \
-                        alignleft aligncenter alignright alignjustify | \
-                        bullist numlist outdent indent | removeformat | help'
+                    toolbar: `undo redo | bold italic underline strikethrough | 
+                            fontselect fontsizeselect formatselect | 
+                            alignleft aligncenter alignright alignjustify | 
+                            outdent indent |  numlist bullist | forecolor backcolor removeformat | 
+                            pagebreak | charmap emoticons | fullscreen  preview save print | 
+                            insertfile image media template link anchor codesample | ltr rtl`
+                    ,
                 }}
                 // onChange={this.handleEditorChange}
             />
