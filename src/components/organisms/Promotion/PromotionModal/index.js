@@ -18,17 +18,24 @@ import {
   closeModal,
   updateCategory,
   updateGroupType,
-  updateType,
-  setApplyStatus,
-  setCodeStatus
-} from "../../../../redux/reducers/saleManagementReducer";
+  updateType
+} from "../../../../redux/reducers/promotionReducer";
 
 const listApplyStatus = [
   { key: "ALL", label: "Áp dụng cho tất cả sản phẩm" },
   { key: "CUSTOM", label: "Chọn sản phẩm áp dụng" }
 ];
 const Render = ({
-  sale: { saleId, name, code, percent, startDate, endDate, selectedItems },
+  promotion: {
+    promotionId,
+    promotionName,
+    percent,
+    startDate,
+    endDate,
+    listProductId,
+    promotionCodes,
+    status
+  },
   applyStatus,
   openModal,
   loading,
@@ -39,19 +46,23 @@ const Render = ({
   modalFormSuccessMessage,
   onPositive,
   onClose,
-  onChangeName,
+  onChangePromotionName,
   onChangeStatusCode,
   onChangeCode,
+  onChangeCodePercent,
+  onChangeCodeQuantity,
   onChangeApplyStatus,
   onChangeStartDate,
   onChangeEndDate,
   onChangePercent,
-  onClickRandomCode,
   onCheckAllItem,
   onCheckItem,
+  onChangeQuantity,
   onChangeCategories,
   onChangeGroupTypes,
   onChangeGroups,
+  onClickAddCode,
+  onClickMinusCode,
   selectBox,
   errors = {},
   dataSources,
@@ -68,7 +79,7 @@ const Render = ({
     <ModalModule
       size="small"
       title={
-        saleId
+        promotionId
           ? "Cập nhật chương trình khuyến mãi"
           : "Tạo chương trình khuyến mãi"
       }
@@ -78,52 +89,68 @@ const Render = ({
       {...rest}
     >
       <Form>
-        <FormInput
-          label="Tên chương trình: "
-          placeholder="Nhập tên chương trình"
-          value={name}
-          onChange={onChangeName}
-          required
-        />
-        <Form.Group>
-          <Form.Field width={12}>
+        <Form.Field>
+          <FormInput
+            label="Tên chương trình: "
+            placeholder="Nhập tên chương trình"
+            value={promotionName}
+            onChange={onChangePromotionName}
+            required
+          />
+          <Form.Group inline={true}>
+            <Form.Checkbox
+              label="Dùng mã giảm giá"
+              checked={codeStatus}
+              onChange={onChangeStatusCode}
+            />
+          </Form.Group>
+        </Form.Field>
+        {promotionCodes.map((code, index) => (
+          <Form.Group key={index}>
             <FormInput
+              width={8}
               label="Mã giảm giá: "
               placeholder="Nhập mã giảm giá"
               style={{ paddingBottom: "10px" }}
-              value={code}
-              disabled={codeStatus ? false : true}
-              onChange={onChangeCode}
+              value={code.code}
+              onChange={(_, input) => onChangeCode(input, index)}
             />
-            <Form.Group inline={true}>
-              <Form.Checkbox
-                label="Dùng mã giảm giá"
-                checked={codeStatus}
-                onChange={onChangeStatusCode}
-              />
-              <Form.Button
-                icon
-                size="mini"
-                disabled={codeStatus ? false : true}
-                onClick={onClickRandomCode}
-              >
-                Ngẫu nhiên
-              </Form.Button>
-            </Form.Group>
-          </Form.Field>
-          <FormInput
-            type="number"
-            min="1"
-            max="100"
-            label="Phần trăm: "
-            placeholder="%"
-            width={4}
-            onChange={onChangePercent}
-            value={percent}
-            required
-          />
-        </Form.Group>
-        <Form.Group widths={2}>
+            <FormInput
+              type="number"
+              min="1"
+              max="100"
+              label="Phần trăm: "
+              placeholder="%"
+              width={3}
+              onChange={(_, input) => onChangeCodePercent(input, index)}
+              value={code.percent}
+              required
+            />
+            <FormInput
+              type="number"
+              min="1"
+              label="Số lượng: "
+              placeholder="Số lượng"
+              width={3}
+              onChange={(_, input) => onChangeCodeQuantity(input, index)}
+              value={code.quantity}
+            />
+            <Form.Button
+              icon="plus"
+              size="mini"
+              style={{ marginTop: "1.88571429rem" }}
+              onClick={(_, event) => onClickAddCode(event, index)}
+            />
+            <Form.Button
+              icon="minus"
+              size="mini"
+              style={{ marginTop: "1.88571429rem" }}
+              onClick={(_, event) => onClickMinusCode(event, index)}
+              disabled={promotionCodes.length === 1}
+            />
+          </Form.Group>
+        ))}
+        <Form.Group widths={3}>
           <DatePickerModule
             label="Thời điểm bắt đầu: "
             onChange={onChangeStartDate}
@@ -135,6 +162,16 @@ const Render = ({
             onChange={onChangeEndDate}
             onSelected={onChangeEndDate}
             value={endDate}
+          />
+          <FormInput
+            type="number"
+            min="1"
+            max="100"
+            label="Phần trăm: "
+            placeholder="%"
+            onChange={onChangePercent}
+            value={percent}
+            required
           />
         </Form.Group>
         <Form.Group>
@@ -178,7 +215,7 @@ const Render = ({
               header={<TableHeader />}
               currentItems={dataSources.length}
               emptyColSpan={3}
-              counter={selectedItems.length}
+              counter={listProductId.length}
               checkAllItem={checkAllItem}
               onCheckAllItem={checked => onCheckAllItem(checked)}
             >
@@ -190,7 +227,9 @@ const Render = ({
                   onChange={onCheckItem}
                   onCheckItem={checked => onCheckItem(index, checked)}
                 >
-                  <TableCell width={cellWidth[0]}>{item.name}</TableCell>
+                  <TableCell width={cellWidth[0]}>
+                    {item.promotionName}
+                  </TableCell>
                 </TableRow>
               ))}
             </SaleTable>
@@ -203,14 +242,14 @@ const Render = ({
   );
 };
 
-const SaleManagementModal = ({ onPositive, ...rest }) => {
+const PromotionModal = ({ onPositive, ...rest }) => {
   const selector = useSelector(
     ({
-      saleManagementReducer: {
+      promotionReducer: {
         openModal,
         modalFormSuccessMessage,
         formLoading,
-        sale,
+        promotion,
         listItems,
         selectList,
         // loading,
@@ -221,7 +260,7 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
       openModal,
       formLoading,
       modalFormSuccessMessage,
-      sale,
+      promotion,
       listItems,
       selectList,
       // loading,
@@ -231,18 +270,19 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
     shallowEqual
   );
 
-  const [sale, setSale] = useState(
-    Object.keys(selector.sale).length
+  const [promotion, setPromotion] = useState(
+    Object.keys(selector.promotion).length
       ? {
-          ...selector.sale
+          ...selector.promotion
         }
       : {
-          name: "",
-          code: "",
+          promotionName: "",
           percent: "",
           startDate: new Date(),
           endDate: new Date(),
-          selectedItems: []
+          listProductId: [],
+          promotionCodes: [],
+          status: true
         }
   );
 
@@ -260,11 +300,11 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
     setState({
       ...state,
       checkAllItem:
-        sale.selectedItems.length === selector.listItems.length ? true : false,
+        promotion.listProductId.length === selector.listItems.length,
       dataSources: selector.listItems.map(item => {
         let boolean = false;
-        sale.selectedItems.forEach(sItem => {
-          if (sItem === item.saleId) {
+        promotion.listProductId.forEach(sItem => {
+          if (sItem === item.promotionId) {
             boolean = true;
           }
         });
@@ -273,47 +313,86 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
           checked: boolean
         };
       }),
-      codeStatus: sale.code ? true : false,
-      applyStatus: sale.selectedItems.length === 0 ? "ALL" : "CUSTOM"
+      codeStatus: promotion.promotionCodes.length,
+      applyStatus: promotion.listProductId.length === 0 ? "ALL" : "CUSTOM"
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selector.listItems, sale.selectedItems, sale.code]);
+  }, [selector.listItems, promotion]);
 
   const renderProps = {
     ...rest,
     ...state,
     ...selector,
-    sale,
-    onChangeName: (_, input) =>
-      setSale({
-        ...sale,
-        name: input.value
+    promotion,
+    onChangePromotionName: (_, input) =>
+      setPromotion({
+        ...promotion,
+        promotionName: input.value
       }),
 
-    onChangeStatusCode: (_, checkbox) =>
-      setState({ ...state, codeStatus: checkbox.checked }),
+    onChangeStatusCode: (_, checkbox) => {
+      setState({ ...state, codeStatus: checkbox.checked });
+      if (!promotion.promotionCodes.length) {
+        setPromotion({
+          ...promotion,
+          promotionCodes: [
+            {
+              code: Math.random()
+                .toString(36)
+                .substring(3)
+                .toUpperCase(),
+              percent: "",
+              quantity: ""
+            }
+          ]
+        });
+      } else {
+        setPromotion({ ...promotion, promotionCodes: [] });
+      }
+    },
 
-    onChangeCode: (_, input) =>
-      setSale({
-        ...sale,
-        code: input.value
-      }),
+    onChangeCode: (input, index) => {
+      let arrTemp = promotion.promotionCodes;
+      arrTemp[index].code = input.value;
+      setPromotion({
+        ...promotion,
+        promotionCodes: arrTemp
+      });
+    },
+
+    onChangeCodePercent: (input, index) => {
+      let arrTemp = promotion.promotionCodes;
+      arrTemp[index].percent = parseInt(input.value);
+      setPromotion({
+        ...promotion,
+        promotionCodes: arrTemp
+      });
+    },
+
+    onChangeCodeQuantity: (input, index) => {
+      let arrTemp = promotion.promotionCodes;
+      arrTemp[index].quantity = parseInt(input.value);
+      setPromotion({
+        ...promotion,
+        promotionCodes: arrTemp
+      });
+    },
 
     onChangePercent: (_, input) =>
-      setSale({
-        ...sale,
+      setPromotion({
+        ...promotion,
         percent: parseInt(input.value)
       }),
 
     onChangeStartDate: date =>
-      setSale({
-        ...sale,
+      setPromotion({
+        ...promotion,
         startDate: date
       }),
 
     onChangeEndDate: date =>
-      setSale({
-        ...sale,
+      setPromotion({
+        ...promotion,
         endDate: date
       }),
 
@@ -326,32 +405,48 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
     onChangeApplyStatus: (_, radio) =>
       setState({ ...state, applyStatus: radio.value }),
 
-    onClickRandomCode: () =>
-      setSale({
-        ...sale,
+    onClickAddCode: (event, index) => {
+      let arrTemp = promotion.promotionCodes;
+      arrTemp.splice(++index, 0, {
         code: Math.random()
           .toString(36)
           .substring(3)
-          .toUpperCase()
-      }),
+          .toUpperCase(),
+        percent: "",
+        quantity: ""
+      });
+      setPromotion({
+        ...promotion,
+        promotionCodes: arrTemp
+      });
+    },
+
+    onClickMinusCode: (event, index) => {
+      let arrTemp = promotion.promotionCodes;
+      arrTemp.splice(index, 1);
+      setPromotion({
+        ...promotion,
+        promotionCodes: arrTemp
+      });
+    },
     onCheckItem: (index, checked) => {
       let arr = [];
       state.dataSources[index].checked = checked;
       state.dataSources.forEach(item =>
-        item.checked === true ? arr.push(item.saleId) : null
+        item.checked === true ? arr.push(item.promotionId) : null
       );
       state.checkAllItem = arr.length === state.dataSources.length;
+      setPromotion({ ...promotion, listProductId: arr });
       setState({ ...state });
-      setSale({ ...sale, selectedItems: arr });
     },
     onCheckAllItem: checkAllItem => {
-      let selectedItems = [];
+      let listProductId = [];
       setState({
         ...state,
         checkAllItem,
         dataSources: state.dataSources.map(item => {
           if (checkAllItem) {
-            selectedItems.push(item.saleId);
+            listProductId.push(item.promotionId);
           }
           return {
             ...item,
@@ -359,20 +454,21 @@ const SaleManagementModal = ({ onPositive, ...rest }) => {
           };
         })
       });
-      setSale({ ...sale, selectedItems });
+      setPromotion({ ...promotion, listProductId });
     },
     onPositive: _ => {
       if (!selector.codeStatus) {
-        setSale({ ...sale, code: "" });
+        setPromotion({ ...promotion, promotionCodes: [] });
       }
       if (selector.applyStatus === "ALL") {
-        setSale({ ...sale, selectedItems: [] });
+        setPromotion({ ...promotion, listProductId: [] });
       }
-      return dispatch(doSave(sale));
+      return dispatch(doSave(promotion));
     },
     onClose: _ => dispatch(closeModal())
   };
+  // console.log(promotion);
   return <Render {...renderProps} />;
 };
 
-export default SaleManagementModal;
+export default PromotionModal;

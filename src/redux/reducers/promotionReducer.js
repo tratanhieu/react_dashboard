@@ -4,9 +4,9 @@ import { ACTIVE } from "../../constants/entites";
 import { handleErrors, resetSystemErrors } from "./rootReducer";
 
 // API
-const URL_PATH = `${REDUX_API_URL}/sale`;
+const URL_PATH = `${REDUX_API_URL}/promotion`;
 
-const prefix = "SALE_";
+const prefix = "PROMOTION_";
 
 const initialState = {
   loading: true,
@@ -19,53 +19,36 @@ const initialState = {
   },
   multipleExecuteLoading: false,
   formLoading: false,
-  openModal: true,
-  sale: {},
-  saleList: [],
+  openModal: false,
   checkedItems: [],
   totalPages: 0,
+  promotion: {
+  },
+  promotionList: [],
   listItems: [
     {
-      saleId: 10,
-      name: "Samsung",
-      slugName: "/samsung",
-      email: "sjhdj@gmail.com",
-      status: "ACTIVE"
+      promotionId: 10,
+      promotionName: "Samsung"
     },
     {
-      saleId: 11,
-      name: "Samsung",
-      slugName: "/samsung",
-      email: "sjhdj@gmail.com",
-      status: "ACTIVE"
+      promotionId: 11,
+      promotionName: "Samsung"
     },
     {
-      saleId: 12,
-      name: "Samsung",
-      slugName: "/samsung",
-      email: "sjhdj@gmail.com",
-      status: "ACTIVE"
+      promotionId: 12,
+      promotionName: "Samsung"
     },
     {
-      saleId: 13,
-      name: "Samsung",
-      slugName: "/samsung",
-      email: "sjhdj@gmail.com",
-      status: "ACTIVE"
+      promotionId: 13,
+      promotionName: "Samsung"
     },
     {
-      saleId: 15,
-      name: "Samsung",
-      slugName: "/samsung",
-      email: "sjhdj@gmail.com",
-      status: "ACTIVE"
+      promotionId: 15,
+      promotionName: "Samsung"
     },
     {
-      saleId: 14,
-      name: "Samsung",
-      slugName: "/samsung",
-      email: "sjhdj@gmail.com",
-      status: "ACTIVE"
+      promotionId: 14,
+      promotionName: "Samsung"
     }
   ],
   selectList: {
@@ -107,8 +90,6 @@ const UPDATE_FILTERS = createAction("UPDATE_FILTERS");
 const UPDATE_CATEGORY = createAction("UPDATE_CATEGORY");
 const UPDATE_GROUPTYPE = createAction("UPDATE_GROUPTYPE");
 const UPDATE_TYPE = createAction("UPDATE_TYPE");
-const UPDATE_APPLY_STATUS = createAction("UPDATE_APPLY_STATUS");
-const UPDATE_CODE_STATUS = createAction("UPDATE_CODE_STATUS");
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS");
 const SET_SELECTED_ITEMS = createAction("SET_SELECTED_ITEMS");
 const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING");
@@ -122,9 +103,14 @@ const MULTIPLE_EXECUTE_LOADING = createAction("MULTIPLE_EXECUTE_LOADING");
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS");
 
 const listLoading = loading => ({ type: LIST_LOADING, loading });
-const prepareData = ({ listData: saleList, totalPage, pageSize, page }) => ({
+const prepareData = ({
+  listData: promotionList,
+  totalPage,
+  pageSize,
+  page
+}) => ({
   type: PREPARE_DATA,
-  saleList,
+  promotionList,
   totalPage,
   pageSize,
   page
@@ -136,9 +122,9 @@ const setMultipleExecuteLoading = loading => ({
   loading
 });
 
-const setsale = (sale, openModal) => ({
+const setPromotion = (promotion, openModal) => ({
   type: SET_PRODUCT_CATEGORY,
-  sale,
+  promotion,
   openModal
 });
 
@@ -147,8 +133,8 @@ const modalFormSuccessMessage = message => ({
   message
 });
 
-const doCreate = sale => async dispatch => {
-  const params = JSON.stringify(sale);
+const doCreate = promotion => async dispatch => {
+  const params = JSON.stringify(promotion);
   // axios.post(`${URL_PATH}/create`, params, {
   //     timeout: 5000,
   //     headers: {
@@ -159,10 +145,10 @@ const doCreate = sale => async dispatch => {
   // .finally(_ => dispatch(formLoading(false)))
 };
 
-const doUpdate = sale => async dispatch => {
-  const params = JSON.stringify(sale);
+const doUpdate = promotion => async dispatch => {
+  const params = JSON.stringify(promotion);
   // return axios.post(
-  //     `${URL_PATH}/${sale.saleId}/update`, params, {
+  //     `${URL_PATH}/${promotion.promotionId}/update`, params, {
   //         timeout: 5000,
   //         headers: {
   //             'Content-Type': 'application/json'
@@ -177,7 +163,10 @@ const updateFilters = filters => ({ type: UPDATE_FILTERS, filters });
 
 export const updateCategory = category => ({ type: UPDATE_CATEGORY, category });
 
-export const updateGroupType = groupType => ({ type: UPDATE_GROUPTYPE, groupType });
+export const updateGroupType = groupType => ({
+  type: UPDATE_GROUPTYPE,
+  groupType
+});
 
 export const updateType = type => ({ type: UPDATE_TYPE, type });
 
@@ -211,25 +200,34 @@ export const fetchWithPaginationAndFilter = (
   // .finally(_ => dispatch(listLoading(false)))
 };
 
-export const doSave = sale => async dispatch => {
+export const doSave = promotion => async dispatch => {
   dispatch(resetSystemErrors());
   dispatch(formLoading(true));
-  const { saleId, code, percent, startDate, endDate, selectedItems } = sale;
-  console.log(sale);
-  // if (!saleId) {
+  const {
+    promotionId,
+    promotionName,
+    percent,
+    startDate,
+    endDate,
+    listProductId,
+    promotionCodes,
+    status
+  } = promotion;
+  console.log(promotion);
+  // if (!promotionId) {
   //     dispatch(doCreate({ name, slugName, status }))
   // } else {
-  //     dispatch(doUpdate({ saleId, name, slugName, status }))
+  //     dispatch(doUpdate({ promotionId, name, slugName, status }))
   // }
 };
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION });
-export const getUpdateAction = saleId => async dispatch => {
+export const getUpdateAction = promotionId => async dispatch => {
   dispatch(resetSystemErrors());
   dispatch(listLoading(true));
-  // return axios.get(`${URL_PATH}/${saleId}`, {
+  // return axios.get(`${URL_PATH}/${promotionId}`, {
   //     timeout: 5000
-  // }).then(response => dispatch(setsale(response.data, true)))
+  // }).then(response => dispatch(setPromotion(response.data, true)))
   // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
   // .finally(_ => dispatch(listLoading(false)))
 };
@@ -279,7 +277,7 @@ export default function(state = initialState, action) {
       case PREPARE_DATA:
         return {
           ...state,
-          saleList: action.saleList,
+          prmotionList: action.prmotionList,
           totalPages: action.totalPage,
           page: action.page,
           loading: false,
@@ -318,7 +316,7 @@ export default function(state = initialState, action) {
       case MODAL_FORM_GET_CREATE_ACTION:
         return {
           ...state,
-          sale: initialState.sale,
+          promotion: initialState.promotion,
           openModal: true,
           modalFormSuccessMessage: initialState.modalFormSuccessMessage
         };
@@ -330,7 +328,7 @@ export default function(state = initialState, action) {
       case SET_PRODUCT_CATEGORY:
         return {
           ...state,
-          sale: action.sale,
+          promotion: action.promotion,
           openModal: action.openModal,
           modalFormSuccessMessage: initialState.modalFormSuccessMessage
         };
@@ -339,7 +337,7 @@ export default function(state = initialState, action) {
           ...state,
           openModal: false,
           listLoading: false,
-          sale: initialState.sale,
+          promotion: initialState.promotion,
           formLoading: initialState.formLoading,
           errors: initialState.errors
         };

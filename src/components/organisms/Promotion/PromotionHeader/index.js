@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux'
 import { Grid, Button, Icon } from 'semantic-ui-react'
-import { getCreateAction } from '../../../../redux/reducers/saleManagementReducer';
+import { getCreateAction } from "../../../../redux/reducers/promotionReducer";
 
 const Render = ({ onClickNew }) => {
     return (
