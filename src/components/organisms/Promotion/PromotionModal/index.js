@@ -60,7 +60,7 @@ const Render = ({
   onChangeQuantity,
   onChangeCategories,
   onChangeGroupTypes,
-  onChangeGroups,
+  onChangeTypes,
   onClickAddCode,
   onClickMinusCode,
   selectBox,
@@ -134,6 +134,7 @@ const Render = ({
               width={3}
               onChange={(_, input) => onChangeCodeQuantity(input, index)}
               value={code.quantity}
+              required
             />
             <Form.Button
               icon="plus"
@@ -198,15 +199,15 @@ const Render = ({
                 label="Theo nhóm loại sản phẩm"
                 options={selectBox.groupTypes}
                 placeholder="Nhóm loại sản phẩm"
-                disabled={!selectList.category ? true : false}
+                disabled={!selectList.category}
                 onChange={(_, select) => onChangeGroupTypes(select.value)}
               />
               <Form.Select
                 label="Theo loại sản phẩm"
                 options={selectBox.groups}
                 placeholder="Loại sản phẩm"
-                disabled={!selectList.groupType ? true : false}
-                onChange={(_, select) => onChangeGroups(select.value)}
+                disabled={!selectList.groupType}
+                onChange={(_, select) => onChangeTypes(select.value)}
               />
             </Form.Group>
             <SaleTable
@@ -228,7 +229,7 @@ const Render = ({
                   onCheckItem={checked => onCheckItem(index, checked)}
                 >
                   <TableCell width={cellWidth[0]}>
-                    {item.promotionName}
+                    {item.productName}
                   </TableCell>
                 </TableRow>
               ))}

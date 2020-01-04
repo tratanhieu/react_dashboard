@@ -50,7 +50,7 @@ class App extends React.Component {
 					<Route path="/user/group">
 						<UserGroup />
 					</Route>
-					<Route path="/sale">
+					<Route path="/promotion">
 						<Promotion />
 					</Route>
 					<Route exact path="/">

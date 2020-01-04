@@ -27,28 +27,28 @@ const initialState = {
   promotionList: [],
   listItems: [
     {
-      promotionId: 10,
-      promotionName: "Samsung"
+      productId: 10,
+      productName: "Samsung"
     },
     {
-      promotionId: 11,
-      promotionName: "Samsung"
+      productId: 11,
+      productName: "Samsung"
     },
     {
-      promotionId: 12,
-      promotionName: "Samsung"
+      productId: 12,
+      productName: "Samsung"
     },
     {
-      promotionId: 13,
-      promotionName: "Samsung"
+      productId: 13,
+      productName: "Samsung"
     },
     {
-      promotionId: 15,
-      promotionName: "Samsung"
+      productId: 15,
+      productName: "Samsung"
     },
     {
-      promotionId: 14,
-      promotionName: "Samsung"
+      productId: 14,
+      productName: "Samsung"
     }
   ],
   selectList: {
@@ -88,7 +88,7 @@ const RELOAD = createAction("RELOAD");
 const PREPARE_DATA = createAction("PREPARE_DATA");
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS");
 const UPDATE_CATEGORY = createAction("UPDATE_CATEGORY");
-const UPDATE_GROUPTYPE = createAction("UPDATE_GROUPTYPE");
+const UPDATE_GROUP_TYPE = createAction("UPDATE_GROUP_TYPE");
 const UPDATE_TYPE = createAction("UPDATE_TYPE");
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS");
 const SET_SELECTED_ITEMS = createAction("SET_SELECTED_ITEMS");
@@ -164,7 +164,7 @@ const updateFilters = filters => ({ type: UPDATE_FILTERS, filters });
 export const updateCategory = category => ({ type: UPDATE_CATEGORY, category });
 
 export const updateGroupType = groupType => ({
-  type: UPDATE_GROUPTYPE,
+  type: UPDATE_GROUP_TYPE,
   groupType
 });
 
@@ -293,7 +293,7 @@ export default function(state = initialState, action) {
           ...state,
           selectList: { ...state.selectList, category: action.category }
         };
-      case UPDATE_GROUPTYPE:
+      case UPDATE_GROUP_TYPE:
         return {
           ...state,
           selectList: { ...state.selectList, groupType: action.groupType }
