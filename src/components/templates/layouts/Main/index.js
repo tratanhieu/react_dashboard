@@ -55,7 +55,7 @@ const Render = ({ navOpen, setNavOpen, children, systemErrors, onCloseSystemErro
                 </div>
             </div>
             {
-                systemErrors.message &
+                systemErrors.message &&
                 <div className="error-system">
                     <span>
                         <ReportProblemOutlined />

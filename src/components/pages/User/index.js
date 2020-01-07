@@ -7,8 +7,11 @@ import UserFilter from '../../organisms/User/UserFilter';
 import UserHeader from '../../organisms/User/UserHeader';
 import { resetSystemErrors } from '../../../redux/reducers/rootReducer';
 import UserAction from '../../organisms/User/UserAction';
+import { AddBox } from '@material-ui/icons';
+import Button from '../../atoms/Button';
+import ContentHeader from '../../organisms/ContentHeader';
 
-const User = () => {
+const User = ({ onOpenCreate }) => {
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -18,9 +21,7 @@ const User = () => {
 
     return (
         <>
-            <UserHeader />
-            <UserFilter />
-            <UserAction />
+            <ContentHeader title="User" onOpenCreate={onOpenCreate} />
             <UserTable />
             <UserModal />
         </>

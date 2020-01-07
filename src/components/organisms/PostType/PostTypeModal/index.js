@@ -53,7 +53,7 @@ const Render = ({
     </ModalModule>
 );
 
-const PostTypeModal = ({ onPositive }) => {
+export default function PostTypeModal() {
     const selector = useSelector(({
         postTypeReducer: { openModal, modalFormSuccessMessage, formLoading, productCategory, errors } 
     }) => ({ openModal, formLoading, modalFormSuccessMessage, productCategory, errors }), shallowEqual)
@@ -86,6 +86,4 @@ const PostTypeModal = ({ onPositive }) => {
     };
 
     return <Render {...renderProps} />;
-};
-
-export default PostTypeModal;
+}

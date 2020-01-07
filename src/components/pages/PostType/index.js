@@ -6,22 +6,13 @@ import PostTypeTable from '../../organisms/PostType/PostTypeTable';
 import PostTypeFilter from '../../organisms/PostType/PostTypeFilter';
 import { resetSystemErrors } from '../../../redux/reducers/rootReducer';
 import ContentHeader from '../../organisms/ContentHeader';
-import { getCreateAction } from '../../../redux/reducers/postTypeReducer';
+import { fetchAll, getCreateAction } from '../../../redux/reducers/postTypeReducer';
 import Button from '../../atoms/Button';
 import { AddBox } from '@material-ui/icons';
 
 const Render = ({ onOpenCreate }) => (
     <>
-        <ContentHeader>
-            <h2>Post Type</h2>
-            <Button
-                icon={<AddBox />}
-                loading={false}
-                content="Create"
-                onClick={onOpenCreate}
-            />
-        </ContentHeader>
-        <PostTypeFilter />
+        <ContentHeader title="Post Type" onOpenCreate={onOpenCreate} />
         <PostTypeTable />
         <PostTypeModal />
     </>
@@ -32,6 +23,7 @@ const PostType = () => {
 
     useEffect(() => {
         dispatch(resetSystemErrors())
+        dispatch(fetchAll())
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 

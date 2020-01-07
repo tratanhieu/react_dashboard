@@ -7,7 +7,7 @@ const ToggleActive = ({
     onChange,
     ...rest
 }) => (
-    <FormGroup>
+    <FormGroup style={{ marginTop: "8px" }}>
         <FormControlLabel
             control={
                 <Switch

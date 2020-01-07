@@ -14,6 +14,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 const useStyles = makeStyles(theme => ({
+    root: {
+        // pointerEvents: "none"
+    },
     bottom: {
         padding: "16px 24px"
     }
@@ -22,17 +25,27 @@ const useStyles = makeStyles(theme => ({
 export default function ModalModule({
     title,
     children,
-    minWidth = "320px", 
+    minWidth = "320px",
     onPositive,
     onClose,
     ...rest
 }) {
     const classes = useStyles()
 
+    const handleClose = (_, reason) => {
+        if (reason != 'backdropClick' || reason != 'escapeKeyDown') {
+            onClose()
+        }
+        return false
+    }
+
     return (
         <Dialog
+            className={classes.root}
             TransitionComponent={Transition}
-            onClose={onClose}
+            onClose={handleClose}
+            disableBackdropClick
+            disableEscapeKeyDown
             {...rest}
         >
             <DialogTitle>{title}</DialogTitle>
@@ -50,7 +63,7 @@ export default function ModalModule({
                 <Button
                     icon={<Close />}
                     color="default"
-                    onClick={onClose}
+                    onClick={handleClose}
                     content="Cancel"
                 />
             </DialogActions>

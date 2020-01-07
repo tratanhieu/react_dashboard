@@ -48,10 +48,7 @@ const PATH_POST_TYPE = `${REDUX_API_URL}/post/type`
 const listLoading = loading => ({ type: LIST_LOADING, loading })
 const prepareData = data => ({
     type: PREPARE_DATA,
-    postTypeList: data.listData,
-    totalPage: data.totalPage,
-    pageSize: data.pageSize,
-    page: data.page
+    postTypeList: data
 })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
@@ -78,11 +75,10 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
     .finally(_ => dispatch(setMultipleExecuteLoading(false)))
 }
 
-export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
+export const fetchAll = () => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${PATH_POST_TYPE}?search=${filters.search}&status=${filters.status}&`
-            + `sort=${filters.sort}&page=${page}`,
+    return axios.get(`${PATH_POST_TYPE}`,
         { timeout: 5000 }
     )
     .then(response => dispatch(prepareData(response.data)))
@@ -166,8 +162,6 @@ export default function(state = initialState, action) {
             case PREPARE_DATA: return {
                 ...state,
                 postTypeList: action.postTypeList,
-                totalPage: action.totalPage,
-                page: action.page,
                 loading: false,
                 reload: false
             }

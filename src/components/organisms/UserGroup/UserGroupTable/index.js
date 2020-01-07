@@ -2,87 +2,54 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { Label } from 'semantic-ui-react'
 
-import {
-    TableModule,
-    TableRow,
-    TableCell,
-    TableHeaderCell,
-    calcCellWidth
-} from "../../../atoms/TableModule";
-
 import { DEFAULT_STATUS } from '../../../../constants/entites'
+import { formatDateTime } from '../../../../commons/utils';
+import StatusLabel from '../../../atoms/StatusLabel';
+import FilterBar from '../../../molecules/FilterBar';
+import { TableCell } from '@material-ui/core';
+import TableModule from '../../../molecules/TableModule';
 // REDUX
-import { fetchWithPaginationAndFilter } from '../../../../redux/reducers/userReducer';
+
+const listStatus = [
+    { key: "", label: "All" },
+    { key: "ACTIVE", label: "Active" },
+    { key: "HIDDEN", label: "Hidden" },
+    { key: "DELETE", label: "Delete" }
+]
+
+const headCells = [
+    { id: "name", label: "Full Name" },
+    { id: "totalUser", label: "Total User" },
+    { id: "createDate", label: "Create Date" },
+    { id: "updateDate", label: "Update Date" },
+    { id: "status", label: "Status" }
+];
+
+const TableRowModule = ({ name, userInGroup, createDate, updateDate, status }) => (
+    <>
+        <TableCell>{name}</TableCell>
+        <TableCell>{userInGroup}</TableCell>
+        <TableCell>{formatDateTime(createDate)}</TableCell>
+        <TableCell>{formatDateTime(updateDate)}</TableCell>
+        <TableCell>
+            <StatusLabel {...DEFAULT_STATUS[status]} />
+        </TableCell>
+    </>
+)
 
 const Render = ({
-    dataSources, loading, totalPages, defaultActivePage,
-    onChange, onDelete, onChangePage, onCheckItem
-}) => {
-    const cellWidth = calcCellWidth([30, 20, 20, 20, 10], false)
-
-    const TableHeader = () => (
-        <>
-            <TableHeaderCell width={cellWidth[0]}>
-                Name
-            </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[1]}>
-                User In Group
-            </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[2]}>
-                Create Date
-            </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[3]}>
-                Update Date
-            </TableHeaderCell>
-            <TableHeaderCell width={cellWidth[4]} textAlign="center">
-                Status
-            </TableHeaderCell>
-        </>
-    )
-
-    return (
-        <TableModule
-            loading={loading}
-            showCheckbox={false}
-            header={<TableHeader />} 
-            currentItems={dataSources.length}
-            emptyColSpan={6}
-            totalPages={totalPages}
-            defaultActivePage={defaultActivePage}
-            onChangePage={onChangePage}
+    userGroupList, loading
+}) => (
+    <TableModule
+        selectKey="userGroupId"
+        headCells={headCells}
+        dataSources={userGroupList}
+        row={TableRowModule}
+        onDelete={selected => console.log(selected)}
         >
-        {
-            dataSources.map((item, index) => (
-                <TableRow
-                    key={index}
-                    checked={item.checked}
-                    onCheckItem={checked => onCheckItem(index, checked)}
-                    onChange={_ => onChange(item.id)}
-                    onDelete={onDelete}
-                >
-                    <TableCell width={cellWidth[0]}>
-                        {item.name}
-                    </TableCell>
-                    <TableCell width={cellWidth[1]}>
-                        {item.userInGroup}
-                    </TableCell>
-                    <TableCell width={cellWidth[2]}>
-                        {item.createDate.toLocaleString('vi')}
-                    </TableCell>
-                    <TableCell width={cellWidth[3]}>
-                        {item.updateDate.toLocaleString('vi')}
-                    </TableCell>
-                    <TableCell width={cellWidth[4]} textAlign="center">
-                        <Label color={DEFAULT_STATUS[item.status].color}>
-                            {DEFAULT_STATUS[item.status].text}
-                        </Label>
-                    </TableCell>
-                </TableRow>
-            ))
-        }
-        </TableModule>
-    )
-}
+        <FilterBar listStatus={listStatus} onChangeFilter />
+    </TableModule>
+)
 
 const UserGroupTable = () => {
     // const selector = useSelector(({
@@ -121,34 +88,8 @@ const UserGroupTable = () => {
         filters: {}
     }
 
-    const [state, setState] = useState({
-        checkAllItem: false,
-        dataSources: []
-    });
-
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        setState({
-            ...state,
-            checkAllItem: false,
-            dataSources: selector.userGroupList.map(item => ({
-                ...item,
-                checked: false
-            }))
-        })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selector.userGroupList])
-
-    // useEffect(() => {
-    //     dispatch(fetchWithPaginationAndFilter(selector.filters, 1))
-    // }, [selector.filters])
-
     const renderProps = {
-        ...state,
-        ...selector,
-        defaultActivePage: selector.page,
-        onChangePage: page => dispatch(fetchWithPaginationAndFilter(selector.filters, page))
+        ...selector
     }
 
     return <Render {...renderProps} />

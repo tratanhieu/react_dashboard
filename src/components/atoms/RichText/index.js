@@ -7,14 +7,16 @@ const RichText = ({ label, height = 500 }) => {
         <div className={styles.root}>
             {label && <label>{label}</label>}
             <Editor
+                apiKey="xtguhbzamroq55plwax7lrbozu2f9sqioce2mwia4qk82s4a"
                 initialValue="<p>This is the initial content of the editor</p>"
                 init={{
                     height: height,
                     menubar: true,
                     plugins: [
-                        'advlist autolink lists link image charmap print preview anchor',
+                        'advlist autolink lists link charmap print preview anchor',
                         'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table paste code help wordcount'
+                        'insertdatetime media table paste powerpaste code help wordcount',
+                        'image imagetools'
                     ],
                     toolbar: `undo redo | bold italic underline strikethrough | 
                             fontselect fontsizeselect formatselect | 
@@ -23,6 +25,13 @@ const RichText = ({ label, height = 500 }) => {
                             pagebreak | charmap emoticons | fullscreen  preview save print | 
                             insertfile image media template link anchor codesample | ltr rtl`
                     ,
+                    images_upload_url: 'postAcceptor.php',
+                    /* we override default upload handler to simulate successful upload*/
+                    images_upload_handler: function (blobInfo, success, failure) {
+                        setTimeout(function () {
+                            success('http://moxiecode.cachefly.net/tinymce/v9/images/logo.png');
+                        }, 2000)
+                    }
                 }}
                 // onChange={this.handleEditorChange}
             />

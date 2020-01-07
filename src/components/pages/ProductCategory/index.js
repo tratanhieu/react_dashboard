@@ -7,12 +7,11 @@ import ProductCategoryModal from '../../organisms/ProductCategory/ProductCategor
 import ProductCategoryFilter from '../../organisms/ProductCategory/ProductCategoryFilter';
 import ProductCategoryAction from '../../organisms/ProductCategory/ProductCategoryAction';
 import { fetchWithPaginationAndFilter } from '../../../redux/reducers/productCategoryReducer';
+import ContentHeader from '../../organisms/ContentHeader';
 
-const Render = ({ loading, reload, productCategoryList, page, totalPages, filters }) => (
+const Render = ({ loading, reload, onOpenCreate, productCategoryList, page, totalPages, filters }) => (
     <>
-        <ProductCategoryHeader />
-        <ProductCategoryFilter filters={filters} />
-        <ProductCategoryAction />
+        <ContentHeader title="Product Category" onOpenCreate={onOpenCreate} />
         <ProductCategoryTable
             loading={loading}
             reload={reload}

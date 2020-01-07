@@ -20,6 +20,8 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import { DeleteForever, BorderColorOutlined } from '@material-ui/icons';
 import FilterListIcon from "@material-ui/icons/FilterList";
+import PageSearch from "../PageSearch";
+import FilterBar from "../FilterBar";
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -47,7 +49,17 @@ function getSorting(order, orderBy) {
         : (a, b) => -desc(a, b, orderBy);
 }
 
-function EnhancedTableHead( {
+const search = (items, text) => items.filter(item => {
+    let res = false
+    for (const key in item) {
+        if (String(item[key]).includes(text)) {
+            res = true
+        }
+    }
+    return res
+})
+
+function EnhancedTableHead({
     headCells,
     classes,
     checkboxColor,
@@ -163,7 +175,7 @@ EnhancedTableToolbar.propTypes = {
 const useStyles = makeStyles(theme => ({
     root: {
         width: "100%",
-        border: '1px solid rgb(204, 204, 204)',
+        // border: '1px solid rgb(204, 204, 204)',
         borderBottom: "none"
     },
     paper: {
@@ -191,6 +203,7 @@ const useStyles = makeStyles(theme => ({
 export default function TableModule({
     selectKey,
     headCells,
+    children,
     dataSources,
     config = {
         selectColor: "primary"
@@ -205,6 +218,7 @@ export default function TableModule({
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [searchKeyWord, setSearchKeyWord] = React.useState("");
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === "asc";
@@ -214,9 +228,9 @@ export default function TableModule({
 
     const handleSelectAllClick = event => {
         if (event.target.checked) {
-        const newSelecteds = dataSources.map(item => item[selectKey]);
-        setSelected(newSelecteds);
-        return;
+            const newSelecteds = dataSources.map(item => item[selectKey]);
+            setSelected(newSelecteds);
+            return;
         }
         setSelected([]);
     };
@@ -224,10 +238,10 @@ export default function TableModule({
     const handleClick = (_, key) => {
         const index = selected.indexOf(key);
         if (index === -1) {
-        setSelected([...selected, key]);
+            setSelected([...selected, key]);
         } else {
-        selected.splice(index, 1);
-        setSelected([...selected]);
+            selected.splice(index, 1);
+            setSelected([...selected]);
         }
     };
 
@@ -242,10 +256,14 @@ export default function TableModule({
 
     const isSelected = name => selected.indexOf(name) !== -1;
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, dataSources.length - page * rowsPerPage);
-    const TableRowModule = row;
+    const handleSearch = keyword => setSearchKeyWord(keyword)
+
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, dataSources.length - page * rowsPerPage)
+    const TableRowModule = row
     return (
         <div className={classes.root}>
+            <PageSearch value={searchKeyWord} onSearch={handleSearch} />
+            {children}
             <Paper className={classes.paper}>
                 <EnhancedTableToolbar
                     numSelected={selected.length}
@@ -270,7 +288,7 @@ export default function TableModule({
                             rowCount={dataSources.length}
                         />
                         <TableBody>
-                        {stableSort(dataSources, getSorting(order, orderBy))
+                        {stableSort(search(dataSources, searchKeyWord), getSorting(order, orderBy))
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((row, index) => {
                                 const isItemSelected = isSelected(row[selectKey]);
@@ -323,7 +341,9 @@ export default function TableModule({
                     page={page}
                     onChangePage={handleChangePage}
                     onChangeRowsPerPage={handleChangeRowsPerPage}
-                />
+                >
+                <h1>OK</h1>
+                </TablePagination>
             </Paper>
         </div>
     );

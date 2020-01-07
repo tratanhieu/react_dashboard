@@ -17,7 +17,7 @@ export const initialState = {
     multipleExecuteLoading: false,
     formLoading: false,
     openModal: false,
-    productCategoryList: [],
+    userList: [],
     checkedItems: [],
     totalPages: 0,
     page: 1,
@@ -46,21 +46,18 @@ const MULTIPLE_EXECUTE_LOADING = createAction("MULTIPLE_EXECUTE_LOADING")
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 
 // API
-const PATH_PRODUCT_CATEGORY = `${REDUX_API_URL}/product/category`
+const PATH_USER = `${REDUX_API_URL}/user`
 
 const listLoading = loading => ({ type: LIST_LOADING, loading })
 const prepareData = data => ({
     type: PREPARE_DATA,
-    productCategoryList: data.listData,
-    totalPage: data.totalPage,
-    pageSize: data.pageSize,
-    page: data.page
+    userList: data.listData
 })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
 
-const setProductCategory = (productCategory, openModal) => ({ type: SET_PRODUCT_CATEGORY, productCategory, openModal})
+const setUser = (productCategory, openModal) => ({ type: SET_PRODUCT_CATEGORY, productCategory, openModal})
 
 const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
 
@@ -70,7 +67,7 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
     const params = { listId, status }
     dispatch(resetSystemErrors())
     dispatch(setMultipleExecuteLoading(true))
-    return axios.post(`${PATH_PRODUCT_CATEGORY}/execute`, params, {
+    return axios.post(`${PATH_USER}/execute`, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
@@ -81,11 +78,10 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
     .finally(_ => dispatch(setMultipleExecuteLoading(false)))
 }
 
-export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
+export const fetchAll = ()=> async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${PATH_PRODUCT_CATEGORY}?search=${filters.search}&status=${filters.status}&`
-            + `sort=${filters.sort}&page=${page}`,
+    return axios.get(`${PATH_USER}`,
         { timeout: 5000 }
     )
     .then(response => dispatch(prepareData(response.data)))
@@ -109,16 +105,16 @@ export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
 export const getUpdateAction = productCategoryId => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${PATH_PRODUCT_CATEGORY}/${productCategoryId}`, {
+    return axios.get(`${PATH_USER}/${productCategoryId}`, {
         timeout: 5000
-    }).then(response => dispatch(setProductCategory(response.data, true)))
+    }).then(response => dispatch(setUser(response.data, true)))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(listLoading(false)))
 }
 
 const doCreate = productCategory => async dispatch => {
     const params = JSON.stringify(productCategory)
-    axios.post(`${PATH_PRODUCT_CATEGORY}/create`, params, {
+    axios.post(`${PATH_USER}/create`, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
@@ -131,7 +127,7 @@ const doCreate = productCategory => async dispatch => {
 const doUpdate = productCategory => async dispatch => {
     const params = JSON.stringify(productCategory)
     return axios.post(
-        `${PATH_PRODUCT_CATEGORY}/${productCategory.productCategoryId}/update`, params, { 
+        `${PATH_USER}/${productCategory.productCategoryId}/update`, params, { 
             timeout: 5000,
             headers: {
                 'Content-Type': 'application/json'
@@ -168,7 +164,7 @@ export default function(state = initialState, action) {
             }
             case PREPARE_DATA: return {
                 ...state,
-                productCategoryList: action.productCategoryList,
+                userList: action.userList,
                 totalPage: action.totalPage,
                 page: action.page,
                 loading: false,

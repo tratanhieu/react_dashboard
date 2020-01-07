@@ -1,25 +1,37 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/styles';
+import { AddBox } from '@material-ui/icons';
+import Button from '../../atoms/Button';
 
 const useStyles = makeStyles(theme => ({
     root: {
         display: 'flex',
         justifyContent: 'space-between',
-        padding: "16px 0px"
+        padding: "8px 0px"
+    },
+    left: {
+        alignSelf: "center"
+    },
+    title: {
+        margin:"0px"
     }
 }));
 
-const ContentHeader = ({ children }) => {
+const ContentHeader = ({ title, onOpenCreate, children }) => {
     const classes = useStyles()
-
-    const [leftBlock, rightBlock] = children
     return (
         <div className={classes.root}>
-            <div>
-                {leftBlock}
+            <div className={classes.left}>
+                {title && <h2 className={classes.title}>{title}</h2>}                
             </div>
             <div>
-                {rightBlock}
+                {children}
+                <Button
+                    icon={<AddBox />}
+                    loading={false}
+                    content="Create"
+                    onClick={onOpenCreate}
+                />
             </div>
         </div>
     )
