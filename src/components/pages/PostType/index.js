@@ -3,12 +3,9 @@ import { useDispatch } from 'react-redux'
 
 import PostTypeModal from '../../organisms/PostType/PostTypeModal';
 import PostTypeTable from '../../organisms/PostType/PostTypeTable';
-import PostTypeFilter from '../../organisms/PostType/PostTypeFilter';
 import { resetSystemErrors } from '../../../redux/reducers/rootReducer';
 import ContentHeader from '../../organisms/ContentHeader';
 import { fetchAll, getCreateAction } from '../../../redux/reducers/postTypeReducer';
-import Button from '../../atoms/Button';
-import { AddBox } from '@material-ui/icons';
 
 const Render = ({ onOpenCreate }) => (
     <>

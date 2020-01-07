@@ -2,14 +2,10 @@ import React, { useEffect } from 'react'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 
 import PostTable from '../../organisms/Post/PostTable';
-import PostFilter from '../../organisms/Post/PostFilter';
 import { resetSystemErrors } from '../../../redux/reducers/rootReducer';
-import PostAction from '../../organisms/Post/PostAction';
 import ContentHeader from '../../organisms/ContentHeader';
 import { fetchAll, getCreateAction } from '../../../redux/reducers/postReducer';
 import PostForm from '../../organisms/Post/PostForm';
-import Button from '../../atoms/Button';
-import { AddBox } from '@material-ui/icons';
 
 const PostList = ({ onOpenCreate }) => (
     <>

@@ -3,12 +3,7 @@ import { useDispatch } from 'react-redux'
 
 import UserModal from '../../organisms/User/UserModal';
 import UserTable from '../../organisms/User/UserTable';
-import UserFilter from '../../organisms/User/UserFilter';
-import UserHeader from '../../organisms/User/UserHeader';
 import { resetSystemErrors } from '../../../redux/reducers/rootReducer';
-import UserAction from '../../organisms/User/UserAction';
-import { AddBox } from '@material-ui/icons';
-import Button from '../../atoms/Button';
 import ContentHeader from '../../organisms/ContentHeader';
 
 const User = ({ onOpenCreate }) => {
