@@ -25,13 +25,39 @@ const RichText = ({ label, height = 500 }) => {
                             pagebreak | charmap emoticons | fullscreen  preview save print | 
                             insertfile image media template link anchor codesample | ltr rtl`
                     ,
-                    images_upload_url: 'postAcceptor.php',
-                    /* we override default upload handler to simulate successful upload*/
-                    images_upload_handler: function (blobInfo, success, failure) {
-                        setTimeout(function () {
-                            success('http://moxiecode.cachefly.net/tinymce/v9/images/logo.png');
-                        }, 2000)
+                    // images_upload_url: 'postAcceptor.php',
+                    // /* we override default upload handler to simulate successful upload*/
+                    // images_upload_handler: function (blobInfo, success, failure) {
+                    //     setTimeout(function () {
+                    //         success('http://moxiecode.cachefly.net/tinymce/v9/images/logo.png');
+                    //     }, 2000)
+                    // }
+                    file_picker_types: 'image',
+                    /* and here's our custom image picker*/
+                    file_picker_callback: function (cb, value, meta) {
+                        var input = document.createElement('input');
+                        input.setAttribute('type', 'file');
+                        input.setAttribute('accept', 'image/*');
+
+                        input.onchange = function () {
+                            var file = this.files[0];
+
+                            var reader = new FileReader();
+                            reader.onload = function () {
+                                var id = 'blobid' + (new Date()).getTime();
+                                var blobCache =  window.tinyMCE.activeEditor.editorUpload.blobCache;
+                                var base64 = reader.result.split(',')[1];
+                                var blobInfo = blobCache.create(id, file, base64);
+                                blobCache.add(blobInfo);
+
+                                /* call the callback and populate the Title field with the file name */
+                                cb(blobInfo.blobUri(), { title: file.name, width: '50%', height: 'auto' });
+                            };
+                            reader.readAsDataURL(file);
+                        };
+                        input.click();
                     }
+
                 }}
                 // onChange={this.handleEditorChange}
             />
