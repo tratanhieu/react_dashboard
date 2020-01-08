@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Form } from "semantic-ui-react";
 import FormInput from "../../../atoms/FormInput";
 import FormSelect from "../../../atoms/FormSelect";
-import { initialState, closeModal } from '../../../../redux/reducers/postTypeReducer'
+import { setPostType, doSave, closeModal } from '../../../../redux/reducers/postTypeReducer'
 import _ from "lodash";
 import FormInputSlug from "../../../atoms/FormInputSlug";
 import { ACTIVE } from "../../../../constants/entites";
@@ -14,18 +14,19 @@ import Input from "../../../atoms/Input";
 
 const Render = ({
     openModal,
+    formLoading,
+    modalFormSuccessMessage = '',
     postType: { name, slugName, status },
     errors,
-    onChangePostTypeInfo,
-    onChangeStatus,
+    onChangeForm,
     onPositive,
     onClose
 }) => (
     <ModalModule
         title="Create Post Type"
         open={openModal}
-        size="mini"
-        actionDisable={isFormError(errors) || !name}
+        loading={formLoading}
+        modalSuccess={modalFormSuccessMessage}
         onPositive={onPositive}
         onClose={onClose}
     >
@@ -33,21 +34,16 @@ const Render = ({
             <Input
                 label="Name"
                 required
+                autoFocus
                 name="name"
-                onChange={onChangePostTypeInfo}
-                defaultValue={name}
+                onChange={onChangeForm}
+                value={name}
                 error={errors.name}
             />
-            {/* <FormInputSlug
-                label="Name"
-                fluid
-                defaultValue={name}
-                error={errors.name}
-            /> */}
             <ToggleActive
                 label="Status"
                 checked={status}
-                onChange={onChangeStatus}
+                onChange={onChangeForm}
             />
         </Form>
     </ModalModule>
@@ -55,33 +51,17 @@ const Render = ({
 
 export default function PostTypeModal() {
     const selector = useSelector(({
-        postTypeReducer: { openModal, modalFormSuccessMessage, formLoading, productCategory, errors } 
-    }) => ({ openModal, formLoading, modalFormSuccessMessage, productCategory, errors }), shallowEqual)
-    
-    const [errors, setErrors] = useState({ ...initialState.errors })
+        postTypeReducer: { openModal, modalFormSuccessMessage, formLoading, postType, errors } 
+    }) => ({ openModal, formLoading, modalFormSuccessMessage, postType, errors }), shallowEqual)
 
     const dispatch = useDispatch()
 
-    const [postType, setPostType] = useState({
-        name: "",
-        slugName: "",
-        status: true
-    });
-
     const renderProps = {
         ...selector,
-        postType,
-        errors,
-        onChangePostTypeInfo: (_, { name, value }) => {
-            // console.log(errors)
-            setPostType({ ...postType, [name]: value });
-            // setErrors({ ...formErrorsHandle(errors, name, error) });
-        },
-        onChangeStatus: (_, { checked }) => setPostType({
-            ...postType,
-            status: checked
-        }),
-        onPositive: _ => { console.log(postType) },
+        onChangeForm: (_, { name, value }) => dispatch(setPostType({ 
+            ...selector.postType, [name]: value 
+        })),
+        onPositive: _ => dispatch(doSave(selector.postType)),
         onClose: _ => dispatch(closeModal())
     };
 

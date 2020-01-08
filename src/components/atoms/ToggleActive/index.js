@@ -1,23 +1,29 @@
 import React from 'react'
 import { Switch, FormGroup, FormControlLabel } from '@material-ui/core';
+import { ACTIVE, HIDDEN } from '../../../constants/entites';
 
 const ToggleActive = ({
     color = "primary",
-    checked = false,
+    name = 'status',
+    checked = ACTIVE,
     onChange,
     ...rest
 }) => (
-    <FormGroup style={{ marginTop: "8px" }}>
+    <FormGroup style={{ marginTop: "8px", marginBottom: "8px" }}>
         <FormControlLabel
             control={
                 <Switch
-                    checked={checked}
+                    checked={checked === ACTIVE}
+                    name={name}
                     color={color}
-                    onChange={e => onChange(e, e.currentTarget)}
+                    onChange={event => {
+                        const { currentTarget: { name, checked } } = event
+                        onChange(event, { name, value: checked ? ACTIVE : HIDDEN }) 
+                    }}
                     {...rest}
                 />
             }
-            label={checked ? 'Hiển thị' : 'Ẩn'}
+            label={checked === ACTIVE ? 'Hiển thị' : 'Ẩn'}
         />
     </FormGroup>
 )

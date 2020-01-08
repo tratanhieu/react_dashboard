@@ -16,7 +16,7 @@ export const initialState = {
     },
     multipleExecuteLoading: false,
     formLoading: false,
-    openForm: false,
+    openModal: false,
     postList: [],
     checkedItems: [],
     totalPages: 0,
@@ -57,9 +57,9 @@ const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
 
-const setpost = (post, openForm) => ({ type: SET_POST, post, openForm})
-
 const formSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
+
+export const setPost = post => ({ type: SET_POST, post })
 
 export const closeModal = () => ({ type: CLOSE_MODAL })
 
@@ -107,7 +107,7 @@ export const getUpdateAction = postId => async dispatch => {
     dispatch(listLoading(true))
     return axios.get(`${PATH_POST}/${postId}`, {
         timeout: 5000
-    }).then(response => dispatch(setpost(response.data, true)))
+    }).then(response => dispatch(setPost(response.data)))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(listLoading(false)))
 }
@@ -181,7 +181,7 @@ export default function(state = initialState, action) {
             case MODAL_FORM_GET_CREATE_ACTION: return {
                 ...state,
                 post: initialState.post,
-                openForm: true,
+                openModal: true,
                 formSuccessMessage: initialState.formSuccessMessage
             }
             case MODAL_FORM_UPDATE_SUCCESS: return {
@@ -191,12 +191,12 @@ export default function(state = initialState, action) {
             case SET_POST: return {
                 ...state,
                 post: action.post,
-                openForm: action.openForm,
+                openModal: action.openModal,
                 formSuccessMessage: initialState.formSuccessMessage
             }
             case CLOSE_MODAL: return {
                 ...state,
-                openForm: false,
+                openModal: false,
                 listLoading: false,
                 post: initialState.post,
                 formLoading: initialState.formLoading,

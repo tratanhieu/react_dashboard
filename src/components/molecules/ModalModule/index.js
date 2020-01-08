@@ -8,6 +8,9 @@ import Slide from '@material-ui/core/Slide';
 import { makeStyles } from '@material-ui/styles';
 import Button from '../../atoms/Button';
 import { Close, Check } from '@material-ui/icons';
+import { Backdrop, CircularProgress } from '@material-ui/core';
+import { Alert, AlertTitle } from '@material-ui/lab';
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
@@ -19,12 +22,26 @@ const useStyles = makeStyles(theme => ({
     },
     bottom: {
         padding: "16px 24px"
+    },
+    content: {
+        position: 'relative',
+        padding: "16px 24px 8px"
+    },
+    backdrop: {
+        position: 'absolute',
+        zIndex: 999,
+        opacity: '0.3 !important',
+        color: '#fff',
+        backgroundColor: "rgba(0, 0, 0, 0.1)"
     }
 }));
 
 export default function ModalModule({
     title,
     children,
+    modalSuccess = '',
+    modalError = '',
+    loading = false,
     minWidth = "320px",
     onPositive,
     onClose,
@@ -49,13 +66,20 @@ export default function ModalModule({
             {...rest}
         >
             <DialogTitle>{title}</DialogTitle>
-            <DialogContent style={{ minWidth }}>
+            <DialogContent dividers className={classes.content} style={{ minWidth }}>
                 {children}
+                {modalSuccess && <ModalSuccess message={modalSuccess} />}
+                {modalError && <ModalError message={modalError} />}
+                <Backdrop
+                    className={classes.backdrop}
+                    open={loading}
+                />
             </DialogContent>
             <DialogActions 
                 className={classes.bottom}
             >
                 <Button
+                    loading={loading}
                     icon={<Check />}
                     onClick={onPositive}
                     content="Ok"
@@ -63,6 +87,7 @@ export default function ModalModule({
                 <Button
                     icon={<Close />}
                     color="default"
+                    disabled={loading}
                     onClick={handleClose}
                     content="Cancel"
                 />
@@ -70,3 +95,15 @@ export default function ModalModule({
         </Dialog>
     );
 }
+
+const ModalSuccess = ({ message }) => (
+    <Alert severity="success">
+        {message}
+    </Alert>
+)
+
+const ModalError = ({ message }) => (
+    <Alert severity="error">
+        {message}
+    </Alert> 
+)

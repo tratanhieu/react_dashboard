@@ -1,6 +1,6 @@
 import { REDUX_API_URL } from '../../constants/redux-actions'
 import axios from 'axios'
-import { ACTIVE } from '../../constants/entites';
+import { ACTIVE, HIDDEN, ALL } from '../../constants/entites';
 import { handleErrors, resetSystemErrors } from './rootReducer';
 
 const prefix = 'POST_TYPE_'
@@ -10,9 +10,7 @@ export const initialState = {
     reload: false,
     modalFormSuccessMessage: '',
     filters: {
-        search: '',
-        status: '',
-        sort: 'createDate,DESC'
+        status: ALL
     },
     multipleExecuteLoading: false,
     formLoading: false,
@@ -30,6 +28,7 @@ export const initialState = {
 const createAction = action => `${prefix}${action}`
 
 const LIST_LOADING = createAction("LIST_LOADING")
+const OPEN_MODAL = createAction("OPEN_MODAL")
 const RELOAD = createAction("RELOAD")
 const PREPARE_DATA = createAction("PREPARE_DATA")
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
@@ -45,6 +44,7 @@ const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 // API
 const PATH_POST_TYPE = `${REDUX_API_URL}/post/type`
 
+const setOpenModal = openModal => ({ type: OPEN_MODAL, openModal })
 const listLoading = loading => ({ type: LIST_LOADING, loading })
 const prepareData = data => ({
     type: PREPARE_DATA,
@@ -54,9 +54,9 @@ const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
 
-const setpostType = (postType, openModal) => ({ type: SET_POST_TYPE, postType, openModal})
-
 const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
+
+export const setPostType = postType => ({ type: SET_POST_TYPE, postType })
 
 export const closeModal = () => ({ type: CLOSE_MODAL })
 
@@ -89,12 +89,13 @@ export const fetchAll = () => async dispatch => {
 export const doSave = postType => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(formLoading(true))
+    dispatch(modalFormSuccessMessage(""))
     const { postTypeId, name, slugName, status } = postType
-
+    const active = status ? ACTIVE : HIDDEN
     if (!postTypeId) {
-        dispatch(doCreate({ name, slugName, status }))
+        dispatch(doCreate({ name, slugName, status: active }))
     } else {
-        dispatch(doUpdate({ postTypeId, name, slugName, status }))
+        dispatch(doUpdate({ postTypeId, name, slugName, status: active }))
     }
 }
 
@@ -104,7 +105,10 @@ export const getUpdateAction = postTypeId => async dispatch => {
     dispatch(listLoading(true))
     return axios.get(`${PATH_POST_TYPE}/${postTypeId}`, {
         timeout: 5000
-    }).then(response => dispatch(setpostType(response.data, true)))
+    }).then(response => {
+        dispatch(setPostType(response.data))
+        dispatch(setOpenModal(true))
+    })
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(listLoading(false)))
 }
@@ -116,7 +120,10 @@ const doCreate = postType => async dispatch => {
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(_ => dispatch(modalFormSuccessMessage("Product Category is created successfully!!")))
+    }).then(_ => {
+        dispatch(modalFormSuccessMessage("Post Type is created successfully!!"))
+        dispatch(setPostType(initialState.postType))
+    })
     .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(formLoading(false)))
 }
@@ -135,7 +142,7 @@ const doUpdate = postType => async dispatch => {
     .finally(_ => dispatch(formLoading(false)))
 }
 
-export const setFilters = filters => ({ type: UPDATE_FILTERS, filters })
+export const doFilters = filters => ({ type: UPDATE_FILTERS, filters })
 export const setCheckedItems = checkedItems => ({ type: SET_CHECKED_ITEMS, checkedItems })
 
 export default function(state = initialState, action) {
@@ -153,7 +160,7 @@ export default function(state = initialState, action) {
             case MODAL_FORM_LOADING: return {
                 ...state,
                 formLoading: action.loading,
-                errors: action.loading ? initialState.errors : state.errors
+                errors: initialState.errors
             }
             case MULTIPLE_EXECUTE_LOADING: return {
                 ...state,
@@ -185,9 +192,11 @@ export default function(state = initialState, action) {
             }
             case SET_POST_TYPE: return {
                 ...state,
-                postType: action.postType,
-                openModal: action.openModal,
-                modalFormSuccessMessage: initialState.modalFormSuccessMessage
+                postType: action.postType
+            }
+            case OPEN_MODAL: return {
+                ...state,
+                openModal: action.openModal
             }
             case CLOSE_MODAL: return {
                 ...state,

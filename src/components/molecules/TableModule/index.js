@@ -22,6 +22,7 @@ import { DeleteForever, BorderColorOutlined } from '@material-ui/icons';
 import FilterListIcon from "@material-ui/icons/FilterList";
 import PageSearch from "../PageSearch";
 import FilterBar from "../FilterBar";
+import { Backdrop, CircularProgress } from "@material-ui/core";
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -179,7 +180,8 @@ const useStyles = makeStyles(theme => ({
         borderBottom: "none"
     },
     paper: {
-        width: "100%"
+        width: "100%",
+        position: 'relative',
     },
     table: {
         minWidth: 750
@@ -197,11 +199,20 @@ const useStyles = makeStyles(theme => ({
     },
     editIcon: {
         color: "#f2711c"
+    },    
+    backdrop: {
+        top: "58px",
+        bottom: "52px",
+        position: 'absolute',
+        zIndex: theme.zIndex.drawer,
+        color: '#fff',
+        backgroundColor: "rgba(0, 0, 0, 0.1)"
     }
 }));
 
 export default function TableModule({
     selectKey,
+    loading,
     headCells,
     children,
     dataSources,
@@ -212,12 +223,12 @@ export default function TableModule({
     onDelete
 }) {
     const classes = useStyles();
-    const [order, setOrder] = React.useState("asc");
+    const [order, setOrder] = React.useState("desc");
     const [orderBy, setOrderBy] = React.useState("createDate");
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [searchKeyWord, setSearchKeyWord] = React.useState("");
 
     const handleRequestSort = (event, property) => {
@@ -258,7 +269,6 @@ export default function TableModule({
 
     const handleSearch = keyword => setSearchKeyWord(keyword)
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, dataSources.length - page * rowsPerPage)
     const TableRowModule = row
     return (
         <div className={classes.root}>
@@ -298,13 +308,10 @@ export default function TableModule({
                                         hover
                                         role="checkbox"
                                         align="center"
-                                        checkboxColor={config.selectColor}
                                         tabIndex={-1}
                                         key={index}
                                         aria-checked={isItemSelected}
                                         selected={isItemSelected}
-                                        isItemSelected={isItemSelected}
-                                        labelId={labelId}
                                         onClick={e => handleClick(e, row[selectKey])}
                                     >
                                         <TableCell padding="checkbox">
@@ -325,13 +332,19 @@ export default function TableModule({
                                     </TableRow>
                                 );
                             })}
-                        {emptyRows === 0 && (
-                            <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                                <TableCell align="center" colSpan={headCells.length + 1}>Empty Data...</TableCell>
+                        {dataSources.length === 0 && (
+                            <TableRow style={{ height: 111 }}>
+                                <TableCell align="center" colSpan={headCells.length + 2}>Empty Data...</TableCell>
                             </TableRow>
-                        )}
+                        )}   
                         </TableBody>
                     </Table>
+                    <Backdrop
+                        className={classes.backdrop}
+                        open={loading}
+                    >
+                        <CircularProgress />
+                    </Backdrop>
                 </TableContainer>
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}

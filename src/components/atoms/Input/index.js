@@ -6,6 +6,7 @@ const Input = ({
     error = '',
     variant = "outlined",
     onChange,
+    value = '',
     ...rest
 }) => (
     <TextField
@@ -14,6 +15,7 @@ const Input = ({
         size={size}
         variant={variant}
         helperText={error}
+        value={value}
         onChange={e => onChange(e, e.currentTarget)}
         {...rest} />
 )

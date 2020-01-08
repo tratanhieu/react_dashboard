@@ -1,25 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
-import { Label } from 'semantic-ui-react'
 import TableCell from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
-import Checkbox from "@material-ui/core/Checkbox";
 import TableModule from "../../../molecules/TableModule";
-// import {
-//     TableModule,
-//     TableRow,
-//     TableCell,
-//     TableHeaderCell,
-//     calcCellWidth
-// } from "../../../atoms/TableModule";
 
-import { DEFAULT_STATUS } from '../../../../constants/entites'
+import { DEFAULT_STATUS, ALL, ACTIVE, HIDDEN } from '../../../../constants/entites'
 import { formatDateTime } from '../../../../commons/utils'
 // REDUX
 import Slug from '../../../atoms/Slug';
-import { Chip } from '@material-ui/core';
-import FilterBar from '../../../molecules/FilterBar';
+import FilterStatus from '../../../molecules/FilterStatus';
 import StatusLabel from '../../../atoms/StatusLabel';
+import { doFilters } from '../../../../redux/reducers/postTypeReducer'
 
 const headCells = [
     { id: "name", label: "Name" },
@@ -31,8 +21,8 @@ const headCells = [
 
 const TableRowModule = ({ name, slugName, totalPost, createDate, updateDate, status }) => (
     <>
-        <TableCell>
-            {name}
+        <TableCell style={{ maxWidth: '230px' }}>
+            <span>{name}</span>
             <Slug>{slugName}</Slug>
         </TableCell>
         <TableCell>{totalPost}</TableCell>
@@ -44,34 +34,44 @@ const TableRowModule = ({ name, slugName, totalPost, createDate, updateDate, sta
     </>
 )
 
-const listStatus = [
-    { key: "", label: "All" },
-    { key: "ACTIVE", label: "Active" },
-    { key: "HIDDEN", label: "Hidden" },
-    { key: "DELETE", label: "Delete" }
+const LIST_STATUS = [
+    { key: ALL, label: "All" },
+    { key: ACTIVE, label: "Active" },
+    { key: HIDDEN, label: "Hidden" }
 ]
 
 const Render = ({
-    postTypeList, loading
+    postTypeList, loading, filters,
+    onChangeStatus
 }) => (
     <TableModule
+        loading={loading}
         selectKey="postTypeId"
         headCells={headCells}
-        dataSources={postTypeList}
+        dataSources={filters.status == ALL ? postTypeList :
+            postTypeList.filter(item => item.status == filters.status)
+        }
         row={TableRowModule}
         onDelete={selected => console.log(selected)}
     >
-        <FilterBar listStatus={listStatus} onChangeFilter />
+        <FilterStatus
+            statusValue={filters.status}
+            listStatus={LIST_STATUS}
+            onChangeStatus={onChangeStatus}
+        />
     </TableModule>
 )
 
 export default function PostTypeTable() {
     const selector = useSelector(({
-        postTypeReducer: { postTypeList, loading } 
-    }) => ({ postTypeList, loading }), shallowEqual)
+        postTypeReducer: { postTypeList, loading, filters } 
+    }) => ({ postTypeList, loading, filters }), shallowEqual)
+
+    const dispatch = useDispatch()
 
     const renderProps = {
-        ...selector
+        ...selector,
+        onChangeStatus: status => dispatch(doFilters({ ...selector.filters, status }))
     }
 
     return <Render {...renderProps} />

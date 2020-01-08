@@ -6,6 +6,12 @@ $sidebar_bg_color:  #1b1c1d;
 $open_sidebar_animation_duration: 0.05s;
 $close_sidebar_animation_duration: 0.3s;
 
+*{
+    span, b, p, a, i {
+        word-break: break-word;
+    }
+}
+
 html,
 body {
     height: 100% !important;
@@ -119,7 +125,7 @@ body {
                     top: 0;
                     align-items: center;
                     background-color: #fff;
-                    height: 60px;
+                    height: 40px;
                     padding: 8px;
                     border-bottom: solid #ccc 1px;
                 }

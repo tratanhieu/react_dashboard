@@ -12,7 +12,6 @@ const Render = ({ loading, reload, SaleManagementList, page, totalPages, filters
     <>
         <SaleManagementHeader />
         <SaleManagementFilter filters={filters} />
-        {/* <SaleManagementAction /> */}
         <SaleManagementTable
             loading={loading}
             reload={reload}
@@ -21,7 +20,7 @@ const Render = ({ loading, reload, SaleManagementList, page, totalPages, filters
             totalPages={totalPages}
             dataSource={SaleManagementList}
         />
-        <SaleManagementModal />
+        <SaleManagementModal open={true} />
     </>
 )
 
