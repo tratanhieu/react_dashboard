@@ -43,6 +43,7 @@ export default function ModalModule({
     modalError = '',
     loading = false,
     minWidth = "320px",
+    positiveDisabled = false,
     onPositive,
     onClose,
     ...rest
@@ -80,6 +81,7 @@ export default function ModalModule({
             >
                 <Button
                     loading={loading}
+                    disabled={positiveDisabled}
                     icon={<Check />}
                     onClick={onPositive}
                     content="Ok"

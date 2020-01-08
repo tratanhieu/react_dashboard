@@ -124,7 +124,7 @@ const doCreate = postType => async dispatch => {
         dispatch(modalFormSuccessMessage("Post Type is created successfully!!"))
         dispatch(setPostType(initialState.postType))
     })
-    .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(formLoading(false)))
 }
 
@@ -159,8 +159,7 @@ export default function(state = initialState, action) {
             }
             case MODAL_FORM_LOADING: return {
                 ...state,
-                formLoading: action.loading,
-                errors: initialState.errors
+                formLoading: action.loading
             }
             case MULTIPLE_EXECUTE_LOADING: return {
                 ...state,

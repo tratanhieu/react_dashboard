@@ -26,6 +26,7 @@ const Render = ({
         title="Create Post Type"
         open={openModal}
         loading={formLoading}
+        positiveDisabled={!name}
         modalSuccess={modalFormSuccessMessage}
         onPositive={onPositive}
         onClose={onClose}
