@@ -46,6 +46,7 @@ export default function ModalModule({
     positiveDisabled = false,
     onPositive,
     onClose,
+    onLoaded = false,
     ...rest
 }) {
     const classes = useStyles()
@@ -73,8 +74,10 @@ export default function ModalModule({
                 {modalError && <ModalError message={modalError} />}
                 <Backdrop
                     className={classes.backdrop}
-                    open={loading}
-                />
+                    open={loading || onLoaded}
+                >
+                    {onLoaded && <CircularProgress />}
+                </Backdrop>
             </DialogContent>
             <DialogActions 
                 className={classes.bottom}

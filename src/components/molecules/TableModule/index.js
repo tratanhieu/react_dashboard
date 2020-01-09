@@ -21,7 +21,7 @@ import Switch from "@material-ui/core/Switch";
 import { DeleteForever, BorderColorOutlined } from '@material-ui/icons';
 import FilterListIcon from "@material-ui/icons/FilterList";
 import PageSearch from "../PageSearch";
-import FilterBar from "../FilterBar";
+import FilterStatus from "../FilterStatus";
 import { Backdrop, CircularProgress } from "@material-ui/core";
 
 function desc(a, b, orderBy) {

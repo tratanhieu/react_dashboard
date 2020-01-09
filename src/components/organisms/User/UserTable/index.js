@@ -5,7 +5,7 @@ import { Label } from 'semantic-ui-react'
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 // REDUX
 import { fetchAll } from '../../../../redux/reducers/userReducer';
-import FilterBar from '../../../molecules/FilterBar';
+import FilterStatus from '../../../molecules/FilterStatus';
 import { TableCell, Chip } from '@material-ui/core';
 import TableModule from '../../../molecules/TableModule';
 import StatusLabel from '../../../atoms/StatusLabel';
@@ -47,7 +47,7 @@ const Render = ({
         row={TableRowModule}
         onDelete={selected => console.log(selected)}
     >
-        <FilterBar listStatus={listStatus} onChangeFilter />
+        <FilterStatus listStatus={listStatus} onChangeFilter />
     </TableModule>
 )
 

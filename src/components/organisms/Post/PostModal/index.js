@@ -13,8 +13,10 @@ import ToggleActive from "../../../atoms/ToggleActive";
 
 const Render = ({
     openModal,
+    init,
     post: { name, slugName, description, content, status },
     errors,
+    onLoaded,
     onChangeForm,
     onPositive,
     onClose
@@ -26,6 +28,7 @@ const Render = ({
         open={openModal}
         onPositive={onPositive}
         onClose={onClose}
+        onLoaded={init}
     >
         <Input
             required
@@ -49,15 +52,7 @@ const Render = ({
             onChange={onChangeForm}
             error={errors.description}
         />
-        <RichText label="Content" />
-        {/* <FormSelect
-            label="Post Type: "
-            required
-            defaultValue={}
-            name="postType"
-            options={userGroups}
-            onChange={onChangeUserInfo}
-        /> */}
+        <RichText label="Content" onLoaded={() => onLoaded()} />
         <ToggleActive
             checked={status}
             onChange={onChangeForm}
@@ -66,6 +61,9 @@ const Render = ({
 );
 
 const PostModal = () => {
+
+    const [init, setInit] = useState(true)
+
     const selector = useSelector(({
         postReducer: { openModal, formSuccessMessage, formLoading, post, errors } 
     }) => ({ openModal, formLoading, formSuccessMessage, post, errors }), shallowEqual)
@@ -73,7 +71,9 @@ const PostModal = () => {
     const dispatch = useDispatch()
 
     const renderProps = {
+        init,
         ...selector,
+        onLoaded: () => setInit(false),
         onChangeForm: (_, { name, value }) => setPost({ 
             ...selector.post,
             [name]: value

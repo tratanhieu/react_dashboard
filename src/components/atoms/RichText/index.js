@@ -2,7 +2,7 @@ import React from 'react'
 import { Editor } from '@tinymce/tinymce-react'
 import styles from './styles.scss'
 
-const RichText = ({ label, height = 500 }) => {
+const RichText = ({ label, height = 500, onLoaded }) => {
     return (
         <div className={styles.root}>
             {label && <label>{label}</label>}
@@ -10,6 +10,11 @@ const RichText = ({ label, height = 500 }) => {
                 apiKey="xtguhbzamroq55plwax7lrbozu2f9sqioce2mwia4qk82s4a"
                 initialValue="<p>This is the initial content of the editor</p>"
                 init={{
+                    setup: function (editor) {
+                        editor.on('init', function () {
+                            onLoaded()
+                        });
+                    },
                     height: height,
                     menubar: true,
                     plugins: [
@@ -41,7 +46,6 @@ const RichText = ({ label, height = 500 }) => {
 
                         input.onchange = function () {
                             var file = this.files[0];
-
                             var reader = new FileReader();
                             reader.onload = function () {
                                 var id = 'blobid' + (new Date()).getTime();
