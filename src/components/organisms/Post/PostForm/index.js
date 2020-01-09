@@ -10,19 +10,21 @@ import RichText from "../../../atoms/RichText";
 import Input from "../../../atoms/Input";
 import { TextareaAutosize } from "@material-ui/core";
 import ToggleActive from "../../../atoms/ToggleActive";
+import FormModule from "../../../molecules/FormModule";
 
 const Render = ({
     openModal,
     init,
     post: { name, slugName, description, content, status },
-    errors,
+    errors: { formErrors },
     onLoaded,
     onChangeForm,
+    onChangeContent,
     onPositive,
     onClose
 }) => (
-    <ModalModule 
-        title="Post"
+    <FormModule 
+        title="Create Post"
         fullWidth
         maxWidth="lg"
         open={openModal}
@@ -36,9 +38,9 @@ const Render = ({
             margin="dense"
             name="name"
             fullWidth
-            defaultValue={name}
+            value={name}
             onChange={onChangeForm}
-            error={errors.name}
+            error={formErrors.name}
         />
         <Input 
             fullWidth
@@ -48,20 +50,25 @@ const Render = ({
             multiline
             rows={3}
             name="description"
-            defaultValue={description}
+            value={description}
             onChange={onChangeForm}
-            error={errors.description}
+            error={formErrors.description}
         />
-        <RichText label="Content" onLoaded={() => onLoaded()} />
+        <RichText
+            label="Content"
+            initialValue={content}
+            value={content}
+            onLoaded={() => onLoaded()} 
+            onEditorChange={onChangeContent}
+        />
         <ToggleActive
             checked={status}
             onChange={onChangeForm}
         />
-    </ModalModule>
+    </FormModule>
 );
 
-const PostModal = () => {
-
+export default function PostForm() {
     const [init, setInit] = useState(true)
 
     const selector = useSelector(({
@@ -74,15 +81,15 @@ const PostModal = () => {
         init,
         ...selector,
         onLoaded: () => setInit(false),
-        onChangeForm: (_, { name, value }) => setPost({ 
+        onChangeForm: (_, { name, value }) => dispatch(setPost({ 
             ...selector.post,
             [name]: value
-        }),
-        onPositive: _ => dispatch(doSave(selector.post)),
+        })),
+        onChangeContent: content => dispatch(setPost({ ...selector.post, content })),
+        // onPositive: _ => dispatch(doSave(selector.post)),
+        onPositive: _ => console.log(selector.post),
         onClose: _ => dispatch(closeModal())
     };
 
     return <Render {...renderProps} />
 }
-
-export default PostModal;
