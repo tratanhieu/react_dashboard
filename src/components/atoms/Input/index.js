@@ -3,6 +3,7 @@ import { TextField } from '@material-ui/core';
 
 const Input = ({
     size="small",
+    margin = "dense",
     error = '',
     variant = "outlined",
     onChange,
@@ -10,8 +11,9 @@ const Input = ({
     ...rest
 }) => (
     <TextField
-        style={{ width: "100%" }}
+        style={{ width: "100%", marginTop: "8px", marginBottom: "8px" }}
         error={!!error}
+        margin={margin}
         size={size}
         variant={variant}
         helperText={error}

@@ -1,7 +1,7 @@
 import { REDUX_API_URL } from '../../constants/redux-actions'
 import axios from 'axios'
 import { ACTIVE, HIDDEN, ALL } from '../../constants/entites';
-import { handleErrors, resetSystemErrors } from './rootReducer';
+import { handleErrors, resetSystemErrors, openSystemPopup } from './rootReducer';
 
 const prefix = 'POST_TYPE_'
 
@@ -22,7 +22,10 @@ export const initialState = {
     postType: {
         status: ACTIVE
     },
-    errors: {}
+    errors: {
+        formErrors: {},
+        errorMessage: ''
+    }
 }
 
 const createAction = action => `${prefix}${action}`
@@ -34,6 +37,7 @@ const PREPARE_DATA = createAction("PREPARE_DATA")
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS")
 const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING")
+const SET_ERRORS = createAction("SET_ERRORS")
 const MODAL_FORM_GET_CREATE_ACTION = createAction("MODAL_FORM_GET_CREATE_ACTION")
 const MODAL_FORM_UPDATE_SUCCESS = createAction("MODAL_FORM_UPDATE_SUCESS")
 const SET_POST_TYPE = createAction("SET_POST_TYPE")
@@ -50,6 +54,7 @@ const prepareData = data => ({
     type: PREPARE_DATA,
     postTypeList: data
 })
+const setErrors = errors => ({ type: SET_ERRORS, errors })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
@@ -75,71 +80,85 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
     .finally(_ => dispatch(setMultipleExecuteLoading(false)))
 }
 
-export const fetchAll = () => async dispatch => {
-    dispatch(resetSystemErrors())
-    dispatch(listLoading(true))
-    return axios.get(`${PATH_POST_TYPE}`,
-        { timeout: 5000 }
-    )
-    .then(response => dispatch(prepareData(response.data)))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(listLoading(false)))
-}
-
-export const doSave = postType => async dispatch => {
-    dispatch(resetSystemErrors())
-    dispatch(formLoading(true))
-    dispatch(modalFormSuccessMessage(""))
-    const { postTypeId, name, slugName, status } = postType
-    const active = status ? ACTIVE : HIDDEN
-    if (!postTypeId) {
-        dispatch(doCreate({ name, slugName, status: active }))
-    } else {
-        dispatch(doUpdate({ postTypeId, name, slugName, status: active }))
-    }
-}
-
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
+
 export const getUpdateAction = postTypeId => async dispatch => {
     dispatch(resetSystemErrors())
+    dispatch(modalFormSuccessMessage(""))
     dispatch(listLoading(true))
-    return axios.get(`${PATH_POST_TYPE}/${postTypeId}`, {
+    axios.get(`${PATH_POST_TYPE}/${postTypeId}`, {
         timeout: 5000
     }).then(response => {
         dispatch(setPostType(response.data))
         dispatch(setOpenModal(true))
     })
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(listLoading(false)))
+    .finally(() => dispatch(listLoading(false)))
+}
+
+export const fetchAll = () => async dispatch => {
+    dispatch(resetSystemErrors())
+    dispatch(listLoading(true))
+    return axios.get(`${PATH_POST_TYPE}`,
+        { timeout: 5000 }
+    ).then(response => dispatch(prepareData(response.data)))
+    .catch(errors => dispatch(handleErrors(errors, HANDLE_ERRORS)))
+    .finally(() => dispatch(listLoading(false)))
+}
+
+export const doSave = postType => async dispatch => {
+    dispatch(resetSystemErrors())
+    dispatch(formLoading(true))
+    dispatch(modalFormSuccessMessage(""))
+    dispatch(setErrors(initialState.errors))
+    const { postTypeId, name, slugName, status } = postType
+    return !postTypeId ? 
+        dispatch(doCreate({ name, slugName, status })) : 
+        dispatch(doUpdate({ postTypeId, name, slugName, status }))
+}
+
+export const doDelete = postTypeId => async dispatch => {
+    dispatch(resetSystemErrors())
+    dispatch(listLoading(true))
+    dispatch(setErrors(initialState.errors))
+    return axios.delete(`${PATH_POST_TYPE}/${postTypeId}`)
+        .then(response => {
+            dispatch(prepareData(response.data))
+            dispatch(openSystemPopup(true, `Delete Post Type #${postTypeId} success!!`))
+        })
+        .catch(errors => dispatch(handleErrors(errors, HANDLE_ERRORS)))
+        .finally(() => dispatch(listLoading(false)))
 }
 
 const doCreate = postType => async dispatch => {
     const params = JSON.stringify(postType)
-    axios.post(`${PATH_POST_TYPE}/create`, params, {
+    return axios.post(`${PATH_POST_TYPE}`, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(_ => {
-        dispatch(modalFormSuccessMessage("Post Type is created successfully!!"))
+    }).then(response => {
+        dispatch(prepareData(response.data))
+        dispatch(modalFormSuccessMessage("Post Type is created success!!"))
         dispatch(setPostType(initialState.postType))
     })
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(formLoading(false)))
+    .catch(errors => dispatch(handleErrors(errors, HANDLE_ERRORS)))
+    .finally(() => dispatch(formLoading(false)))
 }
 
 const doUpdate = postType => async dispatch => {
     const params = JSON.stringify(postType)
-    return axios.post(
-        `${PATH_POST_TYPE}/${postType.postTypeId}/update`, params, { 
-            timeout: 5000,
-            headers: {
-                'Content-Type': 'application/json'
-            }
+    return axios.patch(PATH_POST_TYPE, params, {
+        timeout: 5000,
+        headers: {
+            'Content-Type': 'application/json'
         }
-    ).then(_ => dispatch(modalFormSuccessMessage("Product Category is update successfully!!")))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(formLoading(false)))
+    }).then(response => {
+        dispatch(prepareData(response.data))
+        dispatch(modalFormSuccessMessage("Post Type is update success!!"))
+    })
+    .catch(errors => dispatch(handleErrors(errors, HANDLE_ERRORS)))
+    .finally(() => dispatch(formLoading(false)))
 }
 
 export const doFilters = filters => ({ type: UPDATE_FILTERS, filters })
@@ -152,6 +171,13 @@ export default function(state = initialState, action) {
             case LIST_LOADING: return {
                 ...state,
                 loading: action.loading
+            }
+            case SET_ERRORS: return {
+                ...state,
+                errors: {
+                    ...initialState.errors,
+                    ...action.errors
+                }
             }
             case RELOAD: return {
                 ...state,

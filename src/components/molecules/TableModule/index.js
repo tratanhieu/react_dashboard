@@ -18,7 +18,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
-import { DeleteForever, BorderColorOutlined } from '@material-ui/icons';
+import { DeleteForever, BorderColorOutlined, DeleteOutlineOutlined, EditOutlined } from '@material-ui/icons';
 import FilterListIcon from "@material-ui/icons/FilterList";
 import PageSearch from "../PageSearch";
 import FilterStatus from "../FilterStatus";
@@ -78,7 +78,7 @@ function EnhancedTableHead({
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
+                <TableCell align="center" padding="checkbox">
                     <Checkbox
                         indeterminate={numSelected > 0 && numSelected < rowCount}
                         checked={numSelected === rowCount}
@@ -108,7 +108,7 @@ function EnhancedTableHead({
                         </TableSortLabel>
                     </TableCell>
                 ))}
-                <TableCell>Actions</TableCell>
+                <TableCell align="center">Actions</TableCell>
             </TableRow>
         </TableHead>
     );
@@ -199,7 +199,7 @@ const useStyles = makeStyles(theme => ({
     },
     editIcon: {
         color: "#f2711c"
-    },    
+    },
     backdrop: {
         top: "58px",
         bottom: "52px",
@@ -220,7 +220,8 @@ export default function TableModule({
         selectColor: "primary"
     },
     row,
-    onDelete
+    onDelete,
+    onOpenUpdate
 }) {
     const classes = useStyles();
     const [order, setOrder] = React.useState("desc");
@@ -277,7 +278,7 @@ export default function TableModule({
             <Paper className={classes.paper}>
                 <EnhancedTableToolbar
                     numSelected={selected.length}
-                    onDelete={() => onDelete(selected)}
+                    // onDelete={() => onDelete(selected)}
                 />
                 <TableContainer>
                     <Table
@@ -312,20 +313,25 @@ export default function TableModule({
                                         key={index}
                                         aria-checked={isItemSelected}
                                         selected={isItemSelected}
-                                        onClick={e => handleClick(e, row[selectKey])}
                                     >
-                                        <TableCell padding="checkbox">
+                                        <TableCell align="center" padding="checkbox">
                                             <Checkbox
                                                 checked={isItemSelected}
                                                 color={config.selectColor}
                                                 inputProps={{ "aria-labelledby": labelId }}
+                                                onClick={e => handleClick(e, row[selectKey])}
                                             />
                                         </TableCell>
                                         <TableRowModule {...row} />
                                         <TableCell align="center">
                                             <Tooltip title="Edit">
-                                                <IconButton onClick={onDelete}>
-                                                    <BorderColorOutlined className={classes.editIcon} />
+                                                <IconButton onClick={() => onOpenUpdate(row[selectKey])}>
+                                                    <EditOutlined className={classes.editIcon} />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Delete">
+                                                <IconButton onClick={() => onDelete(row[selectKey])}>
+                                                    <DeleteOutlineOutlined color="error" />
                                                 </IconButton>
                                             </Tooltip>
                                         </TableCell>

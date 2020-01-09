@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import { Form } from "semantic-ui-react";
-import FormInput from "../../../atoms/FormInput";
-import FormSelect from "../../../atoms/FormSelect";
 import { setPostType, doSave, closeModal } from '../../../../redux/reducers/postTypeReducer'
-import _ from "lodash";
-import FormInputSlug from "../../../atoms/FormInputSlug";
-import { ACTIVE } from "../../../../constants/entites";
-import { formErrorsHandle, isFormError } from "../../../../commons/utils";
 import ToggleActive from "../../../atoms/ToggleActive";
 import ModalModule from "../../../molecules/ModalModule";
 import Input from "../../../atoms/Input";
@@ -16,8 +9,8 @@ const Render = ({
     openModal,
     formLoading,
     modalFormSuccessMessage = '',
-    postType: { name, slugName, status },
-    errors,
+    postType: { postTypeId, name, slugName, status },
+    errors: { formErrors },
     onChangeForm,
     onPositive,
     onClose
@@ -31,22 +24,28 @@ const Render = ({
         onPositive={onPositive}
         onClose={onClose}
     >
-        <Form>
-            <Input
-                label="Name"
-                required
-                autoFocus
-                name="name"
-                onChange={onChangeForm}
-                value={name}
-                error={errors.name}
-            />
-            <ToggleActive
-                label="Status"
-                checked={status}
-                onChange={onChangeForm}
-            />
-        </Form>
+        <Input
+            label="Name"
+            required
+            autoFocus
+            name="name"
+            onChange={onChangeForm}
+            value={name}
+            error={formErrors.name}
+        />
+        {postTypeId && <Input
+            label="SlugName"
+            required
+            name="slugName"
+            onChange={onChangeForm}
+            value={slugName}
+            error={formErrors.slugName}
+        />}
+        <ToggleActive
+            label="Status"
+            checked={status}
+            onChange={onChangeForm}
+        />
     </ModalModule>
 );
 

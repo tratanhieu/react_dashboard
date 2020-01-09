@@ -9,14 +9,14 @@ import { formatDateTime } from '../../../../commons/utils'
 import Slug from '../../../atoms/Slug';
 import FilterStatus from '../../../molecules/FilterStatus';
 import StatusLabel from '../../../atoms/StatusLabel';
-import { doFilters } from '../../../../redux/reducers/postTypeReducer'
+import { doFilters, getUpdateAction, doDelete } from '../../../../redux/reducers/postTypeReducer'
 
 const headCells = [
     { id: "name", label: "Name" },
     { id: "total", label: "Total" },
     { id: "createDate", label: "Create Date" },
     { id: "updateDate", label: "Update Date" },
-    { id: "status", label: "Create Date" }
+    { id: "status", label: "Status" }
 ];
 
 const TableRowModule = ({ name, slugName, totalPost, createDate, updateDate, status }) => (
@@ -42,7 +42,9 @@ const LIST_STATUS = [
 
 const Render = ({
     postTypeList, loading, filters,
-    onChangeStatus
+    onChangeStatus,
+    onOpenUpdate,
+    onDelete
 }) => (
     <TableModule
         loading={loading}
@@ -52,7 +54,8 @@ const Render = ({
             postTypeList.filter(item => item.status == filters.status)
         }
         row={TableRowModule}
-        onDelete={selected => console.log(selected)}
+        onDelete={onDelete}
+        onOpenUpdate={postTypeId => onOpenUpdate(postTypeId)}
     >
         <FilterStatus
             statusValue={filters.status}
@@ -67,11 +70,17 @@ export default function PostTypeTable() {
         postTypeReducer: { postTypeList, loading, filters } 
     }) => ({ postTypeList, loading, filters }), shallowEqual)
 
+    useEffect(() => {
+        console.log(selector.postTypeList)
+    }, [selector.postTypeList])
+
     const dispatch = useDispatch()
 
     const renderProps = {
         ...selector,
-        onChangeStatus: status => dispatch(doFilters({ ...selector.filters, status }))
+        onChangeStatus: status => dispatch(doFilters({ ...selector.filters, status })),
+        onOpenUpdate: postTypeId => dispatch(getUpdateAction(postTypeId)),
+        onDelete: postTypeId => dispatch(doDelete(postTypeId)),
     }
 
     return <Render {...renderProps} />
