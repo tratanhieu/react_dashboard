@@ -1,131 +1,112 @@
-import React, { useState, useEffect } from "react";
-import { Table, Checkbox, Button } from 'semantic-ui-react'
+import React, { useState } from "react";
+
 import styles from "./styles.module.css";
-import ProductPackageTableRow from "./ProductPackageTableRow";
+import OptionTableRow from "./OptionTableRow";
 import TableRowEmpty from "../../../../atoms/TableRowEmpty";
-import ProductPackageTable from "./ProductPackageTable";
-import { formErrorsHandle } from "../../../../../commons/utils";
-import FormInput from "../../../../atoms/FormInput";
-import ImageUploads from "../../../../atoms/ImageUploads";
+import OptionModal from "./OptionModal";
+import OptionTable from "./OptionTable";
 
 const Render = ({
-    productPackage: {
-        name, quantity, images, active
-    },
-    productPackages,
-    onChangeFormData,
-    onCreate,
-    onChangeFormDataActive,
+    openModal,
+    option,
+    options,
+    onOpenModal,
+    onCloseModal,
+    onPositive,
+    onChangeOptionActive,
     onRemove
 }) => {
-    useEffect(() => {
-        console.log(name)
-    }, [name])
     return (
         <>
-            <ProductPackageTable
-                onChangeFormData={onChangeFormData}
-                onCreate={onCreate}
-            >
-                {productPackages.map((productPackage, index) => (
-                    <ProductPackageTableRow
-                        productPackage={productPackage}
+            <OptionTable onOpenModal={onOpenModal}>
+                {options.map((option, index) => (
+                    <OptionTableRow
+                        option={option}
                         key={index}
                         index={index}
                         styles={styles}
+                        onChangeOptionActive={onChangeOptionActive}
+                        onOpenChangeModal={_ => onOpenModal(index)}
                         onRemove={_ => onRemove(index)}
                     />
                 ))}
-                {productPackages.length <= 0 && <TableRowEmpty />}
-                <Table.Row>
-                    <Table.Cell>
-                        <FormInput
-                            name="name"
-                            placeholder="Package Type..."
-                            value={name}
-                            onChange={onChangeFormData}
-                        />
-                    </Table.Cell>
-                    <Table.Cell>
-                        <FormInput
-                            name="quantity"
-                            placeholder="Package Quantity..."
-                            value={quantity}
-                            onChange={onChangeFormData}
-                        />
-                    </Table.Cell>
-                    <Table.Cell>
-                        <ImageUploads
-                            width="50px"
-                            height="70px"
-                            dataSources={images}
-                            onChange={items => console.log(items)}
-                        />
-                    </Table.Cell>
-                    <Table.Cell textAlign="center">
-                        <Checkbox checked={active} onChange={onChangeFormDataActive} />
-                    </Table.Cell>
-                    <Table.Cell textAlign="center">
-                        <Button size="small" icon="plus" color="blue" onClick={onCreate} />
-                    </Table.Cell>
-                </Table.Row>
-            </ProductPackageTable>
+                {options.length <= 0 ? <TableRowEmpty /> : null}
+            </OptionTable>
+            <OptionModal
+                option={option}
+                openModal={openModal}
+                onCloseModal={onCloseModal}
+                onPositive={onPositive}
+            />
         </>
     );
 };
 
-const ProductProductPackages = ({ onChange }) => {
+const ProductOptions = ({ openOptionModal, onChange, onOpenOptionModal, ...rest }) => {
+    const initOption = {
+        packageName: "",
+        quantity: 1,
+        images: [],
+        active: true
+    };
 
     const [state, setState] = useState({
-        productPackage: {
-            name: "",
-            quantity: 1,
-            images: [],
-            active: true
-        },
-        productPackages: [],
-        errors: {}
+        option: initOption,
+        options: []
     });
 
     const renderProps = {
+        ...rest,
         ...state,
-        onCreate: () => {
+        onCloseModal: _ =>
             setState({
                 ...state,
-                productPackages: [ ...state.productPackages, state.productPackage ],
-                productPackage: {
-                    name: "",
-                    quantity: 1,
-                    images: [],
-                    active: true
-                },
-            })
-        },
-        onUpdate: (index, productPackage) => {
-            state.productPackages[index] = { ...productPackage }
-            setState({ ...state })
-        },
-        onChangeFormData: (_, { name, value }, error) => {
+                openModal: false
+            }),
+        onOpenModal: index =>
             setState({
                 ...state,
-                productPackage: {
-                    ...state.productPackage,
-                    [name]: value
-                },
-                errors: { ...formErrorsHandle(state.errors, name, error) }
-            });
-        },
-        onChangeFormDataActive: (_, checkbox) => {
-            setState({
-                ...state,
-                productPackage: {
-                    ...state.productPackage,
-                    active: checkbox.checked
+                openModal: true,
+                option: index
+                ? {
+                    ...state.options[index],
+                    index
                 }
-            });
+                : initOption
+            }),
+        onPositive: option => {
+            if (option.key) {
+                state.options[state.options.findIndex(item => item.key === option.key)] = {
+                    ...option
+                }
+                setState({
+                    ...state,
+                    option,
+                    openModal: false
+                });
+            } else {
+                setState({
+                    ...state,
+                    option,
+                    options: [...state.options, option],
+                    openModal: false
+                });
+            }
+        },
+        onNegative: _ =>
+            setState({
+                ...state,
+                openModal: false
+            }),
+        onChangeOptionActive: (index, checked) => {
+            state.options[index] = {
+                ...state.options[index],
+                active: checked
+            };
+            setState({ ...state });
         },
         onRemove: index => {
-            state.productPackages.splice(index, 1);
+            state.options.splice(index, 1);
             setState({ ...state });
         }
     };
@@ -133,4 +114,4 @@ const ProductProductPackages = ({ onChange }) => {
     return <Render {...renderProps} />;
 };
 
-export default ProductProductPackages;
+export default ProductOptions;

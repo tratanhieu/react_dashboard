@@ -1,14 +1,18 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 
+import ProductCategoryHeader from '../../organisms/ProductCategory/ProductCategoryHeader';
 import ProductCategoryTable from '../../organisms/ProductCategory/ProductCategoryTable';
 import ProductCategoryModal from '../../organisms/ProductCategory/ProductCategoryModal';
+import ProductCategoryFilter from '../../organisms/ProductCategory/ProductCategoryFilter';
+import ProductCategoryAction from '../../organisms/ProductCategory/ProductCategoryAction';
 import { fetchWithPaginationAndFilter } from '../../../redux/reducers/productCategoryReducer';
-import ContentHeader from '../../organisms/ContentHeader';
 
-const Render = ({ loading, reload, onOpenCreate, productCategoryList, page, totalPages, filters }) => (
+const Render = ({ loading, reload, productCategoryList, page, totalPages, filters }) => (
     <>
-        <ContentHeader title="Product Category" onOpenCreate={onOpenCreate} />
+        <ProductCategoryHeader />
+        <ProductCategoryFilter filters={filters} />
+        <ProductCategoryAction />
         <ProductCategoryTable
             loading={loading}
             reload={reload}

@@ -7,7 +7,6 @@ const ModalModule = ({
     open,
     title,
     size,
-    closeIcon = true,
     modalSuccessMessage,
     actionDisable,
     actionLoading,
@@ -15,7 +14,6 @@ const ModalModule = ({
     negativeLabel = "Cancel",
     onClose,
     onPositive,
-    onNegative,
     onContinue,
     ...rest
 }) => (
@@ -26,7 +24,7 @@ const ModalModule = ({
             closeOnEscape={false}
             closeOnDimmerClick={false}
             size={modalSuccessMessage ? "mini" : size}
-            closeIcon={closeIcon && (!actionLoading && !modalSuccessMessage)}
+            closeIcon={!actionLoading && !modalSuccessMessage}
             {...rest}
         >
         {!modalSuccessMessage ? <Modal.Header>{title}</Modal.Header> : null}
@@ -64,7 +62,7 @@ const ModalModule = ({
                 disabled={actionLoading}
                 color="grey"
                 content={negativeLabel}
-                onClick={onNegative ? onNegative : onClose}
+                onClick={onClose}
             />
             </Modal.Actions>
         ) : null}

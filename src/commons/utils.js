@@ -32,6 +32,4 @@ export const formErrorsHandle = (errors, target, error) => {
     return errors
 }
 
-export const formatDateTime = (date, pattern = "HH:mm:ss DD/MM/YYYY") => {
-    return date && moment(date).format(pattern)
-}
+export const formatDateTime = (date, pattern = "HH:mm:ss DD/MM/YYYY") => moment(date).format(pattern)

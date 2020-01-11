@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
-import { ExpandMoreOutlined, ExpandLessOutlined, MenuOutlined } from '@material-ui/icons';
 
 const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
 
@@ -47,24 +46,6 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
                 ]
             }
         },
-
-        {
-            path: '/post',
-            icon: 'newspaper outline',
-            text: 'News',
-            active: false,
-            subMenu: {
-                open: false,
-                items: [
-                    {
-                        path: '/post/type',
-                        icon: 'grid layout',
-                        text: 'Post Type',
-                        active: false
-                    }
-                ]
-            }
-        },
         {
             path: '/user',
             icon: 'group',
@@ -83,9 +64,9 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
             }
         },
         {
-            path: '/sale',
+            path: '/promotion',
             icon: 'dollar sign',
-            text: 'Sale',
+            text: 'Promotion',
             active: false
         }
     ])
@@ -97,10 +78,11 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
 
     return (
         <div className={`main-layout--sidebar ${statusNav}`}>
-            <MenuOutlined
+            <Icon
+                name="bars"
                 className={`open-close-icon ${statusNav}-nav`}
                 size="large"
-                color="secondary"
+                inverted
                 onClick={() => setNavOpen(!navOpen)}
             />
             <ul style={{ textAlign: `${navOpen ? "left" : "center"}` }}>
@@ -113,8 +95,9 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
                                 {navOpen && <span> {item.text}</span>}
                             </div>
                             {(navOpen && item.hasOwnProperty('subMenu')) &&
-                                (item.subMenu.open ? <ExpandMoreOutlined onClick={() => handleOpenSubMenu(index)} /> : 
-                                <ExpandLessOutlined onClick={() => handleOpenSubMenu(index)} />)
+                                <Icon name={`angle ${item.subMenu.open ? 'down' : 'up'}`}
+                                    onClick={() => handleOpenSubMenu(index)}
+                                />
                             }
                         </Link>
                         {(navOpen && item.hasOwnProperty('subMenu') && item.subMenu.open) &&

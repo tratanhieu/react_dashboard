@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Image as Img, Input, Icon } from "semantic-ui-react";
 
 import styles from "./styles.module.css";
@@ -49,7 +49,7 @@ const Render = ({
                 multiple
                 onChange={onAdd}
             />
-            <Icon name="add circle" size="large" />
+            <Icon name="add circle" size="big" />
         </div>
     </div>
 );
@@ -64,11 +64,6 @@ const ImageUploads = ({
     ...rest
 }) => {
     const [images, setImages] = useState(dataSources);
-
-    useEffect(() => {
-        setImages(dataSources)
-    }, [dataSources])
-
     const renderProps = {
         ...rest,
         images,
@@ -134,4 +129,4 @@ const readFiles = (files, config, callback) => {
     }
 };
 
-export default ImageUploads
+export default ImageUploads;

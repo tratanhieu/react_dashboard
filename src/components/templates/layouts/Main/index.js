@@ -4,10 +4,7 @@ import Pusher from 'pusher-js'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Icon, Image, Dropdown } from 'semantic-ui-react'
 import HorizontalSidebar from '../../../organisms/HorizontalSidebar';
-import { reload, resetSystemErrors, openSystemPopup } from '../../../../redux/reducers/rootReducer';
-import { ReportProblemOutlined, Close } from '@material-ui/icons';
-import { Snackbar, Slide } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import { reload, resetSystemErrors } from '../../../../redux/reducers/rootReducer';
 
 const trigger = (
     <span>
@@ -31,7 +28,7 @@ const DropdownUser = props => (
     />
 );
 
-const Render = ({ navOpen, setNavOpen, children, systemPopup = {}, systemErrors, onCloseSystemErrors, onSystemPopupClose, ...rest}) => {
+const Render = ({ navOpen, setNavOpen, children, systemErrors, onCloseSystemErrors, ...rest}) => {
     const statusNav = navOpen ? "open" : "close";
     return(
         <>
@@ -42,12 +39,12 @@ const Render = ({ navOpen, setNavOpen, children, systemPopup = {}, systemErrors,
                     statusNav={statusNav} />
                 <div className={`main-layout--body ${statusNav}-nav`}>
                     <div className="main-layout--body---header">
-                        <img
+                        <Image
                             src="http://localhost:3000/images/logo.png"
                             alt="logo"
                             style={{ height: 36 }}
                         />
-                        {/* <DropdownUser /> */}
+                        <DropdownUser />
                     </div>
                     <div className="main-layout--body---content">
                         <div className="main-layout--body---main-content">
@@ -57,37 +54,23 @@ const Render = ({ navOpen, setNavOpen, children, systemPopup = {}, systemErrors,
                 </div>
             </div>
             {
-                systemErrors.message &&
-                <div className="error-system">
-                    <span>
-                        <ReportProblemOutlined />
-                        &nbsp;{systemErrors.message}
-                    </span>
-                    <Close name="close" className="error-system--close-icon" onClick={onCloseSystemErrors} />
-                </div>
+                systemErrors.message ?
+                    <div className="error-system">
+                        <span>
+                            <Icon name="warning sign" />
+                            &nbsp;{systemErrors.message}
+                        </span>
+                        <Icon name="close" className="error-system--close-icon" onClick={onCloseSystemErrors} />
+                    </div> : null
             }
-            <Snackbar
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                key="top,center"
-                autoHideDuration={3000}
-                open={systemPopup.open}
-                TransitionComponent={Slide}
-                onClose={onSystemPopupClose}
-            >
-                <Alert
-                    variant="filled"
-                    severity={systemPopup.type}
-                    onClose={onSystemPopupClose} 
-                >{systemPopup.message}</Alert>
-            </Snackbar>
         </>
     )
 }
 
 const Main = ({ children }) => {
     const selector = useSelector(({
-        rootReducer: { systemPopup, systemErrors } 
-    }) => ({ systemPopup, systemErrors }), shallowEqual)
+        rootReducer: { systemErrors } 
+    }) => ({ systemErrors }), shallowEqual)
 
     const [navOpen, setNavOpen] = useState(true);
 
@@ -110,8 +93,7 @@ const Main = ({ children }) => {
         setNavOpen,
         children,
         ...selector,
-        onCloseSystemErrors: () => dispatch(resetSystemErrors()),
-        onSystemPopupClose: () => dispatch(openSystemPopup(false))
+        onCloseSystemErrors: () => dispatch(resetSystemErrors())
     }
 
     return <Render {...renderProps} />
