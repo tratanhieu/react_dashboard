@@ -12,9 +12,8 @@ import UserGroup from './components/pages/UserGroup';
 import ProductTypeGroup from './components/pages/ProductTypeGroup';
 import ProductType from './components/pages/ProductType';
 import Product from './components/pages/Product';
-import SaleManagement from './components/pages/SaleManagement';
-import Post from './components/pages/Post';
-import PostType from './components/pages/PostType';
+import Promotion from './components/pages/Promotion';
+
 
 class App extends React.Component {
 
@@ -47,14 +46,8 @@ class App extends React.Component {
 					<Route path="/user/group">
 						<UserGroup />
 					</Route>
-					<Route path="/sale">
-						<SaleManagement />
-					</Route>
-					<Route exact path="/post">
-						<Post />
-					</Route>
-					<Route path="/post/type">
-						<PostType />
+					<Route path="/promotion">
+						<Promotion />
 					</Route>
 					<Route exact path="/">
 						<h2>Main</h2>

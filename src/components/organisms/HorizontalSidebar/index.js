@@ -83,9 +83,9 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
             }
         },
         {
-            path: '/sale',
+            path: '/promotion',
             icon: 'dollar sign',
-            text: 'Sale',
+            text: 'Promotion',
             active: false
         }
     ])
