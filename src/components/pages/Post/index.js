@@ -5,21 +5,20 @@ import PostTable from '../../organisms/Post/PostTable';
 import { resetSystemErrors } from '../../../redux/reducers/rootReducer';
 import ContentHeader from '../../organisms/ContentHeader';
 import { fetchAll, getCreateAction } from '../../../redux/reducers/postReducer';
-import PostForm from '../../organisms/Post/PostForm';
+import PostModal from '../../organisms/Post/PostModal';
 
-const ListPost = ({ onOpenCreate }) => (
+const Render = ({ onOpenCreate }) => (
     <>
         <ContentHeader title="Post" onOpenCreate={onOpenCreate} />
         <PostTable />
+        <PostModal />
     </>
 )
 
-const Render = ({ openModal, ...rest }) => openModal ? <PostForm /> : <ListPost {...rest} />
-
 const Post = () => {
     const selector = useSelector(({
-        postReducer: { openModal, errors } 
-    }) => ({ openModal, errors }), shallowEqual)
+        postReducer: { errors } 
+    }) => ({ errors }), shallowEqual)
 
     const dispatch = useDispatch()
 

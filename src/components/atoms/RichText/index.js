@@ -2,7 +2,7 @@ import React from 'react'
 import { Editor } from '@tinymce/tinymce-react'
 import styles from './styles.scss'
 
-const RichText = ({ label, height = 500, onLoaded, ...rest }) => {
+const RichText = ({ label, height = 500, onLoaded }) => {
     return (
         <div className={styles.root}>
             {label && <label>{label}</label>}
@@ -63,7 +63,7 @@ const RichText = ({ label, height = 500, onLoaded, ...rest }) => {
                     }
 
                 }}
-                {...rest}
+                // onChange={this.handleEditorChange}
             />
         </div>
     )

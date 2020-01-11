@@ -10,21 +10,19 @@ import RichText from "../../../atoms/RichText";
 import Input from "../../../atoms/Input";
 import { TextareaAutosize } from "@material-ui/core";
 import ToggleActive from "../../../atoms/ToggleActive";
-import FormModule from "../../../molecules/FormModule";
 
 const Render = ({
     openModal,
     init,
     post: { name, slugName, description, content, status },
-    errors: { formErrors },
+    errors,
     onLoaded,
     onChangeForm,
-    onChangeContent,
     onPositive,
     onClose
 }) => (
-    <FormModule 
-        title="Create Post"
+    <ModalModule 
+        title="Post"
         fullWidth
         maxWidth="lg"
         open={openModal}
@@ -38,9 +36,9 @@ const Render = ({
             margin="dense"
             name="name"
             fullWidth
-            value={name}
+            defaultValue={name}
             onChange={onChangeForm}
-            error={formErrors.name}
+            error={errors.name}
         />
         <Input 
             fullWidth
@@ -50,25 +48,20 @@ const Render = ({
             multiline
             rows={3}
             name="description"
-            value={description}
+            defaultValue={description}
             onChange={onChangeForm}
-            error={formErrors.description}
+            error={errors.description}
         />
-        <RichText
-            label="Content"
-            initialValue={content}
-            value={content}
-            onLoaded={() => onLoaded()} 
-            onEditorChange={onChangeContent}
-        />
+        <RichText label="Content" onLoaded={() => onLoaded()} />
         <ToggleActive
             checked={status}
             onChange={onChangeForm}
         />
-    </FormModule>
+    </ModalModule>
 );
 
-export default function PostForm() {
+const PostModal = () => {
+
     const [init, setInit] = useState(true)
 
     const selector = useSelector(({
@@ -81,15 +74,15 @@ export default function PostForm() {
         init,
         ...selector,
         onLoaded: () => setInit(false),
-        onChangeForm: (_, { name, value }) => dispatch(setPost({ 
+        onChangeForm: (_, { name, value }) => setPost({ 
             ...selector.post,
             [name]: value
-        })),
-        onChangeContent: content => dispatch(setPost({ ...selector.post, content })),
-        // onPositive: _ => dispatch(doSave(selector.post)),
-        onPositive: _ => console.log(selector.post),
+        }),
+        onPositive: _ => dispatch(doSave(selector.post)),
         onClose: _ => dispatch(closeModal())
     };
 
     return <Render {...renderProps} />
 }
+
+export default PostModal;

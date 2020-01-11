@@ -25,15 +25,14 @@ export const initialState = {
         status: ACTIVE
     },
     errors: {
-        formErrors: {},
-        errorMessage: ''
+        name: '',
+        slugName: ''
     }
 }
 
 const createAction = action => `${prefix}${action}`
 
 const LIST_LOADING = createAction("LIST_LOADING")
-const SET_ERRORS = createAction("SET_ERRORS")
 const RELOAD = createAction("RELOAD")
 const PREPARE_DATA = createAction("PREPARE_DATA")
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
@@ -50,7 +49,6 @@ const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 const PATH_POST = `${REDUX_API_URL}/post`
 
 const listLoading = loading => ({ type: LIST_LOADING, loading })
-const setErrors = errors => ({ type: SET_ERRORS, errors })
 const prepareData = data => ({
     type: PREPARE_DATA,
     postList: data
@@ -151,13 +149,6 @@ export default function(state = initialState, action) {
                 ...state,
                 loading: action.loading
             }
-            case SET_ERRORS: return {
-                ...state,
-                errors: {
-                    ...initialState.errors,
-                    ...action.errors
-                }
-            }
             case RELOAD: return {
                 ...state,
                 reload: true
@@ -199,7 +190,9 @@ export default function(state = initialState, action) {
             }
             case SET_POST: return {
                 ...state,
-                post: action.post
+                post: action.post,
+                openModal: action.openModal,
+                formSuccessMessage: initialState.formSuccessMessage
             }
             case CLOSE_MODAL: return {
                 ...state,
