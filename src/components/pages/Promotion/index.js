@@ -1,47 +1,33 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 
-import PromotionHeader from '../../organisms/Promotion/PromotionHeader';
-import PromotionTable from '../../organisms/Promotion/PromotionTable';
 import PromotionModal from '../../organisms/Promotion/PromotionModal';
-import PromotionFilter from '../../organisms/Promotion/PromotionFilter';
-import PromotionAction from '../../organisms/Promotion/PromotionAction';
-// import { fetchWithPaginationAndFilter } from '../../../redux/reducers/PromotionReducer';
+import PromotionTable from '../../organisms/Promotion/PromotionTable';
+import { resetSystemErrors } from '../../../redux/reducers/rootReducer';
+import ContentHeader from '../../organisms/ContentHeader';
+import { fetchAll, getCreateAction } from '../../../redux/reducers/promotionReducer';
 
-const Render = ({ loading, reload, promotionList, page, totalPages, filters }) => (
+const Render = ({ onOpenCreate }) => (
     <>
-        <PromotionHeader />
-        <PromotionFilter filters={filters} />
-        {/* <PromotionAction /> */}
-        <PromotionTable
-            loading={loading}
-            reload={reload}
-            filters={filters}
-            defaultActivePage={page}
-            totalPages={totalPages}
-            dataSource={promotionList}
-        />
+        <ContentHeader title="Post Type" onOpenCreate={onOpenCreate} />
+        <PromotionTable />
         <PromotionModal />
     </>
 )
 
 const Promotion = () => {
-    // const selector = useSelector(({
-    //     PromotionReducer: { PromotionList, page, totalPages, filters, loading, reload } 
-    // }) => ({ PromotionList, loading, page, totalPages, filters, reload }), shallowEqual)
+    const dispatch = useDispatch()
 
-    // const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(resetSystemErrors())
+        dispatch(fetchAll())
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
-    // useEffect(() => {
-    //     dispatch(fetchWithPaginationAndFilter(selector.filters, 1))
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [])
-
-    // const renderProps = {
-    //     ...selector
-    // }
-
-    return <Render/>
+    const renderProps = {
+        onOpenCreate: () => dispatch(getCreateAction())
+    }
+    
+    return <Render {...renderProps} />
 }
-
 export default Promotion
