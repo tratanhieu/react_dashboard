@@ -5,7 +5,7 @@ import { Form, Select, Button, Icon } from "semantic-ui-react";
 import Fieldset from "../../../atoms/Fieldset";
 import PageSearch from "../../../molecules/PageSearch";
 import FilterBar from "../../../molecules/FilterBar";
-import { setFilters } from "../../../../redux/reducers/productTypeGroupReducer";
+import { setFilters } from "../../../../redux/reducers/promotionReducer";
 
 const options = [
     { key: "m", text: "Male", value: "male" },
@@ -57,8 +57,8 @@ const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
     </Form>
 )
 
-const ProductTypeGroupFilter = () => {
-    const selector = useSelector(({ productTypeGroupReducer: { filters } }) => 
+const ProductBrandFilter = () => {
+    const selector = useSelector(({ productCategoryReducer: { filters } }) => 
     ({ filters }), shallowEqual)
 
     const dispatch = useDispatch()
@@ -73,4 +73,4 @@ const ProductTypeGroupFilter = () => {
     return <Render {...renderProps} />
 }
 
-export default ProductTypeGroupFilter
+export default ProductBrandFilter

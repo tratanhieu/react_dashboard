@@ -21,7 +21,7 @@ export const DEFAULT_STATUS = {
     }
 }
 
-export const SALE_STATUS = {
+export const PROMOTION_STATUS = {
     UNAVAILABLE: {
         color: 'blue',
         text: 'Sắp tới'

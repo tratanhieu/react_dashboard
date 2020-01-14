@@ -12,6 +12,7 @@ import saleManagementReducer from './saleManagementReducer'
 import postReducer from './postReducer'
 import postTypeReducer from './postTypeReducer'
 import guestReducer from './guestReducer'
+import promotionReducer from './promotionReducer'
 
 export default combineReducers({
     rootReducer,
@@ -26,5 +27,6 @@ export default combineReducers({
     saleManagementReducer,
     postReducer,
     postTypeReducer,
-    guestReducer
+    guestReducer,
+    promotionReducer
 });

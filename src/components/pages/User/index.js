@@ -3,10 +3,12 @@ import { useDispatch } from 'react-redux'
 
 import UserModal from '../../organisms/User/UserModal';
 import UserTable from '../../organisms/User/UserTable';
+import UserFilter from '../../organisms/User/UserFilter';
+import UserHeader from '../../organisms/User/UserHeader';
 import { resetSystemErrors } from '../../../redux/reducers/rootReducer';
-import ContentHeader from '../../organisms/ContentHeader';
+import UserAction from '../../organisms/User/UserAction';
 
-const User = ({ onOpenCreate }) => {
+const User = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -16,7 +18,9 @@ const User = ({ onOpenCreate }) => {
 
     return (
         <>
-            <ContentHeader title="User" onOpenCreate={onOpenCreate} />
+            <UserHeader />
+            <UserFilter />
+            <UserAction />
             <UserTable />
             <UserModal />
         </>
