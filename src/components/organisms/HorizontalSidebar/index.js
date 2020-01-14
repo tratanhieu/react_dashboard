@@ -44,6 +44,12 @@ const HorizontalSidebar = ({ navOpen, statusNav, setNavOpen }) => {
                         text: 'Product Brand',
                         active: false
                     },
+                    {
+                        path: '/product/producer',
+                        icon: 'truck',
+                        text: 'Producer',
+                        active: false
+                    },
                 ]
             }
         },
