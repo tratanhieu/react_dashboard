@@ -8,14 +8,18 @@ import { closeModal, setPost, doSave } from '../../../../redux/reducers/postRedu
 import _ from "lodash";
 import RichText from "../../../atoms/RichText";
 import Input from "../../../atoms/Input";
-import { TextareaAutosize } from "@material-ui/core";
+import { TextareaAutosize, FormGroup } from "@material-ui/core";
 import ToggleActive from "../../../atoms/ToggleActive";
 import FormModule from "../../../molecules/FormModule";
+import SelectSearch from "../../../atoms/SelectSearch";
+import TagsInput from "../../../atoms/TagsInput";
+import ImageUpload from "../../../atoms/ImageUpload";
 
 const Render = ({
     openModal,
     init,
-    post: { name, slugName, description, content, status },
+    postTypeList,
+    post: { name, slugName, image, description, content, status },
     errors: { formErrors },
     onLoaded,
     onChangeForm,
@@ -41,6 +45,28 @@ const Render = ({
             value={name}
             onChange={onChangeForm}
             error={formErrors.name}
+        />
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ width: '49%' }}>
+                <ImageUpload
+                    source={image}
+                    onChange={value => onChangeForm(_, { name: 'image', value })}
+                />
+            </div>
+            <div style={{ width: '49%' }}>
+                <SelectSearch
+                    label="Post Type"
+                    options={postTypeList}
+                    getOptionLabel={option => option.title}
+                    onChange={e => console.log(e)}
+                />
+            </div>
+        </div>
+        <TagsInput
+            label="Tags"
+            options={postTypeList}
+            getOptionLabel={option => option.title}
+            onChange={e => console.log(e)}
         />
         <Input 
             fullWidth
@@ -72,8 +98,8 @@ export default function PostForm() {
     const [init, setInit] = useState(true)
 
     const selector = useSelector(({
-        postReducer: { openModal, formSuccessMessage, formLoading, post, errors } 
-    }) => ({ openModal, formLoading, formSuccessMessage, post, errors }), shallowEqual)
+        postReducer: { openModal, formSuccessMessage, postTypeList, formLoading, post, errors } 
+    }) => ({ openModal, formLoading, formSuccessMessage, postTypeList, post, errors }), shallowEqual)
 
     const dispatch = useDispatch()
 
