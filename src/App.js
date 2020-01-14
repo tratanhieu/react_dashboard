@@ -15,6 +15,8 @@ import Product from './components/pages/Product';
 import SaleManagement from './components/pages/SaleManagement';
 import Post from './components/pages/Post';
 import PostType from './components/pages/PostType';
+import Guest from './components/pages/Guest';
+
 
 class App extends React.Component {
 
@@ -55,6 +57,9 @@ class App extends React.Component {
 					</Route>
 					<Route path="/post/type">
 						<PostType />
+					</Route>
+					<Route path="/guest">
+						<Guest />
 					</Route>
 					<Route exact path="/">
 						<h2>Main</h2>

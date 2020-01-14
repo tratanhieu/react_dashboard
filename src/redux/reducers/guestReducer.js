@@ -20,54 +20,10 @@ const initialState = {
   multipleExecuteLoading: false,
   formLoading: false,
   openModal: false,
-  sale: {
-  },
+  guest: {},
   saleList: [],
   checkedItems: [],
   totalPages: 0,
-  listItems: [
-    {
-      saleId: 10,
-      name: "Samsung"
-    },
-    {
-      saleId: 11,
-      name: "Samsung"
-    },
-    {
-      saleId: 12,
-      name: "Samsung"
-    },
-    {
-      saleId: 13,
-      name: "Samsung"
-    },
-    {
-      saleId: 15,
-      name: "Samsung"
-    },
-    {
-      saleId: 14,
-      name: "Samsung"
-    }
-  ],
-  selectBox: {
-    categories: [
-      { key: "d", text: "Drinks", value: "drinks" },
-      { key: "e", text: "Electrical", value: "electrical" },
-      { key: "f", text: "Foods", value: "foods" }
-    ],
-    groupTypes: [
-      { key: "m", text: "Male", value: "male" },
-      { key: "f", text: "Female", value: "female" },
-      { key: "o", text: "Other", value: "other" }
-    ],
-    groups: [
-      { key: "m", text: "Male", value: "male" },
-      { key: "f", text: "Female", value: "female" },
-      { key: "o", text: "Other", value: "other" }
-    ]
-  },
   page: 1,
 
   errors: {
@@ -82,6 +38,7 @@ const LIST_LOADING = createAction("LIST_LOADING");
 const RELOAD = createAction("RELOAD");
 const PREPARE_DATA = createAction("PREPARE_DATA");
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS");
+const UPDATE_GUEST = createAction("UPDATE_GUEST");
 const UPDATE_APPLY_STATUS = createAction("UPDATE_APPLY_STATUS");
 const UPDATE_CODE_STATUS = createAction("UPDATE_CODE_STATUS");
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS");
@@ -150,9 +107,7 @@ const doUpdate = sale => async dispatch => {
 
 const updateFilters = filters => ({ type: UPDATE_FILTERS, filters });
 
-const updateApplyStatus = status => ({ type: UPDATE_APPLY_STATUS, status });
-
-const updateCodeStatus = status => ({ type: UPDATE_CODE_STATUS, status });
+const updateGuest = guest => ({ type: UPDATE_GUEST, guest });
 
 export const doMultipleExecute = (listId, status) => async dispatch => {
   const params = { listId, status };
@@ -212,12 +167,8 @@ export const setFilters = filters => async dispatch => {
   dispatch(fetchWithPaginationAndFilter(filters, 1));
 };
 
-export const setApplyStatus = status => async dispatch => {
-  dispatch(updateApplyStatus(status));
-};
-
-export const setCodeStatus = status => async dispatch => {
-  dispatch(updateCodeStatus(status));
+export const setGuest = guest => async dispatch => {
+  dispatch(updateGuest(guest));
 };
 
 export const closeModal = () => ({ type: CLOSE_MODAL });
@@ -317,6 +268,13 @@ export default function(state = initialState, action) {
             ...action.errors.response.data
           }
         };
+      case UPDATE_GUEST: {
+        return {
+          ...state,
+          guest: action.guest,
+          openModal: true
+        }
+      }
       default:
         return {
           ...state
