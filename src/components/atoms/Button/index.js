@@ -1,12 +1,10 @@
 import React from 'react'
-import { Button as ButtonSematic } from 'semantic-ui-react'
 import MaterialButton from '@material-ui/core/Button';
-import { AddBox, DeleteForeverOutlined } from '@material-ui/icons';
-import Icon from '../Icon';
 import { CircularProgress } from '@material-ui/core';
 
 const Button = ({
     loading,
+    style,
     color = 'primary',
     variant = 'contained',
     iconLabel = false,
@@ -18,6 +16,7 @@ const Button = ({
     return loading ? <LoadingButton content={content ? content : children} /> : (
         <MaterialButton 
             color={color}
+            style={color === 'change' ? { backgroundColor: '#f44336', color: '#ccc', ...style } : style }
             variant={variant}
             startIcon={icon}
             {...rest}
