@@ -1,7 +1,7 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import './App.css'
-import 'semantic-ui-css/semantic.min.css'
+// import 'semantic-ui-css/semantic.min.css'
 import './colors.scss'
 
 import ProductCategory from './components/pages/ProductCategory'
@@ -16,6 +16,10 @@ import SaleManagement from './components/pages/SaleManagement';
 import Post from './components/pages/Post';
 import PostType from './components/pages/PostType';
 import Guest from './components/pages/Guest';
+<<<<<<< HEAD
+=======
+import Producer from './components/pages/Producer';
+>>>>>>> parent of c5fa287... Merge with sale_screen
 
 
 class App extends React.Component {
@@ -23,10 +27,6 @@ class App extends React.Component {
 	componentDidCatch(error) {
 		console.log(error)
 	}
-
-	// componentDidMount() {
-		
-	// }
 
 	render() {
 		return (
@@ -53,8 +53,14 @@ class App extends React.Component {
 					<Route path="/user/group">
 						<UserGroup />
 					</Route>
-					<Route path="/promotion">
-						<Promotion />
+					<Route path="/sale">
+						<SaleManagement />
+					</Route>
+					<Route exact path="/post">
+						<Post />
+					</Route>
+					<Route path="/post/type">
+						<PostType />
 					</Route>
 					<Route exact path="/">
 						<h2>Main</h2>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { Form, Button, Icon, Table } from "semantic-ui-react";
+import { Form, Button, Icon, Table, FormInput } from "semantic-ui-react";
 import FormSelect from "../../../atoms/FormSelect";
 import ModalModule from '../../../atoms/ModalModule';
 import Fieldset from "../../../atoms/Fieldset";
@@ -8,7 +8,7 @@ import PropertyTableRow from "./PropertyTableRow";
 import ProductOptions from "./ProductOptions";
 
 import { closeModal } from '../../../../redux/reducers/productReducer';
-import OptionModal from "./ProductOptions/OptionModal";
+import { formErrorsHandle } from "../../../../commons/utils";
 
 const options = [
     { key: "1", text: "Car", value: "car" },
@@ -17,20 +17,21 @@ const options = [
 ];
 
 const Render = ({
-    openModal = false,
-    property = {},
-    properties = [],
-    onChangePropetyName,
-    onChangePropetyValue,
+    openModal,
+    openPackageModal,
+    productState: { properties },
+    openOptionModal = false,
+    productProperty: { productPropertyName, productPropertyValue },
+    onChangeProperty,
     onAddProperty,
     onUpdateProperty,
     onRemoveProperty,
     onClose,
     ...rest
 }) => (
-    <ModalModule title="Thêm sản phẩm" open={openModal} onClose={onClose}>
+    <ModalModule title="Create Product" open={openModal} onClose={onClose}>
         <Form>
-            <Form.Input label="Name: " placeholder="Input name" />
+            <FormInput label="Name: " placeholder="Input name" />
             <Form.Group widths="equal">
                 <FormSelect
                     label="Product Category: "
@@ -65,10 +66,10 @@ const Render = ({
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell style={{ padding: "8px 16px" }}>
-                            Name
+                            Property Name
                         </Table.HeaderCell>
                         <Table.HeaderCell style={{ padding: "8px 16px" }}>
-                            Value
+                            Property Value
                         </Table.HeaderCell>
                         <Table.HeaderCell />
                     </Table.Row>
@@ -84,25 +85,27 @@ const Render = ({
                     ))}
                     <Table.Row textAlign="center">
                     <Table.Cell>
-                        <Form.Input
-                        placeholder="Enter Property Name..."
-                        onChange={onChangePropetyName}
-                        value={property.name}
+                        <FormInput
+                            placeholder="Enter Property Name..."
+                            name="productPropertyName"
+                            onChange={onChangeProperty}
+                            value={productPropertyName}
                         />
                     </Table.Cell>
                     <Table.Cell>
-                        <Form.Input
-                        placeholder="Enter Property Value..."
-                        onChange={onChangePropetyValue}
-                        value={property.value}
+                        <FormInput
+                            placeholder="Enter Property Value..."
+                            name="productPropertyValue"
+                            onChange={onChangeProperty}
+                            value={productPropertyValue}
                         />
                     </Table.Cell>
                     <Table.Cell>
                         <Button
-                        primary
-                        size="mini"
-                        disabled={!property.name || !property.value}
-                        onClick={onAddProperty}
+                            primary
+                            size="mini"
+                            disabled={!productPropertyName || !productPropertyValue}
+                            onClick={onAddProperty}
                         >
                         <Icon name="add" />
                         Add
@@ -114,7 +117,7 @@ const Render = ({
             </Fieldset>
             <Fieldset label="Product Package" icon="box">
                 <ProductOptions />
-                <OptionModal />
+                {/* <OptionModal openOptionModal={true} /> */}
             </Fieldset>
             <Form.TextArea label="Description: " placeholder="Input name.." />
             <Form.Checkbox label="Active" />
@@ -128,11 +131,25 @@ const ProductModal = () => {
     }) => ({ openModal, formLoading, modalFormSuccessMessage, product, errors }), shallowEqual)
 
     const [state, setState] = useState({
-        property: {
-            name: "",
-            value: ""
+        openPackageModal: false,
+        productProperty: {
+            productPropertyName: '',
+            productPropertyValue: ''
         },
-        properties: []
+        productState: {
+            name: '',
+            slugName: '',
+            productCategoryId: '',
+            productTypeGroupId: '',
+            productTypeId: '',
+            productBrandId: '',
+            unit: '',
+            quantityUnit: '',
+            properties: [],
+            packages: [],
+            status: 'ACTIVE'
+        },
+        errors: {}
     });
 
     const dispatch = useDispatch();
@@ -140,36 +157,50 @@ const ProductModal = () => {
     const renderProps = {
         ...selector,
         ...state,
-        onChangePropetyName: (_, input) =>
-        setState({
-            ...state,
-            property: { ...state.property, name: input.value }
-        }),
-        onChangePropetyValue: (_, input) =>
-        setState({
-            ...state,
-            property: { ...state.property, value: input.value }
-        }),
-        onAddProperty: () => {
-            if (state.property.name && state.property.value) {
-                setState({
+        onChangeProperty: (_, { name, value}, error) => {
+            console.log(name, value)
+            setState({
                 ...state,
-                property: { name: "", value: "" },
-                properties: [...state.properties, state.property]
+                productProperty: { ...state.productProperty, [name]: value },
+                errors: { ...formErrorsHandle(state.errors, name, error) }
+            })
+        },
+        onAddProperty: () => {
+            console.log(state.productProperty)
+            if (state.productProperty.productPropertyName &&
+                    state.productProperty.productPropertyValue) {
+                setState({
+                    ...state,
+                    productProperty: { 
+                        productPropertyName: "",
+                        productPropertyValue: ""
+                    },
+                    productState: {
+                        ...state.productState,
+                        properties: [...state.productState.properties, state.productProperty]
+                    }
                 });
             }
         },
-        onUpdateProperty: (index, name, value) => {
-            if (name && value) {
-                state.properties[index] = { name, value };
+        onUpdateProperty: (index, productPropertyName, productPropertyValue) => {
+            if (productPropertyName && productPropertyValue) {
+                state.productState.properties[index] = { productPropertyName, productPropertyValue };
                 setState({ ...state });
             }
         },
         onRemoveProperty: index => {
-            state.properties.splice(index, 1);
+            state.productState.properties.splice(index, 1);
             setState({ ...state });
         },
-        onClose: _ => dispatch(closeModal())
+        onOpenPackageModal: () => setState({
+            ...state,
+            openPackageModal: false
+        }),
+        onClose: () => dispatch(closeModal()),
+        onClosePackageModal: () => setState({
+            ...state,
+            openPackageModal: false
+        })
     };
     return <Render {...renderProps} />;
     };

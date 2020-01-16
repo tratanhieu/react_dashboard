@@ -36,9 +36,12 @@ export const formErrorsHandle = (errors, target, error) => {
 export const formatDateTime = (date, pattern = "HH:mm:ss DD/MM/YYYY") => moment(date).format(pattern)
 
 export const formatDate = (date, pattern = "DD/MM/YYYY") => moment(date).format(pattern)
+<<<<<<< HEAD
 export const formatDateTime = (date, pattern = "HH:mm:ss DD/MM/YYYY") => moment(date).format(pattern)
 =======
 export const formatDateTime = (date, pattern = "HH:mm:ss DD/MM/YYYY") => {
     return date && moment(date).format(pattern)
 }
 >>>>>>> parent of 9ba2fd0... Merge with guest_screen
+=======
+>>>>>>> parent of c5fa287... Merge with sale_screen

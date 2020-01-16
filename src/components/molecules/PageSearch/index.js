@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { Input } from 'semantic-ui-react'
 
 import Fieldset from '../../atoms/Fieldset'
+import Input from '../../atoms/Input';
 
 const PageSearch = ({
     title = "Search",
@@ -10,28 +10,17 @@ const PageSearch = ({
     loading = false,
     placeholder="Type some thing and enter to search...",
     onSearch,
+    value,
     ...rest 
-}) => {
-    const [value, setValue] = useState('')
-
-    return (
-        <Fieldset icon="search" title={title}>
-            <Input
-                fluid
-                // disabled
-                action={{
-                    color,
-                    icon: "search",
-                    content: buttonSearchLabel,
-                    onClick: _ => onSearch(value),
-                    loading
-                }}
-                placeholder="Type some thing and enter to search..."
-                defaultValue={value}
-                onChange={(_, input) => setValue(input.value)}
-                {...rest} />
-        </Fieldset>
-    )
-}
+}) => (
+    <Fieldset icon="search" title={title}>
+        <Input
+            placeholder="Type some thing and enter to search..."
+            value={value}
+            onChange={(_, { value }) => onSearch(value)}
+            {...rest}
+        />
+    </Fieldset>
+)
 
 export default PageSearch
