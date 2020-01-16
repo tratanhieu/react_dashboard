@@ -15,11 +15,6 @@ import Product from './components/pages/Product';
 import SaleManagement from './components/pages/SaleManagement';
 import Post from './components/pages/Post';
 import PostType from './components/pages/PostType';
-import Guest from './components/pages/Guest';
-<<<<<<< HEAD
-=======
-import Producer from './components/pages/Producer';
->>>>>>> parent of c5fa287... Merge with sale_screen
 
 
 class App extends React.Component {
