@@ -15,6 +15,8 @@ import Product from './components/pages/Product';
 import SaleManagement from './components/pages/SaleManagement';
 import Post from './components/pages/Post';
 import PostType from './components/pages/PostType';
+import Guest from './components/pages/Guest';
+
 
 class App extends React.Component {
 
@@ -44,9 +46,6 @@ class App extends React.Component {
 					</Route>
 					<Route path="/product/brand">
 						<ProductBrand />
-					</Route>
-					<Route path="/product/producer">
-						<Producer />
 					</Route>
 					<Route exact path="/user">
 						<User />

@@ -57,8 +57,8 @@ const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
     </Form>
 )
 
-const SaleManagementFilter = () => {
-    const selector = useSelector(({ saleManagementReducer: { filters } }) => 
+const ProductBrandFilter = () => {
+    const selector = useSelector(({ productCategoryReducer: { filters } }) => 
     ({ filters }), shallowEqual)
 
     const dispatch = useDispatch()
@@ -73,4 +73,4 @@ const SaleManagementFilter = () => {
     return <Render {...renderProps} />
 }
 
-export default SaleManagementFilter
+export default ProductBrandFilter
