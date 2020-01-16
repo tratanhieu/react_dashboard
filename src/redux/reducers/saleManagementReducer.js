@@ -19,7 +19,7 @@ const initialState = {
   },
   multipleExecuteLoading: false,
   formLoading: false,
-  openModal: false,
+  openModal: true,
   sale: {
   },
   saleList: [],
@@ -28,27 +28,45 @@ const initialState = {
   listItems: [
     {
       saleId: 10,
-      name: "Samsung"
+      name: "Samsung",
+      slugName: "/samsung",
+      email: "sjhdj@gmail.com",
+      status: "ACTIVE"
     },
     {
       saleId: 11,
-      name: "Samsung"
+      name: "Samsung",
+      slugName: "/samsung",
+      email: "sjhdj@gmail.com",
+      status: "ACTIVE"
     },
     {
       saleId: 12,
-      name: "Samsung"
+      name: "Samsung",
+      slugName: "/samsung",
+      email: "sjhdj@gmail.com",
+      status: "ACTIVE"
     },
     {
       saleId: 13,
-      name: "Samsung"
+      name: "Samsung",
+      slugName: "/samsung",
+      email: "sjhdj@gmail.com",
+      status: "ACTIVE"
     },
     {
       saleId: 15,
-      name: "Samsung"
+      name: "Samsung",
+      slugName: "/samsung",
+      email: "sjhdj@gmail.com",
+      status: "ACTIVE"
     },
     {
       saleId: 14,
-      name: "Samsung"
+      name: "Samsung",
+      slugName: "/samsung",
+      email: "sjhdj@gmail.com",
+      status: "ACTIVE"
     }
   ],
   selectBox: {
