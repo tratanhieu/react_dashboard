@@ -1,26 +1,26 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import ModalModule from "../../../molecules/ModalModule";
-import FormInput from "../../../atoms/FormInput";
-import FormInputSlug from "../../../atoms/FormInputSlug";
-import FormSelect from "../../../atoms/FormSelect";
-import { closeModal, setPost, doSave } from '../../../../redux/reducers/postReducer'
+import { closeModal, setPost } from '../../../../redux/reducers/postReducer'
 import _ from "lodash";
 import RichText from "../../../atoms/RichText";
 import Input from "../../../atoms/Input";
-import { TextareaAutosize, FormGroup } from "@material-ui/core";
+import { FormGroup } from "@material-ui/core";
 import ToggleActive from "../../../atoms/ToggleActive";
 import FormModule from "../../../molecules/FormModule";
 import SelectSearch from "../../../atoms/SelectSearch";
 import TagsInput from "../../../atoms/TagsInput";
 import ImageUpload from "../../../atoms/ImageUpload";
+import DatePicker from "../../../atoms/DatePicker";
+import CheckBox from "../../../atoms/CheckBox";
 
 const Render = ({
     openModal,
     init,
+    showPublishDate,
     postTypeList,
-    post: { name, slugName, image, description, content, status },
+    post: { name, slugName, publishDate, image, tags = [], description, content, status },
     errors: { formErrors },
+    setShowPublishDate,
     onLoaded,
     onChangeForm,
     onChangeContent,
@@ -36,38 +36,60 @@ const Render = ({
         onClose={onClose}
         onLoaded={init}
     >
-        <Input
-            required
-            label="Title"
-            margin="dense"
-            name="name"
-            fullWidth
-            value={name}
-            onChange={onChangeForm}
-            error={formErrors.name}
-        />
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ width: '49%' }}>
-                <ImageUpload
-                    source={image}
-                    onChange={value => onChangeForm(_, { name: 'image', value })}
+            <ImageUpload
+                source={image}
+                onChange={value => onChangeForm(_, { name: 'image', value })}
+            />
+            <div style={{ width: 'calc(100% - 320px - 48px)' }}>
+                <Input
+                    required
+                    label="Title"
+                    margin="dense"
+                    name="name"
+                    fullWidth
+                    value={name}
+                    onChange={onChangeForm}
+                    error={formErrors.name}
                 />
-            </div>
-            <div style={{ width: '49%' }}>
-                <SelectSearch
-                    label="Post Type"
-                    options={postTypeList}
-                    getOptionLabel={option => option.title}
-                    onChange={e => console.log(e)}
+                <FormGroup row>
+                    <SelectSearch
+                        style={{ width: '50%' }}
+                        required
+                        label="Post Type"
+                        options={postTypeList}
+                        getOptionLabel={option => option.title}
+                        onChange={e => console.log(e)}
+                    />
+                    <div style={{ 
+                        display: 'flex', 
+                        marginLeft: '8px',
+                        backgroundColor: showPublishDate ? 'rgba(63, 81, 181, 0.08)' : '#fff',
+                        padding: '0px 8px',
+                        paddingLeft: '16px'
+                    }}>
+                        <CheckBox
+                            label={!showPublishDate ? 'Set Publish Date' : ''}
+                            checked={showPublishDate}
+                            onChange={event => setShowPublishDate(event.target.checked)}
+                        />
+                        {showPublishDate && <DatePicker
+                            style={{ display: 'block', width: '220px'}}
+                            type="date-time"
+                            label="Publish Date"
+                            name="publishDate"
+                            value={publishDate}
+                            onChange={onChangeForm}
+                        />}
+                    </div>
+                </FormGroup>
+                <TagsInput
+                    label="Tags"
+                    value={tags}
+                    onChange={onChangeForm}
                 />
             </div>
         </div>
-        <TagsInput
-            label="Tags"
-            options={postTypeList}
-            getOptionLabel={option => option.title}
-            onChange={e => console.log(e)}
-        />
         <Input 
             fullWidth
             required
@@ -96,6 +118,7 @@ const Render = ({
 
 export default function PostForm() {
     const [init, setInit] = useState(true)
+    const [showPublishDate, setShowPublishDate] = useState(false)
 
     const selector = useSelector(({
         postReducer: { openModal, formSuccessMessage, postTypeList, formLoading, post, errors } 
@@ -105,7 +128,9 @@ export default function PostForm() {
 
     const renderProps = {
         init,
+        showPublishDate,
         ...selector,
+        setShowPublishDate,
         onLoaded: () => setInit(false),
         onChangeForm: (_, { name, value }) => dispatch(setPost({ 
             ...selector.post,

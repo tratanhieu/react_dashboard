@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useDispatch } from 'react-redux'
-import { Label } from 'semantic-ui-react'
 
 import Slug from '../../../atoms/Slug';
 
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 // REDUX
 import {
-    setCheckedItems, fetchWithPaginationAndFilter, getUpdateAction
+    fetchWithPaginationAndFilter, getUpdateAction
 } from '../../../../redux/reducers/productCategoryReducer';
 import { formatDateTime } from '../../../../commons/utils';
 import TableModule from '../../../molecules/TableModule';

@@ -1,35 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import faker from "faker";
+// import faker from "faker";
 import Pusher from 'pusher-js'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import { Icon, Image, Dropdown } from 'semantic-ui-react'
 import HorizontalSidebar from '../../../organisms/HorizontalSidebar';
 import { reload, resetSystemErrors, openSystemPopup } from '../../../../redux/reducers/rootReducer';
 import { ReportProblemOutlined, Close } from '@material-ui/icons';
 import { Snackbar, Slide } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
-const trigger = (
-    <span>
-        <Image avatar src={faker.internet.avatar()} /> {faker.name.findName()}
-    </span>
-);
-
-const options = [
-    { key: "user", text: "Account", icon: "user" },
-    { key: "settings", text: "Settings", icon: "settings" },
-    { key: "sign-out", text: "Sign Out", icon: "sign out" }
-];
-
-const DropdownUser = props => (
-    <Dropdown
-        trigger={trigger}
-        options={options}
-        pointing="top left"
-        icon={null}
-        {...props}
-    />
-);
+// const trigger = (
+//     <span>
+//         <Image avatar src={faker.internet.avatar()} /> {faker.name.findName()}
+//     </span>
+// )
 
 const Render = ({ navOpen, setNavOpen, children, systemPopup = {}, systemErrors, onCloseSystemErrors, onSystemPopupClose, ...rest}) => {
     const statusNav = navOpen ? "open" : "close";

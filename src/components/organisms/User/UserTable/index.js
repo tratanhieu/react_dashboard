@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { Label } from 'semantic-ui-react'
+import React from 'react'
 
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 // REDUX
-import { fetchAll } from '../../../../redux/reducers/userReducer';
+// import { fetchAll } from '../../../../redux/reducers/userReducer';
 import FilterStatus from '../../../molecules/FilterStatus';
-import { TableCell, Chip } from '@material-ui/core';
+import { TableCell } from '@material-ui/core';
 import TableModule from '../../../molecules/TableModule';
 import StatusLabel from '../../../atoms/StatusLabel';
 

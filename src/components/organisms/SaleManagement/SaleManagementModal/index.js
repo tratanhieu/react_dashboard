@@ -15,9 +15,7 @@ import {
 
 import {
   doSave,
-  closeModal,
-  setApplyStatus,
-  setCodeStatus
+  closeModal
 } from "../../../../redux/reducers/saleManagementReducer";
 
 const listApplyStatus = [

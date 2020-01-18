@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+import React from 'react'
+import { useSelector, shallowEqual } from 'react-redux'
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 import Slug from '../../../atoms/Slug';
 import { formatDateTime } from '../../../../commons/utils';
-import { TableCell, Chip } from '@material-ui/core';
+import { TableCell } from '@material-ui/core';
 import TableModule from '../../../molecules/TableModule';
 import StatusLabel from '../../../atoms/StatusLabel';
 

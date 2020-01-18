@@ -53,7 +53,7 @@ const ImageUpload = ({
                 }}
             >
                 {source ? 
-                    <img style={{ width: '100%', height: '100%', objectFit }} src={source} /> :
+                    <img style={{ width: '100%', height: '100%', objectFit }} src={source} alt="post" /> :
                     <span style={{ fontSize: '32px', alignSelf: 'center', display: 'flex' }}>
                         <span>{width.replace('px', '')}</span>
                         <span style={{ alignSelf: 'center', fontSize: '14px', padding: '8px' }}>x</span>

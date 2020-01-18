@@ -55,7 +55,7 @@ const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 const PATH_POST = `${REDUX_API_URL}/post`
 
 const listLoading = loading => ({ type: LIST_LOADING, loading })
-const setErrors = errors => ({ type: SET_ERRORS, errors })
+// const setErrors = errors => ({ type: SET_ERRORS, errors })
 const prepareData = data => ({
     type: PREPARE_DATA,
     postList: data

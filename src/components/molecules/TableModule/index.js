@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
-import { lighten, makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -16,12 +16,8 @@ import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-import { DeleteForever, BorderColorOutlined, DeleteOutlineOutlined, EditOutlined } from '@material-ui/icons';
-import FilterListIcon from "@material-ui/icons/FilterList";
+import { DeleteForever, DeleteOutlineOutlined, EditOutlined } from '@material-ui/icons';
 import PageSearch from "../PageSearch";
-import FilterStatus from "../FilterStatus";
 import { Backdrop, CircularProgress } from "@material-ui/core";
 
 function desc(a, b, orderBy) {
@@ -228,6 +224,7 @@ export default function TableModule({
     const [orderBy, setOrderBy] = React.useState("createDate");
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
+    // eslint-disable-next-line
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [searchKeyWord, setSearchKeyWord] = React.useState("");

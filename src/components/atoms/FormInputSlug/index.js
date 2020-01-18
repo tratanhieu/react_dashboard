@@ -22,10 +22,11 @@ const FormInputSlug = ({
         slugError
     })
 
-    useEffect(() => {
+    useEffect(state => {
         setState({ ...state, defaultValue, error })
     }, [defaultValue, error, slugValue, slugError])
-    
+    // react-hooks/exhaustive-deps
+
     const handleChangeValue = (e, input) => {
         setState({ ...state, tempSlugValue: makeSlug(input.value)})
         if (required && !input.value) {

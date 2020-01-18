@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import TableCell from "@material-ui/core/TableCell";
 import TableModule from "../../../molecules/TableModule";
@@ -50,8 +50,8 @@ const Render = ({
         loading={loading}
         selectKey="postTypeId"
         headCells={headCells}
-        dataSources={filters.status == ALL ? postTypeList :
-            postTypeList.filter(item => item.status == filters.status)
+        dataSources={filters.status === ALL ? postTypeList :
+            postTypeList.filter(item => item.status === filters.status)
         }
         row={TableRowModule}
         onDelete={onDelete}

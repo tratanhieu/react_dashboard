@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { setPostType, doSave, closeModal } from '../../../../redux/reducers/postTypeReducer'
 import ToggleActive from "../../../atoms/ToggleActive";

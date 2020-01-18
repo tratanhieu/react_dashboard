@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { Label } from 'semantic-ui-react'
+import React from 'react'
 
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 import { formatDateTime } from '../../../../commons/utils';

@@ -1,12 +1,10 @@
-import React, { useEffect } from 'react'
-import { useSelector, useDispatch, shallowEqual } from 'react-redux'
+import React from 'react'
+// import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 
 import SaleManagementHeader from '../../organisms/SaleManagement/SaleManagementHeader';
 import SaleManagementTable from '../../organisms/SaleManagement/SaleManagementTable';
 import SaleManagementModal from '../../organisms/SaleManagement/SaleManagementModal';
 import SaleManagementFilter from '../../organisms/SaleManagement/SaleManagementFilter';
-import SaleManagementAction from '../../organisms/SaleManagement/SaleManagementAction';
-import { fetchWithPaginationAndFilter } from '../../../redux/reducers/saleManagementReducer';
 
 const Render = ({ loading, reload, SaleManagementList, page, totalPages, filters }) => (
     <>

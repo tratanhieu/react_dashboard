@@ -4,6 +4,7 @@ import { Autocomplete } from '@material-ui/lab';
 
 const SelectSearch = ({
     style = {},
+    required = false,
     label = '',
     size='small',
     renderInput,
@@ -14,7 +15,7 @@ const SelectSearch = ({
         title={label}
         style={{ width: "100%", marginTop: "8px", marginBottom: "8px", ...style }}
         renderInput={params => (
-            <TextField {...params} label={label} variant="outlined" fullWidth />
+            <TextField {...params} required={required} label={label} variant="outlined" fullWidth />
         )}
         {...rest}
     />
