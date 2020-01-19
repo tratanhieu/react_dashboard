@@ -37,13 +37,13 @@ const PREPARE_DATA = createAction("PREPARE_DATA")
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS")
 const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING")
-const SET_ERRORS = createAction("SET_ERRORS")
 const MODAL_FORM_GET_CREATE_ACTION = createAction("MODAL_FORM_GET_CREATE_ACTION")
 const MODAL_FORM_UPDATE_SUCCESS = createAction("MODAL_FORM_UPDATE_SUCESS")
 const SET_POST_TYPE = createAction("SET_POST_TYPE")
 const CLOSE_MODAL = createAction("CLOSE_MODAL")
 const MULTIPLE_EXECUTE_LOADING = createAction("MULTIPLE_EXECUTE_LOADING")
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
+const SET_ERRORS = createAction("SET_ERRORS")
 
 // API
 const PATH_POST_TYPE = `${REDUX_API_URL}/post/type`

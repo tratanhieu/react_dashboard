@@ -32,7 +32,7 @@ const TagsInput = ({
     const handleSelectTags = ({ keyCode, target: { value }}) => {
         setNoOptionsTextState(`Enter to create tag '${value}'`)
         if (keyCode === 13 && value) {
-            if (tags.findIndex(item => item.name.includes(value)) === -1) {
+            if (tags.findIndex(item => item.name === value) === -1) {
                 tags.push({ name: value })
                 setTags(tags)
                 valueItems.push({ name: value })
@@ -40,6 +40,8 @@ const TagsInput = ({
                 setAddedTags(new Map(addedTags))
                 onChange(value, { name, value: valueItems })
                 setInputValue('')
+            } else {
+                setNoOptionsTextState(`Tag '${value}' is exist`)
             }
         }
     }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import { closeModal, setPost } from '../../../../redux/reducers/postReducer'
+import { closeModal, setPost, doSave } from '../../../../redux/reducers/postReducer'
 import _ from "lodash";
 import RichText from "../../../atoms/RichText";
 import Input from "../../../atoms/Input";
@@ -137,8 +137,13 @@ export default function PostForm() {
             [name]: value
         })),
         onChangeContent: content => dispatch(setPost({ ...selector.post, content })),
-        // onPositive: _ => dispatch(doSave(selector.post)),
-        onPositive: _ => console.log(selector.post),
+        onPositive: () => {
+            const publishDate = showPublishDate ? selector.post.showPublishDate : undefined
+            dispatch(doSave({
+                ...selector.post,
+                publishDate
+            }))
+        },
         onClose: _ => dispatch(closeModal())
     };
 

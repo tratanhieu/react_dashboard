@@ -19,10 +19,12 @@ export const initialState = {
     openModal: false,
     postList: [],
     postTypeList: [
-        { title: 'The Shawshank Redemption', year: 1994 },
-        { title: 'The Godfather', year: 1972 },
-        { title: 'The Godfather: Part II', year: 1974 },
-        { title: 'The Dark Knight', year: 2008 }],
+        { postTypeId: 1, name: 'The Shawshank 1' },
+        { postTypeId: 2, name: 'The Shawshank 2' },
+        { postTypeId: 3, name: 'The Shawshank 3' },
+        { postTypeId: 4, name: 'The Shawshank 4' },
+        { postTypeId: 5, name: 'The Shawshank 5' }
+    ],
     checkedItems: [],
     totalPages: 0,
     page: 1,
@@ -38,7 +40,6 @@ export const initialState = {
 const createAction = action => `${prefix}${action}`
 
 const LIST_LOADING = createAction("LIST_LOADING")
-const SET_ERRORS = createAction("SET_ERRORS")
 const RELOAD = createAction("RELOAD")
 const PREPARE_DATA = createAction("PREPARE_DATA")
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
@@ -50,6 +51,7 @@ const SET_POST = createAction("SET_POST")
 const CLOSE_MODAL = createAction("CLOSE_MODAL")
 const MULTIPLE_EXECUTE_LOADING = createAction("MULTIPLE_EXECUTE_LOADING")
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
+const SET_ERRORS = createAction("SET_ERRORS")
 
 // API
 const PATH_POST = `${REDUX_API_URL}/post`
@@ -60,11 +62,12 @@ const prepareData = data => ({
     type: PREPARE_DATA,
     postList: data
 })
+const setErrors = errors => ({ type: SET_ERRORS, errors })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
 
-const formSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
+const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
 
 export const setPost = post => ({ type: SET_POST, post })
 
@@ -99,13 +102,28 @@ export const fetchAll = () => async dispatch => {
 export const doSave = post => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(formLoading(true))
-    const { postId, name, slugName, status } = post
-
-    if (!postId) {
-        dispatch(doCreate({ name, slugName, status }))
-    } else {
-        dispatch(doUpdate({ postId, name, slugName, status }))
+    dispatch(modalFormSuccessMessage(""))
+    dispatch(setErrors(initialState.errors))
+    const { postId, name, slugName, image, description, content, status } = post
+    const tags = post.tags ? post.tags.map(tag => tag.name) : []
+    const publishDate = post.publishDate ? post.publishDate.getTime() : undefined
+    const postTypeId = 1
+    const userId = 1
+    const postParams = { 
+        name,
+        slugName,
+        image,
+        description,
+        content,
+        tags,
+        publishDate,
+        postTypeId,
+        userId,
+        status
     }
+    return !postId ?
+        dispatch(doCreate(postParams)) :
+        dispatch(doUpdate({ ...postParams, postId }))
 }
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
@@ -121,26 +139,31 @@ export const getUpdateAction = postId => async dispatch => {
 
 const doCreate = post => async dispatch => {
     const params = JSON.stringify(post)
-    axios.post(`${PATH_POST}/create`, params, {
+    axios.post(`${PATH_POST}`, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(_ => dispatch(formSuccessMessage("Product Category is created successfully!!")))
+    }).then(response => {
+        dispatch(prepareData(response.data))
+        dispatch(modalFormSuccessMessage("Post is created success!!"))
+        dispatch(setPost(initialState.post))
+    })
     .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(formLoading(false)))
 }
 
 const doUpdate = post => async dispatch => {
     const params = JSON.stringify(post)
-    return axios.post(
-        `${PATH_POST}/${post.postId}/update`, params, { 
-            timeout: 5000,
-            headers: {
-                'Content-Type': 'application/json'
-            }
+    return axios.post(`${PATH_POST}`, params, { 
+        timeout: 5000,
+        headers: {
+            'Content-Type': 'application/json'
         }
-    ).then(_ => dispatch(formSuccessMessage("Product Category is update successfully!!")))
+    }).then(response => {
+        dispatch(prepareData(response.data))
+        dispatch(modalFormSuccessMessage("Post is update success!!"))
+    })
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(formLoading(false)))
 }
@@ -169,8 +192,7 @@ export default function(state = initialState, action) {
             }
             case MODAL_FORM_LOADING: return {
                 ...state,
-                formLoading: action.loading,
-                errors: action.loading ? initialState.errors : state.errors
+                formLoading: action.loading
             }
             case MULTIPLE_EXECUTE_LOADING: return {
                 ...state,
@@ -179,8 +201,6 @@ export default function(state = initialState, action) {
             case PREPARE_DATA: return {
                 ...state,
                 postList: action.postList,
-                totalPage: action.totalPage,
-                page: action.page,
                 loading: false,
                 reload: false
             }
@@ -196,11 +216,11 @@ export default function(state = initialState, action) {
                 ...state,
                 post: initialState.post,
                 openModal: true,
-                formSuccessMessage: initialState.formSuccessMessage
+                modalFormSuccessMessage: initialState.modalFormSuccessMessage
             }
             case MODAL_FORM_UPDATE_SUCCESS: return {
                 ...state,
-                formSuccessMessage: action.message
+                modalFormSuccessMessage: action.message
             }
             case SET_POST: return {
                 ...state,
