@@ -6,33 +6,36 @@ import { formatDateTime } from '../../../../commons/utils';
 import { TableCell } from '@material-ui/core';
 import TableModule from '../../../molecules/TableModule';
 import StatusLabel from '../../../atoms/StatusLabel';
+import Image from '../../../atoms/Image';
 
 const headCells = [
     { id: "name", label: "Name" },
+    { id: "image", label: "Image" },
     { id: "tags", label: "Tags" },
     { id: "postTypeName", label: "Post Type" },
-    { id: "createDate", label: "Create Date" },
     { id: "updateDate", label: "Update Date" },
     { id: "status", label: "Create Date" }
 ];
 
-const TableRowModule = ({ name, slugName, tags, postTypeName, createDate, updateDate, status }) => (
+const TableRowModule = ({ postId, name, slugName, image, tags, postTypeName, createDate, updateDate, status, onView }) => (
     <>
-        <TableCell>
-            {name}
+        <TableCell width={500}>
+            <span onClick={() => onView(postId)}>{name}</span>
             <Slug>{slugName}</Slug>
         </TableCell>
-        <TableCell>
+        <TableCell width={120}>
+            <Image src={image} alt={slugName} />
+        </TableCell>
+        <TableCell width={69}>
             {tags.map((tag, index) => <>
                     {index === 0 ? '' : ', '}
                     <a key={index} href={`tags/${tag.slugName}`}>{tag.name}</a>
                 </>
             )}
         </TableCell>
-        <TableCell>
+        <TableCell width={160}>
             {postTypeName}
         </TableCell>
-        <TableCell>{formatDateTime(createDate)}</TableCell>
         <TableCell>{formatDateTime(updateDate)}</TableCell>
         <TableCell>
             <StatusLabel {...DEFAULT_STATUS[status]} />
@@ -48,6 +51,7 @@ const Render = ({
         headCells={headCells}
         dataSources={postList}
         row={TableRowModule}
+        onView={postId => alert(postId)}
         onDelete={selected => console.log(selected)}
     />
 )

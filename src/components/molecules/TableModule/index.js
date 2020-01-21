@@ -217,7 +217,8 @@ export default function TableModule({
     },
     row,
     onDelete,
-    onOpenUpdate
+    onOpenUpdate,
+    ...rest
 }) {
     const classes = useStyles();
     const [order, setOrder] = React.useState("desc");
@@ -319,7 +320,7 @@ export default function TableModule({
                                                 onClick={e => handleClick(e, row[selectKey])}
                                             />
                                         </TableCell>
-                                        <TableRowModule {...row} />
+                                        <TableRowModule {...row} {...rest} />
                                         <TableCell align="center">
                                             <Tooltip title="Edit">
                                                 <IconButton onClick={() => onOpenUpdate(row[selectKey])}>
