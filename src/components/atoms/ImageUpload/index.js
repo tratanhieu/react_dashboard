@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles'
 import Button from "../Button"
 import { CloudUploadOutlined, CloseOutlined, EditOutlined } from "@material-ui/icons";
 import { LinearProgress } from "@material-ui/core";
+import ErrorLine from "../ErrorLine";
 
 const ImageUpload = ({
     source = "",
@@ -14,6 +15,7 @@ const ImageUpload = ({
         quality: 0.8
     },
     onChange,
+    error,
     ...rest
 }) => {
     const [loadingProgress, setLoadingProgress] = useState(0)
@@ -27,12 +29,14 @@ const ImageUpload = ({
         readFile(file, config, image => {
             onChange(image)
             setLoadingProgressUp(90, 100, setLoadingProgress)
+            setTimeout(function () {
+                setLoadingProgress(0)
+            }, 500)
         }, setLoadingProgress)
     }
     const onRemove = () => {
         setLoadingProgress(0)
         onChange('')
-
     }
     return (
         <div style={{
@@ -60,6 +64,7 @@ const ImageUpload = ({
                         <span>{height.replace('px', '')}</span>
                     </span>}
             </div>
+            {error && <ErrorLine message={error} />}
             {loadingProgress > 0 && <ColorLinearProgress
                 style={{ width: '100%', height: 8, marginTop: '8px' }}
                 variant="determinate"

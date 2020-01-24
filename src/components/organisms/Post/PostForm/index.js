@@ -16,6 +16,7 @@ import CheckBox from "../../../atoms/CheckBox";
 const Render = ({
     openModal,
     init,
+    formSuccessMessage,
     showPublishDate,
     postTypeList,
     post: { name, slugName, publishDate, image, tags = [], description, content, status },
@@ -31,6 +32,7 @@ const Render = ({
         title="Create Post"
         fullWidth
         maxWidth="lg"
+        modalSuccess={formSuccessMessage}
         open={openModal}
         onPositive={onPositive}
         onClose={onClose}
@@ -40,6 +42,7 @@ const Render = ({
             <ImageUpload
                 source={image}
                 onChange={value => onChangeForm(_, { name: 'image', value })}
+                error={formErrors.image}
             />
             <div style={{ width: 'calc(100% - 320px - 48px)' }}>
                 <Input
@@ -60,6 +63,7 @@ const Render = ({
                         options={postTypeList}
                         getOptionLabel={option => option.title}
                         onChange={e => console.log(e)}
+                        error={formErrors.name}
                     />
                     <div style={{ 
                         display: 'flex', 
@@ -108,6 +112,7 @@ const Render = ({
             value={content}
             onLoaded={() => onLoaded()} 
             onEditorChange={onChangeContent}
+            error={formErrors.content}
         />
         <ToggleActive
             checked={status}

@@ -10,6 +10,10 @@ $close_sidebar_animation_duration: 0.3s;
     span, b, p, a, i {
         word-break: break-word;
     }
+
+    img {
+        max-width: 100%;
+    }
 }
 
 html,

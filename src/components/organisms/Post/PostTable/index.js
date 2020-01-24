@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector, shallowEqual } from 'react-redux'
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 import Slug from '../../../atoms/Slug';
@@ -7,6 +7,7 @@ import { TableCell } from '@material-ui/core';
 import TableModule from '../../../molecules/TableModule';
 import StatusLabel from '../../../atoms/StatusLabel';
 import Image from '../../../atoms/Image';
+import PostViewModal from '../PostView';
 
 const headCells = [
     { id: "name", label: "Name" },
@@ -17,10 +18,10 @@ const headCells = [
     { id: "status", label: "Create Date" }
 ];
 
-const TableRowModule = ({ postId, name, slugName, image, tags, postTypeName, createDate, updateDate, status, onView }) => (
+const TableRowModule = ({ name, slugName, content, image, tags, postTypeName, createDate, updateDate, status, onView }) => (
     <>
-        <TableCell width={500}>
-            <span onClick={() => onView(postId)}>{name}</span>
+        <TableCell width={500} onClick={() => onView({ name, content })}>
+            <span style={{ cursor: 'pointer' }}>{name}</span>
             <Slug>{slugName}</Slug>
         </TableCell>
         <TableCell width={120}>
@@ -44,16 +45,25 @@ const TableRowModule = ({ postId, name, slugName, image, tags, postTypeName, cre
 )
 
 const Render = ({
-    postList, loading
+    postList, loading, viewPost, setViewPost
 }) => (
-    <TableModule
-        selectKey="postId"
-        headCells={headCells}
-        dataSources={postList}
-        row={TableRowModule}
-        onView={postId => alert(postId)}
-        onDelete={selected => console.log(selected)}
-    />
+    <>
+        <TableModule
+            selectKey="postId"
+            loading={loading}
+            headCells={headCells}
+            dataSources={postList}
+            row={TableRowModule}
+            onView={({ name, content }) => setViewPost({ name, content })}
+            onDelete={selected => console.log(selected)}
+        />
+        <PostViewModal
+            open={Object.keys(viewPost).length} 
+            title={viewPost.name} 
+            content={viewPost.content}
+            onClose={() => setViewPost({})}
+        />
+    </>
 )
 
 export default function PostTable () {
@@ -61,8 +71,12 @@ export default function PostTable () {
         postReducer: { postList, loading } 
     }) => ({ postList, loading }), shallowEqual)
 
+    const [viewPost, setViewPost] = useState({});
+
     const renderProps = {
-        ...selector
+        viewPost,
+        ...selector,
+        setViewPost
     }
 
     return <Render {...renderProps} />

@@ -42,6 +42,9 @@ export default function ModalModule({
     loading = false,
     minWidth = "320px",
     positiveDisabled = false,
+    showPositiveButton = true,
+    positiveButtonLabel = "Ok",
+    negativeButtonLabel = "Cancel",
     onPositive,
     onClose,
     onLoaded = false,
@@ -80,19 +83,19 @@ export default function ModalModule({
             <DialogActions 
                 className={classes.bottom}
             >
-                <Button
+                {showPositiveButton && <Button
                     loading={loading}
                     disabled={positiveDisabled}
                     icon={<Check />}
                     onClick={onPositive}
-                    content="Ok"
-                />
+                    content={positiveButtonLabel}
+                />}
                 <Button
                     icon={<Close />}
                     color="default"
                     disabled={loading}
                     onClick={handleClose}
-                    content="Cancel"
+                    content={negativeButtonLabel}
                 />
             </DialogActions>
         </Dialog>

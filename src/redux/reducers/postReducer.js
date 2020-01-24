@@ -42,6 +42,7 @@ const createAction = action => `${prefix}${action}`
 const LIST_LOADING = createAction("LIST_LOADING")
 const RELOAD = createAction("RELOAD")
 const PREPARE_DATA = createAction("PREPARE_DATA")
+const INIT_FORM = createAction("INIT_FORM")
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS")
 const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING")
@@ -64,6 +65,7 @@ const prepareData = data => ({
 })
 const setErrors = errors => ({ type: SET_ERRORS, errors })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
+const setInitForm = data => ({ type: INIT_FORM, data })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
 
@@ -127,6 +129,20 @@ export const doSave = post => async dispatch => {
 }
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
+
+export const initForm = () => dispatch => {
+    dispatch(resetSystemErrors())
+    dispatch(modalFormSuccessMessage(""))
+    dispatch(formLoading(true))
+    return axios.get(`${PATH_POST}/create`, {
+        timeout: 5000
+    }).then(response => {
+        dispatch(setInitForm(response.data))
+    })
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(() => dispatch(formLoading(false)))
+}
+
 export const getUpdateAction = postId => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
