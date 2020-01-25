@@ -18,16 +18,8 @@ export const initialState = {
     formLoading: false,
     openModal: false,
     postList: [],
-    postTypeList: [
-        { postTypeId: 1, name: 'The Shawshank 1' },
-        { postTypeId: 2, name: 'The Shawshank 2' },
-        { postTypeId: 3, name: 'The Shawshank 3' },
-        { postTypeId: 4, name: 'The Shawshank 4' },
-        { postTypeId: 5, name: 'The Shawshank 5' }
-    ],
-    checkedItems: [],
-    totalPages: 0,
-    page: 1,
+    postTypeList: [],
+    tagList: [],
     post: {
         status: ACTIVE
     },
@@ -65,7 +57,7 @@ const prepareData = data => ({
 })
 const setErrors = errors => ({ type: SET_ERRORS, errors })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
-const setInitForm = data => ({ type: INIT_FORM, data })
+const setInitForm = ({ postTypeList, tagList }) => ({ type: INIT_FORM, postTypeList, tagList })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
 
@@ -188,7 +180,7 @@ export const setFilters = filters => ({ type: UPDATE_FILTERS, filters })
 export const setCheckedItems = checkedItems => ({ type: SET_CHECKED_ITEMS, checkedItems })
 
 export default function(state = initialState, action) {
-    // console.log(action.type)
+    console.log(action.tags)
     try {
         switch (action.type) {
             case LIST_LOADING: return {
@@ -201,6 +193,11 @@ export default function(state = initialState, action) {
                     ...initialState.errors,
                     ...action.errors
                 }
+            }
+            case INIT_FORM: return {
+                ...state,
+                postTypeList: action.postTypeList,
+                tagList: action.tagList
             }
             case RELOAD: return {
                 ...state,

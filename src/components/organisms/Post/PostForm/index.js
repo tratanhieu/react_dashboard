@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import { closeModal, setPost, doSave } from '../../../../redux/reducers/postReducer'
+import { closeModal, setPost, doSave, initForm } from '../../../../redux/reducers/postReducer'
 import _ from "lodash";
 import RichText from "../../../atoms/RichText";
 import Input from "../../../atoms/Input";
@@ -19,6 +19,7 @@ const Render = ({
     formSuccessMessage,
     showPublishDate,
     postTypeList,
+    tagList = [],
     post: { name, slugName, publishDate, image, tags = [], description, content, status },
     errors: { formErrors },
     setShowPublishDate,
@@ -61,7 +62,7 @@ const Render = ({
                         required
                         label="Post Type"
                         options={postTypeList}
-                        getOptionLabel={option => option.title}
+                        getOptionLabel={option => option.name}
                         onChange={e => console.log(e)}
                         error={formErrors.name}
                     />
@@ -87,11 +88,12 @@ const Render = ({
                         />}
                     </div>
                 </FormGroup>
-                <TagsInput
+                {tagList.length > 0 && <TagsInput
                     label="Tags"
                     value={tags}
+                    source={tagList}
                     onChange={onChangeForm}
-                />
+                />}
             </div>
         </div>
         <Input 
@@ -126,10 +128,15 @@ export default function PostForm() {
     const [showPublishDate, setShowPublishDate] = useState(false)
 
     const selector = useSelector(({
-        postReducer: { openModal, formSuccessMessage, postTypeList, formLoading, post, errors } 
-    }) => ({ openModal, formLoading, formSuccessMessage, postTypeList, post, errors }), shallowEqual)
+        postReducer: { openModal, formSuccessMessage, postTypeList, tagList, formLoading, post, errors } 
+    }) => ({ openModal, formLoading, formSuccessMessage, postTypeList, tagList, post, errors }), shallowEqual)
 
     const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(initForm())
+        // eslint-disable-next-line
+    }, [])
 
     const renderProps = {
         init,

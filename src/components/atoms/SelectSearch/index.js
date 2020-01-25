@@ -13,6 +13,7 @@ const SelectSearch = ({
     <Autocomplete
         size={size}
         title={label}
+        autoHighlight
         style={{ width: "100%", marginTop: "8px", marginBottom: "8px", ...style }}
         renderInput={params => (
             <TextField {...params} required={required} label={label} variant="outlined" fullWidth />

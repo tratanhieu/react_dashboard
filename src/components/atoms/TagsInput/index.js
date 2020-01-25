@@ -6,8 +6,9 @@ const TagsInput = ({
     style = {},
     label = "Tags",
     multiple = true,
-    name="tags",
+    name = "tags",
     options = [],
+    source = [],
     noOptionsText = "Not Found",
     filterSelectedOptions = true,
     size='small',
@@ -17,11 +18,7 @@ const TagsInput = ({
     onChange,
     ...rest
 }) => {
-    const [tags, setTags] = useState([
-        { name: 'abc' },
-        { name: 'cfs' },
-        { name: 'dd' }
-    ])
+    const [tags, setTags] = useState(source)
 
     const [noOptionsTextState, setNoOptionsTextState] = useState(noOptionsText)
 

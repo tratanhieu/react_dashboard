@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Form, Table } from "semantic-ui-react";
-import ModalModule from "../../../atoms/ModalModule";
+import ModalModule from "../../../molecules/ModalModule";
 import FormInput from "../../../atoms/FormInput";
 import { closeModal } from "../../../../redux/reducers/userGroupReducer";
 
