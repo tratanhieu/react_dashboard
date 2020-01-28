@@ -10,29 +10,21 @@ import Image from '../../../atoms/Image';
 import PostViewModal from '../PostView';
 
 const headCells = [
-    { id: "name", label: "Name" },
     { id: "image", label: "Image" },
-    { id: "tags", label: "Tags" },
+    { id: "name", label: "Name" },
     { id: "postTypeName", label: "Post Type" },
     { id: "updateDate", label: "Update Date" },
-    { id: "status", label: "Create Date" }
+    { id: "status", label: "Status" }
 ];
 
-const TableRowModule = ({ name, slugName, content, image, tags, postTypeName, createDate, updateDate, status, onView }) => (
+const TableRowModule = ({ name, slugName, content, image, postTypeName, updateDate, status, onView }) => (
     <>
-        <TableCell width={500} onClick={() => onView({ name, content })}>
-            <span style={{ cursor: 'pointer' }}>{name}</span>
-            <Slug>{slugName}</Slug>
-        </TableCell>
         <TableCell width={120}>
             <Image src={image} alt={slugName} />
         </TableCell>
-        <TableCell width={69}>
-            {tags.map((tag, index) => <>
-                    {index === 0 ? '' : ', '}
-                    <a key={index} href={`tags/${tag.slugName}`}>{tag.name}</a>
-                </>
-            )}
+        <TableCell width={500} onClick={() => onView({ name, content })}>
+            <span style={{ cursor: 'pointer' }}>{name}</span>
+            <Slug>{slugName}</Slug>
         </TableCell>
         <TableCell width={160}>
             {postTypeName}
@@ -60,6 +52,7 @@ const Render = ({
         <PostViewModal
             open={Object.keys(viewPost).length} 
             title={viewPost.name} 
+            maxWidth="xl"
             content={viewPost.content}
             onClose={() => setViewPost({})}
         />
@@ -75,8 +68,8 @@ export default function PostTable () {
 
     const renderProps = {
         viewPost,
-        ...selector,
-        setViewPost
+        setViewPost,
+        ...selector
     }
 
     return <Render {...renderProps} />

@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
 export default function FormModule({
     title,
     children,
-    modalSuccess = '',
+    formSuccess = '',
     loading = false,
     positiveDisabled = false,
     onPositive,
@@ -54,7 +54,7 @@ export default function FormModule({
             <h2 className={classes.title}>{title}</h2>
             <div className={classes.content}>
                 {children}
-                {modalSuccess && <FormSuccess message={modalSuccess} />}
+                {formSuccess && <FormSuccess message={formSuccess} />}
                 <Backdrop
                     className={classes.backdrop}
                     open={loading || onLoaded}

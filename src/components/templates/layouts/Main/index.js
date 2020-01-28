@@ -42,6 +42,7 @@ const Render = ({ navOpen, setNavOpen, children, systemPopup = {}, systemErrors,
             {
                 systemErrors.message &&
                 <div className="error-system">
+                    <span></span>
                     <span>
                         <ReportProblemOutlined />
                         &nbsp;{systemErrors.message}

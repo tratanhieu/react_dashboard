@@ -94,15 +94,19 @@ export const fetchAll = () => async dispatch => {
 }
 
 export const doSave = post => async dispatch => {
+    console.log(post)
     dispatch(resetSystemErrors())
     dispatch(formLoading(true))
     dispatch(modalFormSuccessMessage(""))
     dispatch(setErrors(initialState.errors))
-    const { postId, name, slugName, image, description, content, status } = post
+    const { postId, name, slugName, image, description, postType, content, status } = post
     const tags = post.tags ? post.tags.map(tag => tag.name) : []
     const publishDate = post.publishDate ? post.publishDate.getTime() : undefined
-    const postTypeId = 1
-    const userId = 1
+    const postTypeId = postType.postTypeId
+    if (!postTypeId) {
+        dispatch(setErrors({ postTypeId: 'Post type is not empty' }))
+        return;
+    }
     const postParams = { 
         name,
         slugName,
@@ -112,7 +116,6 @@ export const doSave = post => async dispatch => {
         tags,
         publishDate,
         postTypeId,
-        userId,
         status
     }
     return !postId ?

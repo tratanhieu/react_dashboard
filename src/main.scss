@@ -150,6 +150,9 @@ body {
         }
 
         .error-system {
+            display: flex;
+            box-sizing: border-box;
+            justify-content: space-between;
             position: fixed;
             color: #fff;
             background: #f44336;
@@ -159,9 +162,9 @@ body {
             width: 100%;
             bottom: 0;
 
-            .error-system--close-icon {
-                position: absolute;
-                right: 8px;
+            span {
+                display: flex;
+                align-items: center;
             }
         }
     }

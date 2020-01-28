@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSelector, shallowEqual } from 'react-redux'
 
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 import { formatDateTime } from '../../../../commons/utils';
@@ -39,6 +40,7 @@ const Render = ({
     userGroupList, loading
 }) => (
     <TableModule
+        loading={loading}
         selectKey="userGroupId"
         headCells={headCells}
         dataSources={userGroupList}
@@ -50,41 +52,9 @@ const Render = ({
 )
 
 const UserGroupTable = () => {
-    // const selector = useSelector(({
-    //     productCategoryReducer: { productCategoryList, page, totalPage: totalPages, filters, loading } 
-    // }) => ({ productCategoryList, loading, page, totalPages, filters }), shallowEqual)
-
-    const selector = {
-        userGroupList: [
-            { 
-                userGroupId: 1,
-                name: "Administrator",
-                userInGroup: 1,
-                createDate: new Date(),
-                updateDate: new Date(),
-                status: "ACTIVE" 
-            },
-            { 
-                userGroupId: 1,
-                name: "Manager",
-                userInGroup: 2,
-                createDate: new Date(),
-                updateDate: new Date(),
-                status: "ACTIVE" 
-            },
-            { 
-                userGroupId: 1,
-                name: "Seller",
-                userInGroup: 10,
-                createDate: new Date(),
-                updateDate: new Date(),
-                status: "ACTIVE" 
-            }
-        ],
-        loading: false,
-        totalPages: 2,
-        filters: {}
-    }
+    const selector = useSelector(({
+        userGroupReducer: { userGroupList, page, totalPage: totalPages, filters, loading } 
+    }) => ({ userGroupList, loading, page, totalPages, filters }), shallowEqual)
 
     const renderProps = {
         ...selector

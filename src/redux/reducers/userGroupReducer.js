@@ -17,7 +17,7 @@ export const initialState = {
     multipleExecuteLoading: false,
     formLoading: false,
     openModal: false,
-    productCategoryList: [],
+    userGroupList: [],
     checkedItems: [],
     totalPages: 0,
     page: 1,
@@ -46,15 +46,12 @@ const MULTIPLE_EXECUTE_LOADING = createAction("MULTIPLE_EXECUTE_LOADING")
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 
 // API
-const PATH_PRODUCT_CATEGORY = `${REDUX_API_URL}/product/category`
+const API_PATH = `${REDUX_API_URL}/user/group`
 
 const listLoading = loading => ({ type: LIST_LOADING, loading })
 const prepareData = data => ({
     type: PREPARE_DATA,
-    productCategoryList: data.listData,
-    totalPage: data.totalPage,
-    pageSize: data.pageSize,
-    page: data.page
+    userGroupList: data
 })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
@@ -70,7 +67,7 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
     const params = { listId, status }
     dispatch(resetSystemErrors())
     dispatch(setMultipleExecuteLoading(true))
-    return axios.post(`${PATH_PRODUCT_CATEGORY}/execute`, params, {
+    return axios.post(`${API_PATH}/execute`, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
@@ -81,11 +78,10 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
     .finally(_ => dispatch(setMultipleExecuteLoading(false)))
 }
 
-export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
+export const fetchAll = () => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${PATH_PRODUCT_CATEGORY}?search=${filters.search}&status=${filters.status}&`
-            + `sort=${filters.sort}&page=${page}`,
+    return axios.get(API_PATH,
         { timeout: 5000 }
     )
     .then(response => dispatch(prepareData(response.data)))
@@ -109,7 +105,7 @@ export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
 export const getUpdateAction = productCategoryId => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${PATH_PRODUCT_CATEGORY}/${productCategoryId}`, {
+    return axios.get(`${API_PATH}/${productCategoryId}`, {
         timeout: 5000
     }).then(response => dispatch(setProductCategory(response.data, true)))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
@@ -118,7 +114,7 @@ export const getUpdateAction = productCategoryId => async dispatch => {
 
 const doCreate = productCategory => async dispatch => {
     const params = JSON.stringify(productCategory)
-    axios.post(`${PATH_PRODUCT_CATEGORY}/create`, params, {
+    axios.post(`${API_PATH}/create`, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
@@ -131,7 +127,7 @@ const doCreate = productCategory => async dispatch => {
 const doUpdate = productCategory => async dispatch => {
     const params = JSON.stringify(productCategory)
     return axios.post(
-        `${PATH_PRODUCT_CATEGORY}/${productCategory.productCategoryId}/update`, params, { 
+        `${API_PATH}/${productCategory.productCategoryId}/update`, params, { 
             timeout: 5000,
             headers: {
                 'Content-Type': 'application/json'
@@ -168,9 +164,7 @@ export default function(state = initialState, action) {
             }
             case PREPARE_DATA: return {
                 ...state,
-                productCategoryList: action.productCategoryList,
-                totalPage: action.totalPage,
-                page: action.page,
+                userGroupList: action.userGroupList,
                 loading: false,
                 reload: false
             }

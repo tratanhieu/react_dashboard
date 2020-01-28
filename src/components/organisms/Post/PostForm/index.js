@@ -16,11 +16,12 @@ import CheckBox from "../../../atoms/CheckBox";
 const Render = ({
     openModal,
     init,
+    formLoading,
     formSuccessMessage,
     showPublishDate,
     postTypeList,
     tagList = [],
-    post: { name, slugName, publishDate, image, tags = [], description, content, status },
+    post: { name, slugName, publishDate, image, tags = [], postType, description, content, status },
     errors: { formErrors },
     setShowPublishDate,
     onLoaded,
@@ -31,9 +32,9 @@ const Render = ({
 }) => (
     <FormModule 
         title="Create Post"
-        fullWidth
-        maxWidth="lg"
-        modalSuccess={formSuccessMessage}
+        loading={formLoading}
+        positiveDisabled={!(name && description && content && postType && description && image)}
+        formSuccess={formSuccessMessage}
         open={openModal}
         onPositive={onPositive}
         onClose={onClose}
@@ -62,9 +63,10 @@ const Render = ({
                         required
                         label="Post Type"
                         options={postTypeList}
+                        value={postType}
                         getOptionLabel={option => option.name}
-                        onChange={e => console.log(e)}
-                        error={formErrors.name}
+                        onChange={(_, value) => onChangeForm(_, { name: 'postType', value: value })}
+                        error={formErrors.postTypeId}
                     />
                     <div style={{ 
                         display: 'flex', 
