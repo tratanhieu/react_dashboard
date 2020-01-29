@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import UserGroupModal from '../../organisms/UserGroup/UserGroupModal';
 import UserGroupTable from '../../organisms/UserGroup/UserGroupTable';
 import ContentHeader from '../../organisms/ContentHeader';
-import { fetchAll } from '../../../redux/reducers/userGroupReducer';
+import { fetchAll, getCreateAction } from '../../../redux/reducers/userGroupReducer';
 import { resetSystemErrors } from '../../../redux/reducers/rootReducer';
 
 const Render = ({ onOpenCreate }) => (
@@ -24,6 +24,10 @@ const UserGroup = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    return <Render />
+    const renderProps = {
+        onOpenCreate: () => dispatch(getCreateAction())
+    }
+
+    return <Render {...renderProps} />
 }
 export default UserGroup

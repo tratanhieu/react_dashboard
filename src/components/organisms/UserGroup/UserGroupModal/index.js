@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Form, Table } from "semantic-ui-react";
-import ModalModule from "../../../molecules/ModalModule";
-import FormInput from "../../../atoms/FormInput";
 import { closeModal } from "../../../../redux/reducers/userGroupReducer";
+import ModalModule from "../../../molecules/ModalModule";
+import Input from "../../../atoms/Input";
+import ToggleActive from "../../../atoms/ToggleActive";
 
 const features = [
     {
@@ -45,8 +46,8 @@ const features = [
 
 const Render = ({
     openModal,
-    userGroup,
-    clientError,
+    userGroup: { name, features, status },
+    errors: { formErrors },
     onChangeGroupName,
     onChangePermision,
     onChangeActive,
@@ -55,18 +56,18 @@ const Render = ({
 }) => (
     <ModalModule
         title="User Group Modal"
+        minWidth="600px"
         open={openModal}
         onClose={onClose}
-        actionDisable={clientError}
         onPositive={onPositive}
     >
         <Form>
-            <FormInput
+            <Input
                 required
                 label="User Group Name: "
-                fluid
-                defaultValue={userGroup.name}
+                value={name}
                 onChange={onChangeGroupName}
+                error={formErrors.name}
             />
             <label>
                 <b>Select Features:</b>
@@ -82,7 +83,7 @@ const Render = ({
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                {userGroup.features.map((item, index) => (
+                {features.map((item, index) => (
                     <Table.Row key={index} textAlign="center">
                         <Table.Cell textAlign="left">{item.name}</Table.Cell>
                         <Table.Cell>
@@ -120,9 +121,9 @@ const Render = ({
                 ))}
                 </Table.Body>
             </Table>
-            <Form.Checkbox
+            <ToggleActive
                 label="Active"
-                checked={userGroup.status}
+                checked={status}
                 onChange={onChangeActive}
             />
         </Form>

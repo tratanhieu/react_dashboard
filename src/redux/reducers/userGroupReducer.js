@@ -21,18 +21,19 @@ export const initialState = {
     checkedItems: [],
     totalPages: 0,
     page: 1,
-    productCategory: {
+    userGroup: {
         status: ACTIVE
     },
     errors: {
-        name: '',
-        slugName: ''
+        formErrors: {},
+        errorMessage: ''
     }
 }
 
 const createAction = action => `${prefix}${action}`
 
 const LIST_LOADING = createAction("LIST_LOADING")
+const OPEN_MODAL = createAction("OPEN_MODAL")
 const RELOAD = createAction("RELOAD")
 const PREPARE_DATA = createAction("PREPARE_DATA")
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
@@ -48,6 +49,7 @@ const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 // API
 const API_PATH = `${REDUX_API_URL}/user/group`
 
+const setOpenModal = openModal => ({ type: OPEN_MODAL, openModal })
 const listLoading = loading => ({ type: LIST_LOADING, loading })
 const prepareData = data => ({
     type: PREPARE_DATA,
@@ -57,7 +59,7 @@ const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
 
-const setProductCategory = (productCategory, openModal) => ({ type: SET_PRODUCT_CATEGORY, productCategory, openModal})
+const setUserGroup = (userGroup, openModal) => ({ type: SET_PRODUCT_CATEGORY, userGroup, openModal})
 
 const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
 
@@ -89,60 +91,71 @@ export const fetchAll = () => async dispatch => {
     .finally(_ => dispatch(listLoading(false)))
 }
 
-export const doSave = productCategory => async dispatch => {
+export const doSave = userGroup => async dispatch => {
     dispatch(resetSystemErrors())
+    dispatch(modalFormSuccessMessage(""))
     dispatch(formLoading(true))
-    const { productCategoryId, name, slugName, status } = productCategory
-
-    if (!productCategoryId) {
-        dispatch(doCreate({ name, slugName, status }))
+    const { userGroupId, name, userGroupFeatures , status } = userGroup
+    const params = { name, userGroupFeatures, status }
+    if (!userGroupId) {
+        dispatch(doCreate(params))
     } else {
-        dispatch(doUpdate({ productCategoryId, name, slugName, status }))
+        dispatch(doUpdate({ ...params, userGroupId }))
     }
 }
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
-export const getUpdateAction = productCategoryId => async dispatch => {
+export const getUpdateAction = userGroupId => async dispatch => {
     dispatch(resetSystemErrors())
+    dispatch(modalFormSuccessMessage(""))
     dispatch(listLoading(true))
-    return axios.get(`${API_PATH}/${productCategoryId}`, {
+    return axios.get(`${API_PATH}/${userGroupId}`, {
         timeout: 5000
-    }).then(response => dispatch(setProductCategory(response.data, true)))
+    }).then(response => {
+        dispatch(setUserGroup(response.data))
+        dispatch(setOpenModal(true))
+    })
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(listLoading(false)))
 }
 
-const doCreate = productCategory => async dispatch => {
-    const params = JSON.stringify(productCategory)
-    axios.post(`${API_PATH}/create`, params, {
+const doCreate = userGroup => async dispatch => {
+    const params = JSON.stringify(userGroup)
+    axios.post(API_PATH, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(_ => dispatch(modalFormSuccessMessage("Product Category is created successfully!!")))
-    .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(formLoading(false)))
+    }).then(response => {
+        dispatch(prepareData(response.data))
+        dispatch(setUserGroup(initialState.userGroup))
+        dispatch(modalFormSuccessMessage("User Group is created successfully!!"))
+    })
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(() => dispatch(formLoading(false)))
 }
 
-const doUpdate = productCategory => async dispatch => {
-    const params = JSON.stringify(productCategory)
-    return axios.post(
-        `${API_PATH}/${productCategory.productCategoryId}/update`, params, { 
-            timeout: 5000,
-            headers: {
-                'Content-Type': 'application/json'
-            }
+const doUpdate = userGroup => async dispatch => {
+    const params = JSON.stringify(userGroup)
+    return axios.patch(API_PATH, params, { 
+        timeout: 5000,
+        headers: {
+            'Content-Type': 'application/json'
         }
-    ).then(_ => dispatch(modalFormSuccessMessage("Product Category is update successfully!!")))
+    }).then(response => {
+        dispatch(prepareData(response.data))
+        dispatch(setUserGroup(initialState.userGroup))
+        dispatch(modalFormSuccessMessage("User Group is update successfully!!"))
+    })
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(formLoading(false)))
+    .finally(() => dispatch(formLoading(false)))
 }
 
 export const setFilters = filters => ({ type: UPDATE_FILTERS, filters })
 export const setCheckedItems = checkedItems => ({ type: SET_CHECKED_ITEMS, checkedItems })
 
 export default function(state = initialState, action) {
-    // console.log(action.type)
+    console.log(action.type, action)
     try {
         switch (action.type) {
             case LIST_LOADING: return {
@@ -152,6 +165,10 @@ export default function(state = initialState, action) {
             case RELOAD: return {
                 ...state,
                 reload: true
+            }
+            case OPEN_MODAL: return {
+                ...state,
+                openModal: action.openModal
             }
             case MODAL_FORM_LOADING: return {
                 ...state,
@@ -178,7 +195,7 @@ export default function(state = initialState, action) {
             }
             case MODAL_FORM_GET_CREATE_ACTION: return {
                 ...state,
-                productCategory: initialState.productCategory,
+                userGroup: initialState.userGroup,
                 openModal: true,
                 modalFormSuccessMessage: initialState.modalFormSuccessMessage
             }
@@ -188,7 +205,7 @@ export default function(state = initialState, action) {
             }
             case SET_PRODUCT_CATEGORY: return {
                 ...state,
-                productCategory: action.productCategory,
+                userGroup: action.userGroup,
                 openModal: action.openModal,
                 modalFormSuccessMessage: initialState.modalFormSuccessMessage
             }
@@ -196,7 +213,7 @@ export default function(state = initialState, action) {
                 ...state,
                 openModal: false,
                 listLoading: false,
-                productCategory: initialState.productCategory,
+                userGroup: initialState.userGroup,
                 formLoading: initialState.formLoading,
                 errors: initialState.errors,
             }
