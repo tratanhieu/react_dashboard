@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import TableCell from "@material-ui/core/TableCell";
 import TableModule from "../../../molecules/TableModule";
@@ -55,7 +55,7 @@ const Render = ({
         }
         row={TableRowModule}
         onDelete={onDelete}
-        onOpenUpdate={postTypeId => onOpenUpdate(postTypeId)}
+        onOpenUpdate={onOpenUpdate}
     >
         <FilterStatus
             statusValue={filters.status}
@@ -69,10 +69,6 @@ export default function PostTypeTable() {
     const selector = useSelector(({
         postTypeReducer: { postTypeList, loading, filters } 
     }) => ({ postTypeList, loading, filters }), shallowEqual)
-
-    useEffect(() => {
-        console.log(selector.postTypeList)
-    }, [selector.postTypeList])
 
     const dispatch = useDispatch()
 

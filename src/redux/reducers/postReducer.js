@@ -47,7 +47,7 @@ const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 const SET_ERRORS = createAction("SET_ERRORS")
 
 // API
-const PATH_POST = `${REDUX_API_URL}/post`
+const PATH_API = `${REDUX_API_URL}/post`
 
 const listLoading = loading => ({ type: LIST_LOADING, loading })
 // const setErrors = errors => ({ type: SET_ERRORS, errors })
@@ -71,7 +71,7 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
     const params = { listId, status }
     dispatch(resetSystemErrors())
     dispatch(setMultipleExecuteLoading(true))
-    return axios.post(`${PATH_POST}/execute`, params, {
+    return axios.post(`${PATH_API}/execute`, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
@@ -85,12 +85,10 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
 export const fetchAll = () => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${PATH_POST}`,
-        { timeout: 5000 }
-    )
-    .then(response => dispatch(prepareData(response.data)))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(listLoading(false)))
+    return axios.get(PATH_API, { timeout: 5000 })
+        .then(response => dispatch(prepareData(response.data)))
+        .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+        .finally(_ => dispatch(listLoading(false)))
 }
 
 export const doSave = post => async dispatch => {
@@ -129,9 +127,8 @@ export const initForm = () => dispatch => {
     dispatch(resetSystemErrors())
     dispatch(modalFormSuccessMessage(""))
     dispatch(formLoading(true))
-    return axios.get(`${PATH_POST}/create`, {
-        timeout: 5000
-    }).then(response => {
+    return axios.get(`${PATH_API}/create`, { timeout: 5000 })
+    .then(response => {
         dispatch(setInitForm(response.data))
     })
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
@@ -141,7 +138,7 @@ export const initForm = () => dispatch => {
 export const getUpdateAction = postId => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${PATH_POST}/${postId}`, {
+    return axios.get(`${PATH_API}/${postId}`, {
         timeout: 5000
     }).then(response => dispatch(setPost(response.data)))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
@@ -150,7 +147,7 @@ export const getUpdateAction = postId => async dispatch => {
 
 const doCreate = post => async dispatch => {
     const params = JSON.stringify(post)
-    axios.post(`${PATH_POST}`, params, {
+    axios.post(`${PATH_API}`, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
@@ -166,7 +163,7 @@ const doCreate = post => async dispatch => {
 
 const doUpdate = post => async dispatch => {
     const params = JSON.stringify(post)
-    return axios.post(`${PATH_POST}`, params, { 
+    return axios.post(`${PATH_API}`, params, { 
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'

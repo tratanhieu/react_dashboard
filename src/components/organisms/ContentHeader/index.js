@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const ContentHeader = ({ title, onOpenCreate, children }) => {
+const ContentHeader = ({ title, createButtonLoading = false, onOpenCreate, children }) => {
     const classes = useStyles()
     return (
         <div className={classes.root}>
@@ -28,7 +28,7 @@ const ContentHeader = ({ title, onOpenCreate, children }) => {
                 {children}
                 <Button
                     icon={<AddBox />}
-                    loading={false}
+                    loading={createButtonLoading}
                     content="Create"
                     onClick={onOpenCreate}
                 />

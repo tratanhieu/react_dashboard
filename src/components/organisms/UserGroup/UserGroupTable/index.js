@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSelector, shallowEqual } from 'react-redux'
+import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 import { formatDateTime } from '../../../../commons/utils';
@@ -7,6 +7,7 @@ import StatusLabel from '../../../atoms/StatusLabel';
 import FilterStatus from '../../../molecules/FilterStatus';
 import { TableCell } from '@material-ui/core';
 import TableModule from '../../../molecules/TableModule';
+import { getUpdateAction, doDelete } from '../../../../redux/reducers/userGroupReducer';
 // REDUX
 
 const listStatus = [
@@ -18,16 +19,16 @@ const listStatus = [
 
 const headCells = [
     { id: "name", label: "Full Name" },
-    { id: "totalUser", label: "Total User" },
+    { id: "totalUser", label: "Total User", align: "center" },
     { id: "createDate", label: "Create Date" },
     { id: "updateDate", label: "Update Date" },
     { id: "status", label: "Status" }
 ];
 
-const TableRowModule = ({ name, userInGroup, createDate, updateDate, status }) => (
+const TableRowModule = ({ name, totalUser, createDate, updateDate, status }) => (
     <>
         <TableCell>{name}</TableCell>
-        <TableCell>{userInGroup}</TableCell>
+        <TableCell align="center">{totalUser}</TableCell>
         <TableCell>{formatDateTime(createDate)}</TableCell>
         <TableCell>{formatDateTime(updateDate)}</TableCell>
         <TableCell>
@@ -37,7 +38,10 @@ const TableRowModule = ({ name, userInGroup, createDate, updateDate, status }) =
 )
 
 const Render = ({
-    userGroupList, loading
+    userGroupList,
+    loading,
+    onOpenUpdate,
+    onDelete
 }) => (
     <TableModule
         loading={loading}
@@ -45,8 +49,9 @@ const Render = ({
         headCells={headCells}
         dataSources={userGroupList}
         row={TableRowModule}
-        onDelete={selected => console.log(selected)}
-        >
+        onDelete={onDelete}
+        onOpenUpdate={onOpenUpdate}
+    >
         <FilterStatus listStatus={listStatus} onChangeFilter />
     </TableModule>
 )
@@ -56,8 +61,12 @@ const UserGroupTable = () => {
         userGroupReducer: { userGroupList, page, totalPage: totalPages, filters, loading } 
     }) => ({ userGroupList, loading, page, totalPages, filters }), shallowEqual)
 
+    const dispatch = useDispatch()
+
     const renderProps = {
-        ...selector
+        ...selector,
+        onOpenUpdate: userGroupId => dispatch(getUpdateAction(userGroupId)),
+        onDelete: userGroupId => dispatch(doDelete(userGroupId)),
     }
 
     return <Render {...renderProps} />

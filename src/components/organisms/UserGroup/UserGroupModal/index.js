@@ -1,73 +1,41 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import { closeModal } from "../../../../redux/reducers/userGroupReducer";
+import { setUserGroup, closeModal, doSave } from "../../../../redux/reducers/userGroupReducer";
 import ModalModule from "../../../molecules/ModalModule";
 import Input from "../../../atoms/Input";
 import ToggleActive from "../../../atoms/ToggleActive";
-import { Table, Checkbox, TableRow, TableHead, TableCell, TableBody } from "@material-ui/core";
-
-const features = [
-    {
-        name: "Manage Users",
-        view: false,
-        create: false,
-        update: false,
-        delete: false
-    },
-    {
-        name: "Manage Products",
-        view: false,
-        create: false,
-        update: false,
-        delete: false
-    },
-    {
-        name: "Manage Posts",
-        view: false,
-        create: false,
-        update: false,
-        delete: false
-    },
-    {
-        name: "Manage Comments",
-        view: false,
-        create: false,
-        update: false,
-        delete: false
-    },
-    {
-        name: "Manage Orders",
-        view: false,
-        create: false,
-        update: false,
-        delete: false
-    }
-];
+import { Table, TableRow, TableHead, TableCell, TableBody } from "@material-ui/core";
+import CheckBox from "../../../atoms/CheckBox";
 
 const Render = ({
+    formLoading,
     openModal,
-    userGroup: { name, features, status },
+    userGroup: { name, userGroupFeatures = [], status },
+    modalFormSuccessMessage,
     errors: { formErrors },
-    onChangeGroupName,
+    onChangeForm,
     onChangePermision,
-    onChangeActive,
     onPositive,
     onClose
 }) => (
     <ModalModule
         title="User Group Modal"
         minWidth="600px"
+        loading={formLoading}
+        modalSuccess={modalFormSuccessMessage}
+        positiveDisabled={!name}
         open={openModal}
         onClose={onClose}
         onPositive={onPositive}
     >
         <Input
             required
+            name="name"
             label="User Group Name: "
             value={name}
-            onChange={onChangeGroupName}
+            onChange={onChangeForm}
             error={formErrors.name}
-    />
+        />
         <Table size="small" stickyHeader style={{ marginTop: '8px', marginBottom: '8px' }}>
             <TableHead>
                 <TableRow textAlign="center">
@@ -79,38 +47,38 @@ const Render = ({
                 </TableRow>
             </TableHead>
             <TableBody>
-            {features.map((item, index) => (
+            {userGroupFeatures.map(({ featureName, read, create, update, delete: deletePermission }, index) => (
                 <TableRow key={index} textAlign="center">
-                    <TableCell textAlign="left">{item.name}</TableCell>
+                    <TableCell textAlign="left">{featureName}</TableCell>
                     <TableCell>
-                        <Checkbox
-                            value="view"
-                            checked={item.view}
-                            onChange={(_, checkbox) => onChangePermision(index, checkbox)}
+                        <CheckBox
+                            value="read"
+                            checked={read}
+                            onChange={e => onChangePermision(index, e.target)}
                         />
                     </TableCell>
                     <TableCell>
-                        <Checkbox
+                        <CheckBox
                             value="create"
-                            disabled={!item.view}
-                            checked={item.create}
-                            onChange={(_, checkbox) => onChangePermision(index, checkbox)}
+                            disabled={!read}
+                            checked={create}
+                            onChange={e => onChangePermision(index, e.target)}
                         />
                     </TableCell>
                     <TableCell>
-                        <Checkbox
+                        <CheckBox
                             value="update"
-                            disabled={!item.view}
-                            checked={item.update}
-                            onChange={(_, checkbox) => onChangePermision(index, checkbox)}
+                            disabled={!read}
+                            checked={update}
+                            onChange={e => onChangePermision(index, e.target)}
                         />
                     </TableCell>
                     <TableCell>
-                        <Checkbox
+                        <CheckBox
                             value="delete"
-                            disabled={!item.view}
-                            checked={item.delete}
-                            onChange={(_, checkbox) => onChangePermision(index, checkbox)}
+                            disabled={!read}
+                            checked={deletePermission}
+                            onChange={e => onChangePermision(index, e.target)}
                         />
                     </TableCell>
                 </TableRow>
@@ -119,54 +87,37 @@ const Render = ({
         </Table>
         <ToggleActive
             label="Active"
+            name="status"
             checked={status}
-            onChange={onChangeActive}
+            onChange={onChangeForm}
         />
     </ModalModule>
 );
 
-const UserGroupModal = ({ onPositive }) => {
+const UserGroupModal = () => {
     const selector = useSelector(({
-        userGroupReducer: { openModal, modalFormSuccessMessage, formLoading, productCategory, errors } 
-    }) => ({ openModal, formLoading, modalFormSuccessMessage, productCategory, errors }), shallowEqual)
-    
-    const [state, setState] = useState({
-        userGroup: {
-            name: "",
-            features: [...features],
-            status: true
-        },
-        clientError: true
-    });
+        userGroupReducer: { openModal, formLoading, modalFormSuccessMessage, userGroup, errors } 
+    }) => ({ openModal, formLoading, modalFormSuccessMessage, userGroup, errors }), shallowEqual)
 
     const dispatch = useDispatch()
 
     const renderProps = {
         ...selector,
-        ...state,
-        onChangeGroupName: (_, name, clientError) =>
-        setState({
-            ...state,
-            userGroup: {
-                ...state.userGroup,
-                name
-            },
-            clientError
-        }),
-        onChangePermision: (index, checkbox) => {
-            state.userGroup.features[index][checkbox.value] = checkbox.checked;
-            setState({ ...state });
-        },
-        onChangeActive: (_, checkbox) =>
-        setState({
-            ...state,
-            userGroup: {
-                ...state.userGroup,
-                status: checkbox.checked
+        onChangeForm: (_, { name, value }) => dispatch(setUserGroup({
+            ...selector.userGroup,
+            [name]: value
+        })),
+        onChangePermision: (index, { value, checked }) => {
+            selector.userGroup.userGroupFeatures[index][value] = checked;
+            if (value === 'read' && !checked) {
+                selector.userGroup.userGroupFeatures[index].create = checked;
+                selector.userGroup.userGroupFeatures[index].update = checked;
+                selector.userGroup.userGroupFeatures[index].delete = checked;
             }
-        }),
-        onPositive: _ => onPositive(state.userGroup),
-        onClose: _ => dispatch(closeModal())
+            dispatch(setUserGroup({...selector.userGroup}))
+        },
+        onPositive: () => dispatch(doSave(selector.userGroup)),
+        onClose: () => dispatch(closeModal())
     };
 
     return <Render {...renderProps} />;
