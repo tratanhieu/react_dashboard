@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import { Form, Table } from "semantic-ui-react";
 import { closeModal } from "../../../../redux/reducers/userGroupReducer";
 import ModalModule from "../../../molecules/ModalModule";
 import Input from "../../../atoms/Input";
 import ToggleActive from "../../../atoms/ToggleActive";
+import { Table, Checkbox, TableRow, TableHead, TableCell, TableBody } from "@material-ui/core";
 
 const features = [
     {
@@ -61,72 +61,67 @@ const Render = ({
         onClose={onClose}
         onPositive={onPositive}
     >
-        <Form>
-            <Input
-                required
-                label="User Group Name: "
-                value={name}
-                onChange={onChangeGroupName}
-                error={formErrors.name}
-            />
-            <label>
-                <b>Select Features:</b>
-            </label>
-            <Table>
-                <Table.Header>
-                    <Table.Row textAlign="center">
-                        <Table.HeaderCell textAlign="left">Feature Name</Table.HeaderCell>
-                        <Table.HeaderCell>View</Table.HeaderCell>
-                        <Table.HeaderCell>Create</Table.HeaderCell>
-                        <Table.HeaderCell>Update</Table.HeaderCell>
-                        <Table.HeaderCell>Delete</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                {features.map((item, index) => (
-                    <Table.Row key={index} textAlign="center">
-                        <Table.Cell textAlign="left">{item.name}</Table.Cell>
-                        <Table.Cell>
-                            <Form.Checkbox
-                                value="view"
-                                checked={item.view}
-                                onChange={(_, checkbox) => onChangePermision(index, checkbox)}
-                            />
-                        </Table.Cell>
-                        <Table.Cell>
-                            <Form.Checkbox
-                                value="create"
-                                disabled={!item.view}
-                                checked={item.create}
-                                onChange={(_, checkbox) => onChangePermision(index, checkbox)}
-                            />
-                        </Table.Cell>
-                        <Table.Cell>
-                            <Form.Checkbox
-                                value="update"
-                                disabled={!item.view}
-                                checked={item.update}
-                                onChange={(_, checkbox) => onChangePermision(index, checkbox)}
-                            />
-                        </Table.Cell>
-                        <Table.Cell>
-                            <Form.Checkbox
-                                value="delete"
-                                disabled={!item.view}
-                                checked={item.delete}
-                                onChange={(_, checkbox) => onChangePermision(index, checkbox)}
-                            />
-                        </Table.Cell>
-                    </Table.Row>
-                ))}
-                </Table.Body>
-            </Table>
-            <ToggleActive
-                label="Active"
-                checked={status}
-                onChange={onChangeActive}
-            />
-        </Form>
+        <Input
+            required
+            label="User Group Name: "
+            value={name}
+            onChange={onChangeGroupName}
+            error={formErrors.name}
+    />
+        <Table size="small" stickyHeader style={{ marginTop: '8px', marginBottom: '8px' }}>
+            <TableHead>
+                <TableRow textAlign="center">
+                    <TableCell textAlign="left">Feature Name</TableCell>
+                    <TableCell>View</TableCell>
+                    <TableCell>Create</TableCell>
+                    <TableCell>Update</TableCell>
+                    <TableCell>Delete</TableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody>
+            {features.map((item, index) => (
+                <TableRow key={index} textAlign="center">
+                    <TableCell textAlign="left">{item.name}</TableCell>
+                    <TableCell>
+                        <Checkbox
+                            value="view"
+                            checked={item.view}
+                            onChange={(_, checkbox) => onChangePermision(index, checkbox)}
+                        />
+                    </TableCell>
+                    <TableCell>
+                        <Checkbox
+                            value="create"
+                            disabled={!item.view}
+                            checked={item.create}
+                            onChange={(_, checkbox) => onChangePermision(index, checkbox)}
+                        />
+                    </TableCell>
+                    <TableCell>
+                        <Checkbox
+                            value="update"
+                            disabled={!item.view}
+                            checked={item.update}
+                            onChange={(_, checkbox) => onChangePermision(index, checkbox)}
+                        />
+                    </TableCell>
+                    <TableCell>
+                        <Checkbox
+                            value="delete"
+                            disabled={!item.view}
+                            checked={item.delete}
+                            onChange={(_, checkbox) => onChangePermision(index, checkbox)}
+                        />
+                    </TableCell>
+                </TableRow>
+            ))}
+            </TableBody>
+        </Table>
+        <ToggleActive
+            label="Active"
+            checked={status}
+            onChange={onChangeActive}
+        />
     </ModalModule>
 );
 

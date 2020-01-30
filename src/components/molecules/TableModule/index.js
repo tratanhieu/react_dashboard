@@ -359,7 +359,6 @@ export default function TableModule({
                     onChangePage={handleChangePage}
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                 >
-                <h1>OK</h1>
                 </TablePagination>
             </Paper>
         </div>

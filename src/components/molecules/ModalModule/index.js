@@ -69,7 +69,7 @@ export default function ModalModule({
             {...rest}
         >
             <DialogTitle>{title}</DialogTitle>
-            <DialogContent dividers className={classes.content} style={{ minWidth }}>
+            <DialogContent dividers className={classes.content} style={{ boxSizing: 'border-box', minWidth }}>
                 {children}
                 {modalSuccess && <ModalSuccess message={modalSuccess} />}
                 {modalError && <ModalError message={modalError} />}
