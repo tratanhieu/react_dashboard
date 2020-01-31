@@ -146,10 +146,13 @@ const doUpdate = userGroup => async dispatch => {
         }
     }).then(response => {
         dispatch(prepareData(response.data))
-        dispatch(setUserGroup(initialState.userGroup))
+        dispatch(setUserGroup(userGroup))
         dispatch(modalFormSuccessMessage("User Group is update successfully!!"))
     })
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .catch(error => {
+        dispatch(handleErrors(error, HANDLE_ERRORS))
+        dispatch(setUserGroup(initialState.userGroup))
+    })
     .finally(() => dispatch(formLoading(false)))
 }
 
