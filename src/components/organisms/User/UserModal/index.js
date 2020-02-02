@@ -1,135 +1,129 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import { Form } from "semantic-ui-react";
+import Input from "../../../atoms/Input";
+import { closeModal, doSave, setUser } from '../../../../redux/reducers/userReducer';
 import ModalModule from "../../../molecules/ModalModule";
-import FormInput from "../../../atoms/FormInput";
-import FormSelect from "../../../atoms/FormSelect";
-import { initialState, closeModal } from '../../../../redux/reducers/userReducer'
-import _ from "lodash";
-
-const userGroups = [
-    { key: 12345, value: 12345, text: "Administrator" },
-    { key: 12346, value: 12346, text: "Seller" },
-    { key: 12347, value: 12347, text: "Manager" }
-];
+import ToggleActive from "../../../atoms/ToggleActive";
+import SelectSearch from "../../../atoms/SelectSearch";
+import FormGroup from "../../../atoms/FormGroup";
 
 const Render = ({
     openModal,
-    user,
-    errors,
-    onChangeUserInfo,
-    onChangeActive,
+    formLoading,
+    modalFormSuccessMessage,
+    user: { userId, firstName, middleName, lastName, email, phone, userGroup, status },
+    userGroupList,
+    errors: { formErrors },
+    onChangeForm,
     onPositive,
     onClose
 }) => (
     <ModalModule
         title="Create User"
         open={openModal}
-        size="tiny"
-        actionDisable={!_.isEqual(initialState.errors, errors)}
+        loading={formLoading}
+        modalSuccess={modalFormSuccessMessage}
+        minWidth="sm"
         onPositive={onPositive}
         onClose={onClose}
     >
-        <Form>
-            <Form.Group widths="equal">
-                <FormInput
-                    required
-                    label="First Name: "
-                    name="firstName"
-                    fluid
-                    defaultValue={user.firstName}
-                    onChange={onChangeUserInfo}
-                    error={errors.firstName}
-                />
-                <FormInput
-                    required
-                    label="Middle Name: "
-                    name="lastName"
-                    fluid
-                    defaultValue={user.lastName}
-                    onChange={onChangeUserInfo}
-                    error={errors.lastName}
-                />
-                <FormInput
-                    required
-                    label="Name: "
-                    name="name"
-                    fluid
-                    defaultValue={user.name}
-                    onChange={onChangeUserInfo}
-                    error={errors.name}
-                />
-            </Form.Group>
-            <Form.Group widths="equal">
-                <FormInput
-                    required
-                    label="Phone: "
-                    name="phone"
-                    fluid
-                    defaultValue={user.phone}
-                    onChange={onChangeUserInfo}
-                    error={errors.phone}
-                />
-                <FormInput
-                    required
-                    label="Email: "
-                    name="email"
-                    fluid
-                    defaultValue={user.email}
-                    onChange={onChangeUserInfo}
-                    error={errors.email}
-                />
-            </Form.Group>
-            <FormSelect
-                label="User Group: "
+        <FormGroup row>
+            <Input
+                width="32%"
                 required
-                defaultValue={user.userGroup}
-                name="userGroup"
-                options={userGroups}
-                onChange={onChangeUserInfo}
+                label="First Name: "
+                name="firstName"
+                value={firstName}
+                onChange={onChangeForm}
+                disabled={!!userId}
+                error={formErrors.firstName}
             />
-            <Form.Checkbox
-                label="Active"
-                checked={user.status}
-                onChange={onChangeActive}
+            <Input
+                width="32%"
+                required
+                label="Middle Name: "
+                name="middleName"
+                value={middleName}
+                onChange={onChangeForm}
+                disabled={!!userId}
+                error={formErrors.middleName}
             />
-        </Form>
+            <Input
+                width="32%"
+                required
+                label="Last Name: "
+                name="lastName"
+                value={lastName}
+                onChange={onChangeForm}
+                disabled={!!userId}
+                error={formErrors.lastName}
+            />
+        </FormGroup>
+        <FormGroup row>
+            <Input
+                width="49%"
+                required
+                label="Phone: "
+                name="phone"
+                value={phone}
+                onChange={onChangeForm}
+                disabled={!!userId}
+                error={formErrors.phone}
+            />
+            <Input
+                width="49%"
+                required
+                label="Email: "
+                name="email"
+                value={email}
+                onChange={onChangeForm}
+                disabled={!!userId}
+                error={formErrors.email}
+            />
+        </FormGroup>
+        <SelectSearch
+            required
+            label="User Group"
+            options={userGroupList}
+            value={userGroup}
+            getOptionLabel={option => option.name}
+            onChange={(_, value) => onChangeForm(_, { name: 'userGroup', value })}
+            error={formErrors.userGroup}
+        />
+        <ToggleActive
+            label="Active"
+            checked={status}
+            onChange={onChangeForm}
+        />
     </ModalModule>
 );
 
-const UserModal = ({ onPositive }) => {
+const UserModal = () => {
     const selector = useSelector(({
-        userReducer: { openModal, modalFormSuccessMessage, formLoading, productCategory, errors } 
-    }) => ({ openModal, formLoading, modalFormSuccessMessage, productCategory, errors }), shallowEqual)
-    
-    const [errors, setErrors] = useState({ ...initialState.errors })
+        userReducer: { 
+            openModal,
+            modalFormSuccessMessage,
+            formLoading,
+            user,
+            userGroupList,
+            errors
+        }
+    }) => ({ 
+        openModal,
+        modalFormSuccessMessage,
+        formLoading,
+        user,
+        userGroupList,
+        errors
+    }), shallowEqual)
 
     const dispatch = useDispatch()
 
-    const [user, setUser] = useState({
-        firstName: "",
-        lastName: "",
-        name: "",
-        phone: "",
-        email: "",
-        userGroup: userGroups[0].value,
-        status: true
-    });
-
     const renderProps = {
         ...selector,
-        user,
-        errors,
-        onChangeUserInfo: (_, { name, value }, error) => {
-            setUser({ ...user, [name]: value });
-            setErrors({ ...errors, [name]: error });
-        },
-        onChangeActive: (_, checkbox) => setUser({
-            ...user,
-            status: checkbox.checked
-        }),
-        onPositive: _ => onPositive(user),
-        onClose: _ => dispatch(closeModal())
+        onChangeForm: (_, { name, value }) => dispatch(setUser({ ...selector.user, [name]: value })),
+        onPositive: () => dispatch(doSave(selector.user)),
+        onClose: () => dispatch(closeModal())
     };
 
     return <Render {...renderProps} />;

@@ -2,16 +2,18 @@ import React from 'react'
 import { TextField } from '@material-ui/core';
 
 const Input = ({
-    size="small",
+    size = "small",
+    width = "100%",
+    variant = "outlined",
+    style = {},
     margin = "dense",
     error = '',
-    variant = "outlined",
     onChange,
     value = '',
     ...rest
 }) => (
     <TextField
-        style={{ width: "100%", marginTop: "8px", marginBottom: "8px" }}
+        style={{ width, marginTop: "8px", marginBottom: "8px", ...style }}
         error={!!error}
         margin={margin}
         size={size}

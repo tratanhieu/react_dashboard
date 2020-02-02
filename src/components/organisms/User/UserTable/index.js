@@ -1,12 +1,12 @@
 import React from 'react'
-
+import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { DEFAULT_STATUS } from '../../../../constants/entites'
 // REDUX
-// import { fetchAll } from '../../../../redux/reducers/userReducer';
 import FilterStatus from '../../../molecules/FilterStatus';
 import { TableCell } from '@material-ui/core';
 import TableModule from '../../../molecules/TableModule';
 import StatusLabel from '../../../atoms/StatusLabel';
+import { getUpdateAction, doDelete } from '../../../../redux/reducers/userReducer';
 
 const listStatus = [
     { key: "", label: "All" },
@@ -36,40 +36,34 @@ const TableRowModule = ({ fullName, phone, email, userGroupName, status }) => (
 )
 
 const Render = ({
-    userList, loading
+    userList, loading,
+    onOpenUpdate,
+    onDelete
 }) => (
     <TableModule
         selectKey="userId"
+        loading={loading}
         headCells={headCells}
         dataSources={userList}
         row={TableRowModule}
-        onDelete={selected => console.log(selected)}
+        onOpenUpdate={onOpenUpdate}
+        onDelete={onDelete}
     >
         <FilterStatus listStatus={listStatus} onChangeFilter />
     </TableModule>
 )
 
 export default function UserTable() {
-    // const selector = useSelector(({
-    //     productCategoryReducer: { productCategoryList, page, totalPage: totalPages, filters, loading } 
-    // }) => ({ productCategoryList, loading, page, totalPages, filters }), shallowEqual)
+    const selector = useSelector(({
+        userReducer: { userList, page, totalPage: totalPages, filters, loading } 
+    }) => ({ userList, loading, page, totalPages, filters }), shallowEqual)
 
-    const selector = {
-        userList: [
-            { 
-                userId: 10,
-                fullName: "Tran Van Anh",
-                phone: 123456,
-                email: "sjhdj@gmail.com",
-                userGroupName: "ADMIN",
-                status: "ACTIVE" 
-            }
-        ],
-        loading: false
-    }
+    const dispatch = useDispatch()
 
     const renderProps = {
-        ...selector
+        ...selector,
+        onOpenUpdate: userId => dispatch(getUpdateAction(userId)),
+        onDelete: userId => dispatch(doDelete(userId)),
     }
 
     return <Render {...renderProps} />
