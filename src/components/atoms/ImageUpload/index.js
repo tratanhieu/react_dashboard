@@ -7,9 +7,11 @@ import ErrorLine from "../ErrorLine";
 
 const ImageUpload = ({
     source = "",
+    name = 'image',
     width = "320px",
     height = "240px",
     objectFit = "cover",
+    circle = false,
     config = {
         width: 480,
         quality: 0.8
@@ -27,7 +29,7 @@ const ImageUpload = ({
         const file = e.currentTarget.files[0]
         e.currentTarget.value = ""
         readFile(file, config, image => {
-            onChange(image)
+            onChange('', { name, value: image })
             setLoadingProgressUp(90, 100, setLoadingProgress)
             setTimeout(function () {
                 setLoadingProgress(0)
@@ -36,7 +38,7 @@ const ImageUpload = ({
     }
     const onRemove = () => {
         setLoadingProgress(0)
-        onChange('')
+        onChange('', { name, value: '' })
     }
     return (
         <div style={{
@@ -53,11 +55,12 @@ const ImageUpload = ({
                     display: 'flex',
                     justifyContent: 'center',
                     padding: '5px',
-                    boxShadow: '#aeaeae 3px 3px 5px 1px'
+                    boxShadow: '#aeaeae 3px 3px 5px 1px',
+                    borderRadius: circle ? '50%' : '0'
                 }}
             >
                 {source ? 
-                    <img style={{ width: '100%', height: '100%', objectFit }} src={source} alt="post" /> :
+                    <img style={{ width: '100%', height: '100%', objectFit, borderRadius: circle ? '50%' : '0' }} src={source} alt="post" /> :
                     <span style={{ fontSize: '32px', alignSelf: 'center', display: 'flex' }}>
                         <span>{width.replace('px', '')}</span>
                         <span style={{ alignSelf: 'center', fontSize: '14px', padding: '8px' }}>x</span>
@@ -70,7 +73,7 @@ const ImageUpload = ({
                 variant="determinate"
                 value={loadingProgress}
             />}
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', marginTop: '8px' }}>
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', marginTop: '16px' }}>
                 <div>
                     <label style={{
                         display: 'flex',
@@ -92,7 +95,6 @@ const ImageUpload = ({
                         boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'
                     }} for="file-upload" class="custom-file-upload">
                         {source ? <EditOutlined /> : <CloudUploadOutlined />}
-                        <span style={{ alignSelf: 'center', marginLeft: '8px' }}>{source ? 'Change' : 'Upload'}</span>
                     </label>
                     <input style={{ display: 'none' }} id="file-upload" type="file" onChange={onAdd} />
                 </div>
@@ -100,7 +102,7 @@ const ImageUpload = ({
                     color="secondary"
                     onClick={onRemove}
                 >
-                    <CloseOutlined /> Remove
+                    <CloseOutlined />
                 </Button>
                 }
             </div>

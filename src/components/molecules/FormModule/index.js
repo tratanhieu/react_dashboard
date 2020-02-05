@@ -38,7 +38,9 @@ export default function FormModule({
     children,
     formSuccess = '',
     loading = false,
+    maxWidth = '100%',
     positiveDisabled = false,
+    style = {},
     onPositive,
     onClose,
     onLoaded = false,
@@ -48,6 +50,7 @@ export default function FormModule({
 
     return (
         <div
+            style={{ maxWidth, ...style }}
             className={classes.root}
             {...rest}
         >

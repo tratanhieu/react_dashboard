@@ -144,6 +144,36 @@ body {
                         height: 100%;
                         background-color: #fff;
                         padding: 16px;
+
+                        .setting-screen {
+                            display: flex;
+                            justify-content: space-between;
+
+                            ul {
+                                width: 240px;
+                                padding: 0;
+                                margin: 0;
+                                
+                                li {
+                                    padding: 0;
+                                    a {
+                                        display: block;
+                                        padding: 16px;
+                                        text-decoration: none;
+                                        color: #000;
+
+                                        &:hover {
+                                            background: #eee;
+                                        }
+                                    }
+                                }
+                            }
+
+                            .setting-content {
+                                width: calc(100% - 240px);
+                                border-left: solid 1px #ccc9;
+                            }
+                        }
                     }
                 }
             }
