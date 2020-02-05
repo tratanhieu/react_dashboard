@@ -1,36 +1,31 @@
-import React, { useState, useEffect } from 'react'
-import { Form, Radio } from 'semantic-ui-react'
+import React from 'react'
+import { Switch, FormGroup, FormControlLabel } from '@material-ui/core';
+import { ACTIVE, HIDDEN } from '../../../constants/entites';
 
 const ToggleActive = ({
-    label = 'Trạng thái: ',
+    color = "primary",
+    name = 'status',
+    checked = ACTIVE,
     onChange,
-    inline = true,
-    checked=false,
     ...rest
-}) => {
-
-    const [active, setActive] = useState(checked)
-
-    const handleToggle = () => {
-        const activeStatus = !active
-        setActive(activeStatus)
-        onChange(activeStatus)
-    }
-
-    useEffect(() => {
-        setActive(checked)
-    }, [checked])
-
-    return (
-        <Form.Field inline={inline}>
-            <label>{label}</label>
-            <Radio
-                label={active ? 'Hiển thị' : 'Ẩn'}
-                checked={active}
-                toggle
-                onChange={handleToggle} {...rest} />
-        </Form.Field>
-    )
-}
+}) => (
+    <FormGroup>
+        <FormControlLabel
+            control={
+                <Switch
+                    checked={checked === ACTIVE}
+                    name={name}
+                    color={color}
+                    onChange={event => {
+                        const { currentTarget: { name, checked } } = event
+                        onChange(event, { name, value: checked ? ACTIVE : HIDDEN }) 
+                    }}
+                    {...rest}
+                />
+            }
+            label={checked === ACTIVE ? 'Hiển thị' : 'Ẩn'}
+        />
+    </FormGroup>
+)
 
 export default ToggleActive

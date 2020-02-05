@@ -12,7 +12,7 @@ import UserGroup from './components/pages/UserGroup';
 import ProductTypeGroup from './components/pages/ProductTypeGroup';
 import ProductType from './components/pages/ProductType';
 import Product from './components/pages/Product';
-import SaleManagement from './components/pages/SaleManagement';
+import Promotion from './components/pages/Promotion';
 
 
 class App extends React.Component {
@@ -50,8 +50,8 @@ class App extends React.Component {
 					<Route path="/user/group">
 						<UserGroup />
 					</Route>
-					<Route path="/sale">
-						<SaleManagement />
+					<Route path="/promotion">
+						<Promotion />
 					</Route>
 					<Route exact path="/">
 						<h2>Main</h2>

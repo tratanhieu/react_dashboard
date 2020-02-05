@@ -134,4 +134,4 @@ const readFiles = (files, config, callback) => {
     }
 };
 
-export default ImageUploads;
+export default ImageUploads

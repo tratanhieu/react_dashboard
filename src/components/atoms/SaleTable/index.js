@@ -1,9 +1,7 @@
 import React from "react";
-import { Table, Checkbox, Icon } from "semantic-ui-react";
+import { Table, Checkbox } from "semantic-ui-react";
 
 import "./style.css";
-import ConfirmPopup from "../../atoms/ConfirmPopup";
-import TablePagination from "../TablePagination";
 
 const CHECKBOX_CELL_WIDTH = 50;
 const ACTION_CELL_WIDTH = 100;
