@@ -12,7 +12,9 @@ const useStyles = makeStyles(theme => ({
     bottom: {
         padding: "8px",
         paddingTop: "24px",
-        borderTop: "1px solid rgba(0,0,0,0.12)"
+        borderTop: "1px solid rgba(0,0,0,0.12)",
+        display: 'flex',
+        justifyContent: 'center'
     },
     title: {
         padding: "0px 8px"
@@ -41,6 +43,9 @@ export default function FormModule({
     maxWidth = '100%',
     positiveDisabled = false,
     style = {},
+    showNegativeButton = true,
+    positiveLabel = "OK",
+    negativeLabel = "Cancel",
     onPositive,
     onClose,
     onLoaded = false,
@@ -72,15 +77,15 @@ export default function FormModule({
                     disabled={positiveDisabled}
                     icon={<Check />}
                     onClick={onPositive}
-                    content="Ok"
+                    content={positiveLabel}
                 />
-                <Button
+                {showNegativeButton && <Button
                     icon={<Close />}
                     color="default"
                     disabled={loading}
                     onClick={onClose}
-                    content="Cancel"
-                />
+                    content={negativeLabel}
+                />}
             </div>
         </div>
     );

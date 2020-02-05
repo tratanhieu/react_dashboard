@@ -150,12 +150,17 @@ body {
                             justify-content: space-between;
 
                             ul {
-                                width: 240px;
+                                width: 200px;
                                 padding: 0;
                                 margin: 0;
                                 
                                 li {
                                     padding: 0;
+
+                                    &.active {
+                                        background: #eee;
+                                    }
+
                                     a {
                                         display: block;
                                         padding: 16px;
@@ -170,7 +175,7 @@ body {
                             }
 
                             .setting-content {
-                                width: calc(100% - 240px);
+                                width: calc(100% - 200px);
                                 border-left: solid 1px #ccc9;
                             }
                         }
@@ -196,6 +201,43 @@ body {
                 display: flex;
                 align-items: center;
             }
+        }
+    }
+}
+
+.login-screen {
+    .login-form {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 360px;
+        box-sizing: border-box;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        padding: 48px;
+        box-shadow: 0 5px 10px 0 rgba(0,0,0,.1);
+        text-align: center;
+
+        .form-group {
+            margin: 12px 0px;
+        }
+
+        .forgot-password {
+            color: #3f51b5;
+            display: block;
+            text-align: left;
+            margin-top: 16px;
+
+            &:hover {
+                cursor: pointer;
+                text-decoration: underline;
+            }
+        }
+
+        button {
+            margin-top: 24px;
         }
     }
 }

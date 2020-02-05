@@ -9,7 +9,13 @@ const Render = ({
     userProfile: { firstName, middleName, lastName, image },
     onChangeForm
 }) => (
-    <FormModule title="User Profile" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
+    <FormModule
+        title="User Profile"
+        maxWidth="768px"
+        style={{ paddingLeft: '16px', paddingRight: '16px' }}
+        showNegativeButton={false}
+        positiveLabel="Update"
+    >
         <div style={{ display: 'flex' }}>
             <ImageUpload
                 name="image" 
@@ -19,7 +25,7 @@ const Render = ({
                 source={image}
                 onChange={onChangeForm} 
             />
-            <div style={{ width: 'calc(100% - 180px - 32px)', paddingLeft: '32px', maxWidth: '600px' }}>
+            <div style={{ width: 'calc(100% - 180px - 32px)', paddingLeft: '32px' }}>
                 <FormGroup row>
                     <Input 
                         width="32%"

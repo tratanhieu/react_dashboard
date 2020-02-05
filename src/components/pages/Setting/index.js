@@ -16,7 +16,7 @@ const Render = ({ children }) => (
     <div className="setting-screen">
         <ul style={{ listStyle: 'none' }}>
             {settings.map(({ url, name }, key) => (
-                <li key={key}>
+                <li key={key} className={window.location.pathname === url ? 'active' : ''}>
                     <Link to={url}>{name}</Link>
                 </li>
             ))}

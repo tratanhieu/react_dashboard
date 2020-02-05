@@ -3,7 +3,13 @@ import FormModule from '../../molecules/FormModule';
 import Input from '../../atoms/Input';
 
 const Render = () => (
-    <FormModule title="Change Password" maxWidth="320px" de style={{ paddingLeft: '16px', paddingRight: '16px' }}>
+    <FormModule
+        title="Change Password"
+        maxWidth="320px"
+        style={{ paddingLeft: '16px', paddingRight: '16px' }}
+        showNegativeButton={false}
+        positiveLabel="Update"
+    >
         <Input 
             required
             margin="dense"

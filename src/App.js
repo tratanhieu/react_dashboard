@@ -18,7 +18,10 @@ import PostType from './components/pages/PostType';
 import Setting from './components/pages/Setting';
 import UserProfile from './components/organisms/Setting/UserProfile';
 import ChangePassword from './components/organisms/Setting/ChangePassword';
+import { Login } from './components/organisms/Login';
 
+
+const isLogin = false;
 
 class App extends React.Component {
 
@@ -27,7 +30,7 @@ class App extends React.Component {
 	}
 
 	render() {
-		return (
+		return !isLogin ? <Login /> : (
 			<Main>
 				<Switch>
 					<Route exact path="/product">
