@@ -1,11 +1,11 @@
-import axios from 'axios'
+import axios from '../axios'
 import { REDUX_API_URL } from '../../constants/redux-actions'
 import { ACTIVE } from '../../constants/entites';
 import { handleErrors, resetSystemErrors, openSystemPopup } from './rootReducer';
 
 const prefix = 'USER_GROUP_'
 // API
-const PATH_API = `${REDUX_API_URL}/user/group`
+const PATH_API = `user/group`
 // Create Action
 const createAction = action => `${prefix}${action}`
 
@@ -51,9 +51,7 @@ const setErrors = errors => ({ type: SET_ERRORS, errors })
 export const fetchAll = () => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(PATH_API,
-        { timeout: 5000 }
-    )
+    return axios.get(PATH_API)
     .then(response => dispatch(prepareData(response.data)))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(_ => dispatch(listLoading(false)))
@@ -76,7 +74,7 @@ export const getCreateAction = () => dispatch => {
     dispatch(resetSystemErrors())
     dispatch(modalFormSuccessMessage(""))
     dispatch(createButtonLoading(true))
-    return axios.get(`${PATH_API}/create`, { timeout: 5000 })
+    return axios.get(`${PATH_API}/create`)
     .then(response => {
         dispatch({ type: MODAL_FORM_GET_CREATE_ACTION, featureList: response.data })
     })
@@ -88,9 +86,7 @@ export const getUpdateAction = userGroupId => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(modalFormSuccessMessage(""))
     dispatch(listLoading(true))
-    return axios.get(`${PATH_API}/${userGroupId}`, {
-        timeout: 5000
-    }).then(response => {
+    return axios.get(`${PATH_API}/${userGroupId}`).then(response => {
         dispatch(setUserGroup(response.data))
         dispatch(setOpenModal(true))
     })
@@ -116,7 +112,6 @@ export const doDelete = userGroupId => async dispatch => {
 const doCreate = userGroup => async dispatch => {
     const params = JSON.stringify(userGroup)
     axios.post(PATH_API, params, {
-        timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
         }
@@ -139,8 +134,7 @@ const doCreate = userGroup => async dispatch => {
 
 const doUpdate = userGroup => async dispatch => {
     const params = JSON.stringify(userGroup)
-    return axios.patch(PATH_API, params, { 
-        timeout: 5000,
+    return axios.patch(PATH_API, params, {
         headers: {
             'Content-Type': 'application/json'
         }

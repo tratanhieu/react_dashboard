@@ -1,5 +1,7 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
+import { connect } from 'react-redux'
+import cookie from 'js-cookie'
 import './App.css'
 // import 'semantic-ui-css/semantic.min.css'
 import './colors.scss'
@@ -20,17 +22,13 @@ import UserProfile from './components/organisms/Setting/UserProfile';
 import ChangePassword from './components/organisms/Setting/ChangePassword';
 import { Login } from './components/organisms/Login';
 
-
-const isLogin = false;
-
 class App extends React.Component {
-
 	componentDidCatch(error) {
 		console.log(error)
 	}
 
 	render() {
-		return !isLogin ? <Login /> : (
+		return !cookie.get("USER_TOKEN") ? <Login /> : (
 			<Main>
 				<Switch>
 					<Route exact path="/product">
@@ -85,4 +83,9 @@ class App extends React.Component {
 	}
 }
 
-export default App;
+function mapStateToProps(state) {
+	const { rootReducer: { userAuth } } = state
+	return { userAuth }
+}
+
+export default connect(mapStateToProps)(App);

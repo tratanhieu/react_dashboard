@@ -1,11 +1,11 @@
-import axios from 'axios'
+import axios from '../axios'
 import { REDUX_API_URL } from '../../constants/redux-actions'
 import { ACTIVE } from '../../constants/entites';
 import { handleErrors, resetSystemErrors, openSystemPopup } from './rootReducer';
 
 const prefix = 'USER_'
 // API
-const PATH_API = `${REDUX_API_URL}/user`
+const PATH_API = `user`
 const createAction = action => `${prefix}${action}`
 
 export const initialState = {
@@ -57,7 +57,7 @@ export const closeModal = () => ({ type: CLOSE_MODAL })
 export const fetchAll = () => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(PATH_API, { timeout: 5000 })
+    return axios.get(PATH_API)
         .then(response => dispatch(prepareData(response.data)))
         .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
         .finally(() => dispatch(listLoading(false)))
@@ -81,7 +81,7 @@ export const getCreateAction = () => dispatch => {
     dispatch(resetSystemErrors())
     dispatch(modalFormSuccessMessage(""))
     dispatch(createButtonLoading(true))
-    return axios.get(`${PATH_API}/create`, { timeout: 5000 })
+    return axios.get(`${PATH_API}/create`)
     .then(({ data: { userGroupList = [], provinceList = [] }}) => {
         dispatch({ 
             type: MODAL_FORM_GET_CREATE_ACTION, 
@@ -97,7 +97,7 @@ export const getUpdateAction = userId => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(modalFormSuccessMessage(""))
     dispatch(listLoading(true))
-    axios.get(`${PATH_API}/update/${userId}`, { timeout: 5000 })
+    axios.get(`${PATH_API}/update/${userId}`)
     .then(response => {
         dispatch({ 
             type: SET_UPDATE_USER_MODAL, 
@@ -113,7 +113,6 @@ export const getUpdateAction = userId => async dispatch => {
 const doCreate = user => async dispatch => {
     const params = JSON.stringify(user)
     axios.post(PATH_API, params, {
-        timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
         }
