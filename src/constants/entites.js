@@ -21,17 +21,17 @@ export const DEFAULT_STATUS = {
     }
 }
 
-export const SALE_STATUS = {
+export const PROMOTION_STATUS = {
     UNAVAILABLE: {
         color: 'blue',
-        text: 'Sắp tới'
+        text: 'UNAVAILABLE'
     },
     AVAILABLE: {
         color: 'green',
-        text: 'Đang diễn ra'
+        text: 'AVAILABLE'
     },
     STOP: {
         color: 'black',
-        text: 'Đã ngừng'
+        text: 'STOP'
     }
 }

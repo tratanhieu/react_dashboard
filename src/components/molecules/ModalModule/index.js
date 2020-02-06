@@ -66,10 +66,11 @@ export default function ModalModule({
             onClose={handleClose}
             disableBackdropClick
             disableEscapeKeyDown
+            maxWidth='md'
             {...rest}
         >
             <DialogTitle>{title}</DialogTitle>
-            <DialogContent dividers className={classes.content} style={{ boxSizing: 'border-box', minWidth }}>
+            <DialogContent dividers className={classes.content} style={{ boxSizing: 'border-box', minWidth}}>
                 {children}
                 {modalSuccess && <ModalSuccess message={modalSuccess} />}
                 {modalError && <ModalError message={modalError} />}

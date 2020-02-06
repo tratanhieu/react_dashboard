@@ -1,67 +1,87 @@
-import React from 'react'
-import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import { DEFAULT_STATUS } from '../../../../constants/entites'
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+import TableCell from "@material-ui/core/TableCell";
+import TableModule from "../../../molecules/TableModule";
+import { PROMOTION_STATUS, ALL, STOP, UNAVAILABLE, AVAILABLE } from '../../../../constants/entites'
+import { formatDateTime } from '../../../../commons/utils'
 // REDUX
 import FilterStatus from '../../../molecules/FilterStatus';
-import { TableCell } from '@material-ui/core';
-import TableModule from '../../../molecules/TableModule';
 import StatusLabel from '../../../atoms/StatusLabel';
-import { getUpdateAction, doDelete } from '../../../../redux/reducers/promotionReducer';
-
-const listStatus = [
-    { key: "", label: "All" },
-    { key: "ACTIVE", label: "Active" },
-    { key: "HIDDEN", label: "Hidden" },
-    { key: "DELETE", label: "Delete" }
-]
-
+import { doFilters, getUpdateAction, doDelete } from '../../../../redux/reducers/promotionReducer'
 const headCells = [
-    { id: "fullName", label: "Full Name" },
-    { id: "phone", label: "Phone" },
-    { id: "email", label: "Email" },
-    { id: "promotionGroupName", label: "Promotion Group" },
+    { id: "promotionName", label: "Promotion Name" },
+    { id: "startDate", label: "Start Date" },
+    { id: "endDate", label: "End Date" },
+    { id: "percent", label: "%" },
+    { id: "listProductId", label: "Products Applied" },
+    { id: "promotionCodes", label: "Promotion Codes" },
+    { id: "promotionDetails", label: "Promotion Details" },
     { id: "status", label: "Status" }
 ];
 
-const TableRowModule = ({ fullName, phone, email, promotionGroupName, status }) => (
+const TableRowModule = ({ promotionName, startDate, endDate, percent, listProductId, promotionCodes, status }) => (
     <>
-        <TableCell>{fullName}</TableCell>
-        <TableCell>{phone}</TableCell>
-        <TableCell>{email}</TableCell>
-        <TableCell>{promotionGroupName}</TableCell>
+        <TableCell style={{ maxWidth: '230px' }}>
+            <span>{promotionName}</span>
+        </TableCell>
+        <TableCell>{formatDateTime(startDate)}</TableCell>
+        <TableCell>{formatDateTime(endDate)}</TableCell>
+        <TableCell>{percent}</TableCell>
+        <TableCell>{listProductId.length}</TableCell>
+        <TableCell>{promotionCodes.map((code, index) => <p key={index}>{ code.code }</p>)}</TableCell>
+        <TableCell>{promotionCodes.map((code, index) => <p key={index}>{ code.percent }% | { code.quantity }</p>)}</TableCell>
         <TableCell>
-            <StatusLabel {...DEFAULT_STATUS[status]} />
+            <StatusLabel {...PROMOTION_STATUS[status]} />
         </TableCell>
     </>
 )
 
+const LIST_STATUS = [
+    { key: ALL, label: "All" },
+    { key: UNAVAILABLE, label: "Unavailable" },
+    { key: AVAILABLE, label: "Available" },
+    { key: STOP, label: "Stop" }
+]
+
 const Render = ({
-    promotionList, loading,
+    promotionList, loading, filters,
+    onChangeStatus,
     onOpenUpdate,
     onDelete
 }) => (
     <TableModule
-        selectKey="promotionId"
         loading={loading}
+        selectKey="promotionId"
         headCells={headCells}
-        dataSources={promotionList}
+        dataSources={filters.status == ALL ? promotionList :
+            promotionList.filter(item => item.status == filters.status)
+        }
         row={TableRowModule}
-        onOpenUpdate={onOpenUpdate}
         onDelete={onDelete}
+        onOpenUpdate={promotionId => onOpenUpdate(promotionId)}
     >
-        <FilterStatus listStatus={listStatus} onChangeFilter />
-    </TableModule>
+        <FilterStatus
+            statusValue={filters.status}
+            listStatus={LIST_STATUS}
+            onChangeStatus={onChangeStatus}
+        />
+    </TableModule> 
 )
 
 export default function PromotionTable() {
     const selector = useSelector(({
-        promotionReducer: { promotionList, page, totalPage: totalPages, filters, loading } 
-    }) => ({ promotionList, loading, page, totalPages, filters }), shallowEqual)
+        promotionReducer: { promotionList, loading, filters } 
+    }) => ({ promotionList, loading, filters }), shallowEqual)
+
+    useEffect(() => {
+        console.log(selector.promotionList)
+    }, [selector.promotionList])
 
     const dispatch = useDispatch()
 
     const renderProps = {
         ...selector,
+        onChangeStatus: status => dispatch(doFilters({ ...selector.filters, status })),
         onOpenUpdate: promotionId => dispatch(getUpdateAction(promotionId)),
         onDelete: promotionId => dispatch(doDelete(promotionId)),
     }
