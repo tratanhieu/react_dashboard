@@ -7,15 +7,28 @@ import {
   setPromotion,
   setModalStatus
 } from "../../../../redux/reducers/promotionReducer";
+import {
+  Radio,
+  RadioGroup,
+  FormControlLabel
+} from "@material-ui/core";
 import ModalModule from "../../../molecules/ModalModule";
 import ToggleActive from "../../../atoms/ToggleActive";
 import CheckBox from "../../../atoms/CheckBox";
+import DatePicker from "../../../atoms/DatePicker";
 import Button from "../../../atoms/Button";
 import IconButton from "@material-ui/core/IconButton";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import SelectSearch from "../../../atoms/SelectSearch";
+import { ALL, CUSTOM } from "../../../../constants/entites";
 import FormGroup from "../../../atoms/FormGroup";
+
+
+const APPLY_STATUS = [
+  { key: ALL, label: "Apply on all product" },
+  { key: CUSTOM, label: "Custom" }
+];
 
 const Render = ({
   openModal,
@@ -32,7 +45,8 @@ const Render = ({
     status
   },
   modalStatus,
-  onChangeStatusCode,
+  onChangeCodeStatus,
+  onChangeApplyStatus,
   onChangeCode,
   onAddCode,
   onRemoveCode,
@@ -63,7 +77,7 @@ const Render = ({
       <CheckBox
         label="Use Promotion Code"
         checked={modalStatus.codeStatus}
-        onChange={onChangeStatusCode}
+        onChange={onChangeCodeStatus}
       />
     </FormGroup>
     {promotionCodes
@@ -85,6 +99,7 @@ const Render = ({
               label="Percent: "
               name="percent"
               type="number"
+              InputProps={{ inputProps: { min: 1, max: 100 } }}
               value={code.percent}
               onChange={(_, input) => onChangeCode(input, index)}
               disabled={!!promotionId}
@@ -96,21 +111,73 @@ const Render = ({
               label="Amount: "
               name="amount"
               type="number"
+              InputProps={{ inputProps: { min: 1 } }}
               value={code.amount}
               onChange={(_, input) => onChangeCode(input, index)}
               disabled={!!promotionId}
               error={formErrors.promotionCode}
             />
-            <IconButton width="9%" onClick={(_) => onAddCode(index)}>
+            <IconButton width="9%" onClick={_ => onAddCode(index)}>
               <AddCircleOutlineIcon />
             </IconButton>
-            <IconButton width="9%" onClick={(_) => onRemoveCode(index)} disabled={promotionCodes.length === 1}>
+            <IconButton
+              width="9%"
+              onClick={_ => onRemoveCode(index)}
+              disabled={promotionCodes.length === 1}
+            >
               <RemoveCircleOutlineIcon />
             </IconButton>
           </FormGroup>
         ))
       : null}
 
+    <FormGroup row>
+      <DatePicker
+        style={{ display: "block", width: "32%" }}
+        type="date"
+        label="Start Date"
+        name="startDate"
+        value={startDate}
+        onChange={onChangeForm}
+      />
+      <DatePicker
+        style={{ display: "block", width: "32%" }}
+        type="date"
+        label="Start Date"
+        name="startDate"
+        value={startDate}
+        onChange={onChangeForm}
+      />
+      <Input
+        width="32%"
+        required
+        label="Percent: "
+        name="percent"
+        type="number"
+        InputProps={{ inputProps: { min: 1, max: 100 } }}
+        value={percent}
+        onChange={onChangeForm}
+        disabled={!!promotionId}
+        error={formErrors.promotionCode}
+      />
+    </FormGroup>
+    <FormGroup row>
+      <RadioGroup
+        row
+        onChange={({ currentTarget: { value } }) => onChangeApplyStatus(value)}
+      >
+        {APPLY_STATUS.map(item => (
+          <FormControlLabel
+            control={<Radio />}
+            key={item.key}
+            label={item.label}
+            value={item.key}
+            labelPlacement="end"
+            checked={modalStatus.applyStatus === item.key}
+          />
+        ))}
+      </RadioGroup>
+    </FormGroup>
     {/* <FormGroup row>
             <Input
                 width="49%"
@@ -190,7 +257,7 @@ const PromotionModal = () => {
         })
       );
     },
-    onChangeStatusCode: (_, checkbox) => {
+    onChangeCodeStatus: (_, checkbox) => {
       dispatch(
         setModalStatus({ ...selector.modalStatus, codeStatus: checkbox })
       );
@@ -217,29 +284,39 @@ const PromotionModal = () => {
         dispatch(setPromotion({ ...selector.promotion, promotionCodes: [] }));
       }
     },
+    onChangeApplyStatus: status =>{
+      dispatch(
+        setModalStatus({ ...selector.modalStatus, applyStatus: status })
+      )
+    },
+
     onAddCode: index => {
-        let arrTemp = selector.promotion.promotionCodes;
-        arrTemp.splice(++index, 0, {
-          code: Math.random()
-            .toString(36)
-            .substring(3)
-            .toUpperCase(),
-          percent: "",
-          quantity: ""
-        });
-        dispatch(setPromotion({
+      let arrTemp = selector.promotion.promotionCodes;
+      arrTemp.splice(++index, 0, {
+        code: Math.random()
+          .toString(36)
+          .substring(3)
+          .toUpperCase(),
+        percent: "",
+        quantity: ""
+      });
+      dispatch(
+        setPromotion({
           ...selector.promotion,
           promotionCodes: arrTemp
-        }));
-      },
-      onRemoveCode: index => {
-        let arrTemp = selector.promotion.promotionCodes;
-        arrTemp.splice(index, 1);
-        dispatch(setPromotion({
+        })
+      );
+    },
+    onRemoveCode: index => {
+      let arrTemp = selector.promotion.promotionCodes;
+      arrTemp.splice(index, 1);
+      dispatch(
+        setPromotion({
           ...selector.promotion,
           promotionCodes: arrTemp
-        }));
-      },
+        })
+      );
+    },
     //   onCheckItem: (index, checked) => {
     //     let arr = [];
     //     state.dataSources[index].checked = checked;

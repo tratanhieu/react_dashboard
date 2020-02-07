@@ -133,7 +133,7 @@ export const initialState = {
   ],
   modalStatus: {
     codeStatus: false,
-    applyStatus: "ALL"
+    applyStatus: ALL
   },
   promotion: {
     // status: ALL

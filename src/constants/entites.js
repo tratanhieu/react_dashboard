@@ -1,4 +1,5 @@
 export const ALL = ''
+export const CUSTOM = 'CUSTOM'
 export const ACTIVE = 'ACTIVE'
 export const HIDDEN = 'HIDDEN'
 export const DELETED = 'DELETED'
@@ -23,6 +24,21 @@ export const DEFAULT_STATUS = {
 
 export const PROMOTION_STATUS = {
     UNAVAILABLE: {
+        color: 'blue',
+        text: 'UNAVAILABLE'
+    },
+    AVAILABLE: {
+        color: 'green',
+        text: 'AVAILABLE'
+    },
+    STOP: {
+        color: 'black',
+        text: 'STOP'
+    }
+}
+
+export const APPLY_STATUS = {
+    ALL: {
         color: 'blue',
         text: 'UNAVAILABLE'
     },
