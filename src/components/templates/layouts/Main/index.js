@@ -1,12 +1,25 @@
 import React, { useState, useEffect } from 'react'
-// import faker from "faker";
+import faker from "faker";
+import { useHistory } from 'react-router-dom'
+import Button from '@material-ui/core/Button';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Grow from '@material-ui/core/Grow';
+import Paper from '@material-ui/core/Paper';
+import Popper from '@material-ui/core/Popper';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
+import { makeStyles } from '@material-ui/core/styles';
+import { Link } from 'react-router-dom'
+import { ROUTE_USER_PROFILE, ROUTE_USER_LOGOUT, ROUTE_LOGIN } from '../../../../routes'
+
 import Pusher from 'pusher-js'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import HorizontalSidebar from '../../../organisms/HorizontalSidebar';
-import { reload, resetSystemErrors, openSystemPopup } from '../../../../redux/reducers/rootReducer';
+import { reload, resetSystemErrors, openSystemPopup, doLogout } from '../../../../redux/reducers/rootReducer';
 import { ReportProblemOutlined, Close } from '@material-ui/icons';
 import { Snackbar, Slide } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import Image from '../../../atoms/Image';
 
 // const trigger = (
 //     <span>
@@ -14,7 +27,31 @@ import { Alert } from '@material-ui/lab';
 //     </span>
 // )
 
-const Render = ({ navOpen, setNavOpen, children, systemPopup = {}, systemErrors, onCloseSystemErrors, onSystemPopupClose, ...rest}) => {
+const useStyles = makeStyles(theme => ({
+    root: {
+        display: 'flex',
+    },
+    paper: {
+        marginRight: theme.spacing(2),
+    },
+    menuItem: {
+        color: '#000',
+        textDecoration: 'none'
+    }
+}))
+
+
+const Render = ({
+    navOpen,
+    setNavOpen,
+    children,
+    systemPopup = {},
+    systemErrors,
+    onCloseSystemErrors,
+    onSystemPopupClose,
+    onLogout,
+    ...rest
+}) => {
     const statusNav = navOpen ? "open" : "close";
     return(
         <>
@@ -30,7 +67,7 @@ const Render = ({ navOpen, setNavOpen, children, systemPopup = {}, systemErrors,
                             alt="logo"
                             style={{ height: 36 }}
                         />
-                        {/* <DropdownUser /> */}
+                        <UserdropDownMenu onLogout={onLogout} />
                     </div>
                     <div className="main-layout--body---content">
                         <div className="main-layout--body---main-content">
@@ -68,6 +105,84 @@ const Render = ({ navOpen, setNavOpen, children, systemPopup = {}, systemErrors,
     )
 }
 
+const UserdropDownMenu = ({ onLogout }) => {
+    const classes = useStyles();
+    const [open, setOpen] = React.useState(false);
+    const anchorRef = React.useRef(null);
+    
+    const handleToggle = () => {
+        setOpen(prevOpen => !prevOpen);
+    };
+    
+    const handleClose = event => {
+        if (anchorRef.current && anchorRef.current.contains(event.target)) {
+        return;
+        }
+    
+        setOpen(false);
+    };
+    
+    function handleListKeyDown(event) {
+        if (event.key === 'Tab') {
+        event.preventDefault();
+        setOpen(false);
+        }
+    }
+    
+    // return focus to the button when we transitioned from !open -> open
+    const prevOpen = React.useRef(open);
+    React.useEffect(() => {
+        if (prevOpen.current === true && open === false) {
+        anchorRef.current.focus();
+        }
+    
+        prevOpen.current = open;
+    }, [open])
+
+    return(
+        <div>
+            <Button
+                ref={anchorRef}
+                aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-haspopup="true"
+                onClick={handleToggle}
+            >
+                <Image
+                    width="36px"
+                    height="36px"
+                    circle
+                    src={faker.internet.avatar()}
+                />
+            </Button>
+            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+                {({ TransitionProps, placement }) => (
+                    <Grow
+                        {...TransitionProps}
+                        style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                    >
+                    <Paper>
+                        <ClickAwayListener onClickAway={handleClose}>
+                            <MenuList
+                                autoFocusItem={open}
+                                onKeyDown={handleListKeyDown}
+                            >
+                                <MenuItem>
+                                    <Link
+                                        className={classes.menuItem}
+                                        to={ROUTE_USER_PROFILE}>My Account
+                                    </Link>
+                                </MenuItem>
+                                <MenuItem onClick={onLogout}>Logout</MenuItem>
+                            </MenuList>
+                        </ClickAwayListener>
+                    </Paper>
+                    </Grow>
+                )}
+            </Popper>
+        </div>
+    )
+}
+
 const Main = ({ children }) => {
     const selector = useSelector(({
         rootReducer: { systemPopup, systemErrors } 
@@ -76,6 +191,8 @@ const Main = ({ children }) => {
     const [navOpen, setNavOpen] = useState(true);
 
     const dispatch = useDispatch();
+
+    const history = useHistory()
 
     useEffect(() => {
         const pusher = new Pusher('7853616a98fac75c9b66', {
@@ -95,7 +212,8 @@ const Main = ({ children }) => {
         children,
         ...selector,
         onCloseSystemErrors: () => dispatch(resetSystemErrors()),
-        onSystemPopupClose: () => dispatch(openSystemPopup(false))
+        onSystemPopupClose: () => dispatch(openSystemPopup(false)),
+        onLogout: () => dispatch(doLogout(() => history.push(ROUTE_LOGIN) ))
     }
 
     return <Render {...renderProps} />

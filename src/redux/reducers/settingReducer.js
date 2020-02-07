@@ -1,28 +1,66 @@
 import { HANDLE_SYSTEM_ERROR } from '../../constants/redux-actions'
+import axios from '../axios'
 
 export const initialState = {
-    systemErrors: {
-        message: '',
-        detail: ''
-    },
-    systemPopup: {
-        open: false,
-        type: 'success',
-        message: ''
+    formLoading: false,
+    userProfileForm: {},
+    changePasswordForm: {},
+    errors: {
+        formErrors: {},
+        errorMessage: ''
     }
 }
 
-const SYSTEM_ERROR_MESSAGE = 'The system has an undefined error, please try again later.'
+const PATH_API = 'user/'
+const createAction = action => `SETTING_${action}`
 
-const RESET_SYSTEM_ERRORS = 'RESET_SYSTEM_ERRORS'
-const SET_SYSTEM_POPUP = 'SET_SYSTEM_POPUP'
+const SET_USER_PROFILE = createAction("SET_USER_PROFILE")
+export const setUserProfileForm = userProfileForm => ({ type: SET_USER_PROFILE, userProfileForm })
 
-export const reload = pageName => ({ type: `${pageName}_RELOAD` })
+const SET_CHANGE_PASSWORD_FORM = createAction("SET_CHANGE_PASSWORD_FORM")
+export const setChangePasswordForm = changePasswordForm => ({ type: SET_CHANGE_PASSWORD_FORM, changePasswordForm })
 
-export const handleErrors = (errors = {}, pageErrorAction) => {
+const SET_FORM_LOADING = createAction("SET_FORM_LOADING")
+const setFormLoading = loading => ({ type: SET_FORM_LOADING, loading })
+
+export const getUserProfile = () => dispatch => {
+    dispatch(setFormLoading(true))
+    return axios.get(PATH_API, params, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        cookie.set(USER_TOKEN, response.data.token)
+        dispatch(setUserAuth(response.data))
+        callback()
+    })
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(() => dispatch(setFormLoading(false)))
+}
+
+export const doLogout = callback => dispatch => {
+    // return axios.post(PATH_API_LOGOUT, params, {
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     }
+    // })
+    // .then(() => {
+    //     cookie.remove(USER_TOKEN)
+    //     dispatch(setUserAuth({}))
+    //     callback()
+    // })
+    // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    // .finally(() => dispatch(setFormLoading(false)))
+    cookie.remove(USER_TOKEN)
+    callback()
+}
+
+const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
+export const handleErrors = (errors = {}) => {
     if (errors.response) {
         if (errors.response.data) {
-            return ({ type: pageErrorAction, errors })
+            return ({ type: HANDLE_ERRORS, errors })
         }
     }
     return ({ type: HANDLE_SYSTEM_ERROR })
@@ -37,6 +75,10 @@ export const resetSystemErrors = () => ({ type: RESET_SYSTEM_ERRORS })
 export default function(state = initialState, action) {
     try {
         switch (action.type) {
+            case SET_FORM_LOADING: return {
+                ...state,
+                formLoading: action.loading
+            }
             case HANDLE_SYSTEM_ERROR: return {
                 ...state,
                 systemErrors: {
@@ -44,9 +86,24 @@ export default function(state = initialState, action) {
                     detail: action.detail
                 }
             }
+            case HANDLE_ERRORS: return {
+                ...state,
+                errors: {
+                    ...initialState.errors,
+                    ...action.errors
+                }
+            }
             case RESET_SYSTEM_ERRORS: return {
                 ...state,
                 systemErrors: initialState.systemErrors
+            }
+            case SET_USER_AUTH: return {
+                ...state,
+                userAuth: action.userAuth
+            }
+            case SET_LOGIN_FORM: return {
+                ...state,
+                loginForm: action.loginForm
             }
             case SET_SYSTEM_POPUP: return {
                 ...state,

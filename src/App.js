@@ -21,66 +21,81 @@ import Setting from './components/pages/Setting';
 import UserProfile from './components/organisms/Setting/UserProfile';
 import ChangePassword from './components/organisms/Setting/ChangePassword';
 import { Login } from './components/organisms/Login';
+import AuthRoute, { isAuthenticated } from './routes/AuthRoute';
+
+const routes = [
+	{
+		path: '',
+		component: <Login />,
+	}
+]
 
 class App extends React.Component {
 	componentDidCatch(error) {
 		console.log(error)
 	}
 
-	render() {
-		return !cookie.get("USER_TOKEN") ? <Login /> : (
-			<Main>
-				<Switch>
-					<Route exact path="/product">
-						<Product />
-					</Route>
-					<Route path="/product/category">
-						<ProductCategory />
-					</Route>
-					<Route path="/product/type_group">
-						<ProductTypeGroup />
-					</Route>
-					<Route path="/product/type">
-						<ProductType />
-					</Route>
-					<Route path="/product/brand">
-						<ProductBrand />
-					</Route>
-					<Route exact path="/user">
-						<User />
-					</Route>
-					<Route path="/user/group">
-						<UserGroup />
-					</Route>
-					<Route path="/sale">
-						<SaleManagement />
-					</Route>
-					<Route exact path="/post">
-						<Post />
-					</Route>
-					<Route path="/post/type">
-						<PostType />
-					</Route>
-					<Route exact path="/setting">
-						<Setting />
-					</Route>
-					<Route path="/setting/profile">
-						<Setting>
-							<UserProfile />
-						</Setting>
-					</Route>
-					<Route path="/setting/change-password">
-						<Setting>
-							<ChangePassword />
-						</Setting>
-					</Route>
-					<Route exact path="/">
-						<h2>Main</h2>
-					</Route>
-				</Switch>
-			</Main>
-		);
-	}
+	render = () => (
+		<Switch>
+			<Route path="/login">
+				<Login />
+			</Route>
+			<AuthRoute exact path="/product">
+				<Product />
+			</AuthRoute>
+			<AuthRoute path="/product/category">
+				<ProductCategory />
+			</AuthRoute>
+			<AuthRoute path="/product/type_group">
+				<ProductTypeGroup />
+			</AuthRoute>
+			<AuthRoute path="/product/type">
+				<ProductType />
+			</AuthRoute>
+			<AuthRoute path="/product/brand">
+				<ProductBrand />
+			</AuthRoute>
+			<AuthRoute exact path="/user">
+				<Main>
+					<User />
+				</Main>
+			</AuthRoute>
+			<AuthRoute path="/user/group">
+				<Main>
+					<UserGroup />
+				</Main>
+			</AuthRoute>
+			<AuthRoute path="/sale">
+				<SaleManagement />
+			</AuthRoute>
+			<AuthRoute exact path="/post">
+				<Post />
+			</AuthRoute>
+			<AuthRoute path="/post/type">
+				<PostType />
+			</AuthRoute>
+			<AuthRoute exact path="/setting">
+				<Setting />
+			</AuthRoute>
+			<AuthRoute path="/setting/profile">
+				<Main>
+					<Setting>
+						<UserProfile />
+					</Setting>
+				</Main>
+			</AuthRoute>
+			<AuthRoute path="/setting/change-password">
+				<Main>
+					<Setting>
+						<ChangePassword />
+					</Setting>
+				</Main>
+			</AuthRoute>
+			<AuthRoute exact path="/">
+				<h2>Main</h2>
+			</AuthRoute>
+		</Switch>
+	)
 }
 
 function mapStateToProps(state) {

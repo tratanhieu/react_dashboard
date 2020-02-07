@@ -1,6 +1,7 @@
 import { HANDLE_SYSTEM_ERROR } from '../../constants/redux-actions'
 import axios from '../axios'
 import cookie from 'js-cookie'
+import { USER_TOKEN } from '../../constants';
 
 export const initialState = {
     formLoading: false,
@@ -24,6 +25,7 @@ export const initialState = {
 }
 
 const PATH_API_LOGIN = 'user/login'
+const PATH_API_LOGOUT = 'user/logout'
 const createAction = action => `SYSTEM_${action}`
 
 const SYSTEM_ERROR_MESSAGE = 'The system has an undefined error, please try again later.'
@@ -42,7 +44,7 @@ const setFormLoading = loading => ({ type: SET_FORM_LOADING, loading })
 const SET_USER_AUTH = createAction("SET_USER_AUTH")
 export const setUserAuth = userAuth => ({ type: SET_USER_AUTH, userAuth })
 
-export const doLogin = params => dispatch => {
+export const doLogin = (params, callback) => dispatch => {
     dispatch(setFormLoading(true))
     return axios.post(PATH_API_LOGIN, params, {
         headers: {
@@ -50,11 +52,29 @@ export const doLogin = params => dispatch => {
         }
     })
     .then(response => {
-        cookie.set("USER_TOKEN", response.data.token)
+        cookie.set(USER_TOKEN, response.data.token)
         dispatch(setUserAuth(response.data))
+        callback()
     })
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(() => dispatch(setFormLoading(false)))
+}
+
+export const doLogout = callback => dispatch => {
+    // return axios.post(PATH_API_LOGOUT, params, {
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     }
+    // })
+    // .then(() => {
+    //     cookie.remove(USER_TOKEN)
+    //     dispatch(setUserAuth({}))
+    //     callback()
+    // })
+    // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    // .finally(() => dispatch(setFormLoading(false)))
+    cookie.remove(USER_TOKEN)
+    callback()
 }
 
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
