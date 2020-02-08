@@ -1,5 +1,5 @@
-import { HANDLE_SYSTEM_ERROR } from '../../constants/redux-actions'
 import axios from '../axios'
+import { handleErrors } from './rootReducer';
 
 export const initialState = {
     formLoading: false,
@@ -11,11 +11,11 @@ export const initialState = {
     }
 }
 
-const PATH_API = 'user/'
+const PATH_API_USER = 'user'
 const createAction = action => `SETTING_${action}`
 
-const SET_USER_PROFILE = createAction("SET_USER_PROFILE")
-export const setUserProfileForm = userProfileForm => ({ type: SET_USER_PROFILE, userProfileForm })
+const SET_USER_PROFILE_FORM = createAction("SET_USER_PROFILE_FORM")
+export const setUserProfileForm = userProfileForm => ({ type: SET_USER_PROFILE_FORM, userProfileForm })
 
 const SET_CHANGE_PASSWORD_FORM = createAction("SET_CHANGE_PASSWORD_FORM")
 export const setChangePasswordForm = changePasswordForm => ({ type: SET_CHANGE_PASSWORD_FORM, changePasswordForm })
@@ -23,68 +23,29 @@ export const setChangePasswordForm = changePasswordForm => ({ type: SET_CHANGE_P
 const SET_FORM_LOADING = createAction("SET_FORM_LOADING")
 const setFormLoading = loading => ({ type: SET_FORM_LOADING, loading })
 
+const SET_INIT_USER_PROFILE = createAction("SET_INIT_USER_PROFILE")
+const setInitUserProfile = ({ userProfile, provinceList }) => ({ type: SET_INIT_USER_PROFILE, userProfile, provinceList })
 export const getUserProfile = () => dispatch => {
     dispatch(setFormLoading(true))
-    return axios.get(PATH_API, params, {
+    return axios.get(`${PATH_API_USER}/profile`, {},{
         headers: {
             'Content-Type': 'application/json'
         }
     })
     .then(response => {
-        cookie.set(USER_TOKEN, response.data.token)
-        dispatch(setUserAuth(response.data))
-        callback()
+        dispatch(setInitUserProfile(response.data))
     })
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     .finally(() => dispatch(setFormLoading(false)))
 }
 
-export const doLogout = callback => dispatch => {
-    // return axios.post(PATH_API_LOGOUT, params, {
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     }
-    // })
-    // .then(() => {
-    //     cookie.remove(USER_TOKEN)
-    //     dispatch(setUserAuth({}))
-    //     callback()
-    // })
-    // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    // .finally(() => dispatch(setFormLoading(false)))
-    cookie.remove(USER_TOKEN)
-    callback()
-}
-
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
-export const handleErrors = (errors = {}) => {
-    if (errors.response) {
-        if (errors.response.data) {
-            return ({ type: HANDLE_ERRORS, errors })
-        }
-    }
-    return ({ type: HANDLE_SYSTEM_ERROR })
-}
-
-export const openSystemPopup = (open, message, typePopup = 'success') => {
-    return ({ type: SET_SYSTEM_POPUP, open, message, typePopup })
-}
-
-export const resetSystemErrors = () => ({ type: RESET_SYSTEM_ERRORS })
-
 export default function(state = initialState, action) {
     try {
         switch (action.type) {
             case SET_FORM_LOADING: return {
                 ...state,
                 formLoading: action.loading
-            }
-            case HANDLE_SYSTEM_ERROR: return {
-                ...state,
-                systemErrors: {
-                    message: SYSTEM_ERROR_MESSAGE,
-                    detail: action.detail
-                }
             }
             case HANDLE_ERRORS: return {
                 ...state,
@@ -93,25 +54,31 @@ export default function(state = initialState, action) {
                     ...action.errors
                 }
             }
-            case RESET_SYSTEM_ERRORS: return {
-                ...state,
-                systemErrors: initialState.systemErrors
-            }
-            case SET_USER_AUTH: return {
-                ...state,
-                userAuth: action.userAuth
-            }
-            case SET_LOGIN_FORM: return {
-                ...state,
-                loginForm: action.loginForm
-            }
-            case SET_SYSTEM_POPUP: return {
-                ...state,
-                systemPopup: {
-                    open: action.open,
-                    type: action.typePopup,
-                    message: action.message
+            case SET_INIT_USER_PROFILE: {
+                let userProfileForm = action.userProfile
+                const provinceListObject = action.provinceList
+                userProfileForm.province = {
+                    provinceId: userProfileForm.provinceId,
+                    name: provinceListObject[userProfileForm.provinceId]
                 }
+                return {
+                    ...state,
+                    userProfileForm,
+                    provinceList: Object.keys(provinceListObject).map(provinceId => (
+                        {
+                            provinceId,
+                            name: provinceListObject[provinceId]
+                        }
+                    ))
+                }
+            }
+            case SET_USER_PROFILE_FORM: return {
+                ...state,
+                userProfileForm: action.userProfileForm
+            }
+            case SET_CHANGE_PASSWORD_FORM: return {
+                ...state,
+                changePasswordForm: action.changePasswordForm
             }
             default: return {
                 ...state

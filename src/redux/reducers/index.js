@@ -10,6 +10,7 @@ import userGroupReducer from './userGroupReducer'
 import saleManagementReducer from './saleManagementReducer'
 import postReducer from './postReducer'
 import postTypeReducer from './postTypeReducer'
+import settingReducer from './settingReducer'
 
 export default combineReducers({
     rootReducer,
@@ -22,5 +23,6 @@ export default combineReducers({
     userGroupReducer,
     saleManagementReducer,
     postReducer,
-    postTypeReducer
+    postTypeReducer,
+    settingReducer
 });

@@ -188,23 +188,23 @@ const Main = ({ children }) => {
         rootReducer: { systemPopup, systemErrors } 
     }) => ({ systemPopup, systemErrors }), shallowEqual)
 
-    const [navOpen, setNavOpen] = useState(true);
+    const [navOpen, setNavOpen] = useState(true)
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch()
 
     const history = useHistory()
 
-    useEffect(() => {
-        const pusher = new Pusher('7853616a98fac75c9b66', {
-			cluster: 'ap3',
-			encrypted: true
-		});
-		const channel = pusher.subscribe('spring_reactjs-development');
-		channel.bind('RELOAD', pageName => {
-			dispatch(reload(pageName))
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    // useEffect(() => {
+    //     const pusher = new Pusher('7853616a98fac75c9b66', {
+	// 		cluster: 'ap3',
+	// 		encrypted: true
+	// 	});
+	// 	const channel = pusher.subscribe('spring_reactjs-development');
+	// 	channel.bind('RELOAD', pageName => {
+	// 		dispatch(reload(pageName))
+    //     });
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [])
 
     const renderProps = {
         navOpen,
