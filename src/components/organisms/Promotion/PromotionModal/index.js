@@ -1,22 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import Input from "../../../atoms/Input";
 import {
   closeModal,
   doSave,
   setPromotion,
-  setModalStatus
+  setModalStatus,
+  setSelectedFilters
 } from "../../../../redux/reducers/promotionReducer";
-import {
-  Radio,
-  RadioGroup,
-  FormControlLabel
-} from "@material-ui/core";
+import { Radio, RadioGroup, FormControlLabel } from "@material-ui/core";
 import ModalModule from "../../../molecules/ModalModule";
-import ToggleActive from "../../../atoms/ToggleActive";
 import CheckBox from "../../../atoms/CheckBox";
+import TableCell from "@material-ui/core/TableCell";
+import ListItems from "../../../molecules/ListItems";
 import DatePicker from "../../../atoms/DatePicker";
-import Button from "../../../atoms/Button";
 import IconButton from "@material-ui/core/IconButton";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
@@ -24,6 +21,14 @@ import SelectSearch from "../../../atoms/SelectSearch";
 import { ALL, CUSTOM } from "../../../../constants/entites";
 import FormGroup from "../../../atoms/FormGroup";
 
+const headCells = [{ id: "productName", label: "Product Name" }];
+const TableRowModule = ({ productName }) => (
+  <>
+    <TableCell style={{ maxWidth: "230px" }}>
+      <span>{productName}</span>
+    </TableCell>
+  </>
+);
 
 const APPLY_STATUS = [
   { key: ALL, label: "Apply on all product" },
@@ -44,9 +49,14 @@ const Render = ({
     promotionCodes,
     status
   },
+  loading,
+  productList,
+  productFilter,
+  selectedFilters,
   modalStatus,
   onChangeCodeStatus,
   onChangeApplyStatus,
+  onChangeSelectedFilters,
   onChangeCode,
   onAddCode,
   onRemoveCode,
@@ -144,8 +154,8 @@ const Render = ({
         style={{ display: "block", width: "32%" }}
         type="date"
         label="Start Date"
-        name="startDate"
-        value={startDate}
+        name="endDate"
+        value={endDate}
         onChange={onChangeForm}
       />
       <Input
@@ -178,42 +188,56 @@ const Render = ({
         ))}
       </RadioGroup>
     </FormGroup>
-    {/* <FormGroup row>
-            <Input
-                width="49%"
-                required
-                label="Phone: "
-                name="phone"
-                value={phone}
-                onChange={onChangeForm}
-                disabled={!!promotionId}
-                error={formErrors.phone}
-            />
-            <Input
-                width="49%"
-                required
-                label="Email: "
-                name="email"
-                value={email}
-                onChange={onChangeForm}
-                disabled={!!promotionId}
-                error={formErrors.email}
-            />
+    {modalStatus.applyStatus === "CUSTOM" ? (
+      <>
+        <FormGroup row>
+          <SelectSearch
+            style={{ display: "block", width: "32%" }}
+            label="Category"
+            options={productFilter.categories}
+            value={selectedFilters.category}
+            getOptionLabel={option => option.categoryName}
+            onChange={(_, value) =>
+              onChangeSelectedFilters(_, { name: "category", value })
+            }
+            error={formErrors.userGroup}
+          />
+          <SelectSearch
+            style={{ display: "block", width: "32%" }}
+            label="Group Type"
+            options={productFilter.groupTypes}
+            value={selectedFilters.groupType}
+            getOptionLabel={option => option.groupTypeName}
+            disabled={!selectedFilters.category}
+            onChange={(_, value) =>
+              onChangeSelectedFilters(_, { name: "groupType", value })
+            }
+            error={formErrors.userGroup}
+          />
+          <SelectSearch
+            style={{ display: "block", width: "32%" }}
+            label="Type"
+            options={productFilter.types}
+            value={selectedFilters.type}
+            disabled={!selectedFilters.groupType}
+            getOptionLabel={option => option.typeName}
+            onChange={(_, value) =>
+              onChangeSelectedFilters(_, { name: "type", value })
+            }
+            error={formErrors.userGroup}
+          />
         </FormGroup>
-        <SelectSearch
-            required
-            label="Promotion Group"
-            options={promotionGroupList}
-            value={promotionGroup}
-            getOptionLabel={option => option.name}
-            onChange={(_, value) => onChangeForm(_, { name: 'promotionGroup', value })}
-            error={formErrors.promotionGroup}
-        />
-        <ToggleActive
-            label="Active"
-            checked={status}
-            onChange={onChangeForm}
-        /> */}
+        <ListItems
+          loading={loading}
+          selectKey="productId"
+          headCells={headCells}
+          dataSources={productList}
+          row={TableRowModule}
+        ></ListItems>
+      </>
+    ) : (
+      ""
+    )}
   </ModalModule>
 );
 
@@ -226,6 +250,10 @@ const PromotionModal = () => {
         formLoading,
         modalStatus,
         promotion,
+        loading,
+        productList,
+        productFilter,
+        selectedFilters,
         promotionGroupList,
         errors
       }
@@ -235,6 +263,10 @@ const PromotionModal = () => {
       formLoading,
       modalStatus,
       promotion,
+      loading,
+      productList,
+      productFilter,
+      selectedFilters,
       promotionGroupList,
       errors
     }),
@@ -252,7 +284,7 @@ const PromotionModal = () => {
       arrTemp[index][name] = value;
       dispatch(
         setPromotion({
-          ...selector.promotion.promotionCode,
+          ...selector.promotion,
           promotionCodes: arrTemp
         })
       );
@@ -284,10 +316,16 @@ const PromotionModal = () => {
         dispatch(setPromotion({ ...selector.promotion, promotionCodes: [] }));
       }
     },
-    onChangeApplyStatus: status =>{
+
+    onChangeApplyStatus: status =>
       dispatch(
         setModalStatus({ ...selector.modalStatus, applyStatus: status })
-      )
+      ),
+
+    onChangeSelectedFilters: (_, { name, value }) => {
+      dispatch(
+        setSelectedFilters({ ...selector.selectedFilters, [name]: value })
+      );
     },
 
     onAddCode: index => {
@@ -307,6 +345,7 @@ const PromotionModal = () => {
         })
       );
     },
+
     onRemoveCode: index => {
       let arrTemp = selector.promotion.promotionCodes;
       arrTemp.splice(index, 1);
@@ -317,33 +356,7 @@ const PromotionModal = () => {
         })
       );
     },
-    //   onCheckItem: (index, checked) => {
-    //     let arr = [];
-    //     state.dataSources[index].checked = checked;
-    //     state.dataSources.forEach(item =>
-    //       item.checked === true ? arr.push(item.promotionId) : null
-    //     );
-    //     state.checkAllItem = arr.length === state.dataSources.length;
-    //     setPromotion({ ...promotion, listProductId: arr });
-    //     setState({ ...state });
-    //   },
-    //   onCheckAllItem: checkAllItem => {
-    //     let listProductId = [];
-    //     setState({
-    //       ...state,
-    //       checkAllItem,
-    //       dataSources: state.dataSources.map(item => {
-    //         if (checkAllItem) {
-    //           listProductId.push(item.promotionId);
-    //         }
-    //         return {
-    //           ...item,
-    //           checked: item.checked !== checkAllItem ? checkAllItem : item.checked
-    //         };
-    //       })
-    //     });
-    //     setPromotion({ ...promotion, listProductId });
-    //   },
+
     onPositive: () => dispatch(doSave(selector.promotion)),
     onClose: () => dispatch(closeModal())
   };

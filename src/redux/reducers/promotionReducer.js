@@ -138,6 +138,30 @@ export const initialState = {
   promotion: {
     // status: ALL
   },
+  productList: [
+    { productId: 100, productName: "Samsung" },
+    { productId: 101, productName: "Apple" },
+    { productId: 102, productName: "Oppo" },
+    { productId: 103, productName: "Viettel" },
+    { productId: 104, productName: "Off White" },
+    { productId: 105, productName: "Gucci" }
+  ],
+  productFilter: {
+    categories: [
+      { categoryId: 1001, categoryName: "Water" },
+      { categoryId: 1002, categoryName: "Food" },
+      { categoryId: 1003, categoryName: "Clothes" },
+      { categoryId: 1004, categoryName: "Accessories" },
+      { categoryId: 1005, categoryName: "Technologies" }
+    ],
+    groupTypes: [],
+    types: []
+  },
+  selectedFilters: {
+    categoriy: "",
+    groupType: "",
+    type: ""
+  },
   errors: {
     formErrors: {},
     errorMessage: ""
@@ -157,6 +181,7 @@ const MODAL_FORM_GET_CREATE_ACTION = createAction(
 const MODAL_FORM_UPDATE_SUCCESS = createAction("MODAL_FORM_UPDATE_SUCESS");
 const SET_PROMOTION = createAction("SET_PROMOTION");
 const SET_MODAL_STATUS = createAction("SET_MODAL_STATUS");
+const SET_SELECTED_FILTER = createAction("SET_SELECTED_FILTER");
 const CLOSE_MODAL = createAction("CLOSE_MODAL");
 const SET_UPDATE_PROMOTION_MODAL = createAction("SET_UPDATE_PROMOTION_MODAL");
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS");
@@ -181,30 +206,15 @@ const modalFormSuccessMessage = message => ({
 
 export const setPromotion = promotion => ({ type: SET_PROMOTION, promotion });
 
-export const setModalStatus = modalStatus => {
-//   if (!initialState.promotion.promotionCodes) {
-//     setPromotion({
-//       ...initialState.promotion,
-//       promotionCodes: [
-//         {
-//           code: Math.random()
-//             .toString(36)
-//             .substring(3)
-//             .toUpperCase(),
-//           percent: "",
-//           quantity: ""
-//         }
-//       ]
-//     });
-//   } else {
-//     setPromotion({ ...initialState.promotion, promotionCodes: [] });
-//   }
-//   console.log(initialState.promotion)
-  return {
-    type: SET_MODAL_STATUS,
-    modalStatus
-  };
-};
+export const setModalStatus = modalStatus => ({
+  type: SET_MODAL_STATUS,
+  modalStatus
+});
+
+export const setSelectedFilters = selectedFilters => ({
+  type: SET_SELECTED_FILTER,
+  selectedFilters
+});
 
 export const closeModal = () => ({ type: CLOSE_MODAL });
 
@@ -377,7 +387,7 @@ export default function(state = initialState, action) {
           modalFormSuccessMessage: initialState.modalFormSuccessMessage
         };
       case SET_PROMOTION:
-          console.log(action)
+        console.log(action);
         return {
           ...state,
           promotion: action.promotion,
@@ -387,6 +397,12 @@ export default function(state = initialState, action) {
         return {
           ...state,
           modalStatus: action.modalStatus,
+          modalFormSuccessMessage: initialState.modalFormSuccessMessage
+        };
+      case SET_SELECTED_FILTER:
+        return {
+          ...state,
+          selectedFilters: action.selectedFilters,
           modalFormSuccessMessage: initialState.modalFormSuccessMessage
         };
       case SET_UPDATE_PROMOTION_MODAL:
