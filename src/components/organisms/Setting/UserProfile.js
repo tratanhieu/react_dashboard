@@ -5,7 +5,13 @@ import ImageUpload from '../../atoms/ImageUpload'
 import FormGroup from '../../atoms/FormGroup';
 import Input from '../../atoms/Input';
 import SelectSearch from '../../atoms/SelectSearch';
-import { setUserProfileForm, getUserProfile } from '../../../redux/reducers/settingReducer';
+import {
+    setUserProfileForm,
+    getUserProfile,
+    getDistrictList,
+    getWardList,
+    doUpdateProfile
+} from '../../../redux/reducers/settingReducer';
 
 const Render = ({
     formLoading,
@@ -22,8 +28,11 @@ const Render = ({
         address
     },
     provinceList = [],
+    districtList = [],
+    wardList = [],
     errors: { formErrors },
-    onChangeForm
+    onChangeForm,
+    onPositive
 }) => (
     <FormModule
         title="User Profile"
@@ -32,6 +41,7 @@ const Render = ({
         loading={formLoading}
         showNegativeButton={false}
         positiveLabel="Update"
+        onPositive={onPositive}
     >
         <div style={{ display: 'flex' }}>
             <ImageUpload
@@ -78,6 +88,7 @@ const Render = ({
                         required
                         margin="dense"
                         name="phone"
+                        disabled={true}
                         label="Phone"
                         value={phone}
                         onChange={onChangeForm}
@@ -100,12 +111,26 @@ const Render = ({
                     onChange={(_, value) => onChangeForm(_, { name: 'province', value })}
                     error={formErrors.provinceId}
                 />
+                <SelectSearch
+                    label="District"
+                    options={districtList}
+                    value={district}
+                    getOptionLabel={option => option.name}
+                    onChange={(_, value) => onChangeForm(_, { name: 'district', value })}
+                    error={formErrors.district}
+                />
+                <SelectSearch
+                    label="Ward"
+                    options={wardList}
+                    value={ward}
+                    getOptionLabel={option => option.name}
+                    onChange={(_, value) => onChangeForm(_, { name: 'ward', value })}
+                    error={formErrors.ward}
+                />
                 <Input
                     fullWidth
                     required
                     margin="dense"
-                    multiline
-                    rows={3}
                     label="Address" 
                     name="address"
                     value={address}
@@ -119,8 +144,24 @@ const Render = ({
 
 const UserProfile = () => {
     const selector = useSelector(({
-        settingReducer: { userProfileForm, provinceList, formLoading, formSuccessMessage, errors } 
-    }) => ({ userProfileForm, provinceList, formLoading, formSuccessMessage, errors }), shallowEqual)
+        settingReducer: {
+            userProfileForm,
+            provinceList,
+            districtList,
+            wardList,
+            formLoading,
+            formSuccessMessage,
+            errors
+        } 
+    }) => ({
+        userProfileForm,
+        provinceList,
+        districtList,
+        wardList,
+        formLoading,
+        formSuccessMessage,
+        errors
+    }), shallowEqual)
 
     const dispatch = useDispatch()
 
@@ -130,10 +171,19 @@ const UserProfile = () => {
 
     const renderProps = {
         ...selector,
-        onChangeForm: (_, { name, value }) => dispatch(setUserProfileForm({
-            ...selector.userProfileForm,
-            [name]: value
-        }))
+        onChangeForm: (_, { name, value }) => {
+            dispatch(setUserProfileForm({
+                ...selector.userProfileForm,
+                [name]: value
+            }))
+            if (name === 'province') {
+                dispatch(getDistrictList(value.provinceId))
+            }
+            if (name === 'district') {
+                dispatch(getWardList(value.provinceId, value.districtId))
+            }
+        },
+        onPositive: () => dispatch(doUpdateProfile(selector.userProfileForm))
     }
 
     return <Render {...renderProps} />

@@ -1,14 +1,12 @@
 import { HANDLE_SYSTEM_ERROR } from '../../constants/redux-actions'
 import axios from '../axios'
 import cookie from 'js-cookie'
-import { USER_TOKEN } from '../../constants';
+import { USER_TOKEN, USER_AUTH } from '../../constants';
 
 export const initialState = {
     formLoading: false,
     loginForm: {},
-    userAuth: {
-        token: ''
-    },
+    userAuth: {},
     systemErrors: {
         message: '',
         detail: ''
@@ -53,6 +51,7 @@ export const doLogin = (params, callback) => dispatch => {
     })
     .then(response => {
         cookie.set(USER_TOKEN, response.data.token)
+        cookie.set(USER_AUTH, response.data)
         dispatch(setUserAuth(response.data))
         callback()
     })

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import cookie from 'js-cookie'
 import faker from "faker";
 import { useHistory } from 'react-router-dom'
 import Button from '@material-ui/core/Button';
@@ -20,6 +21,7 @@ import { ReportProblemOutlined, Close } from '@material-ui/icons';
 import { Snackbar, Slide } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import Image from '../../../atoms/Image';
+import { USER_AUTH } from '../../../../constants';
 
 // const trigger = (
 //     <span>
@@ -67,7 +69,10 @@ const Render = ({
                             alt="logo"
                             style={{ height: 36 }}
                         />
-                        <UserdropDownMenu onLogout={onLogout} />
+                        <UserdropDownMenu
+                            userAuth={cookie.getJSON(USER_AUTH)}
+                            onLogout={onLogout}
+                        />
                     </div>
                     <div className="main-layout--body---content">
                         <div className="main-layout--body---main-content">
@@ -105,7 +110,7 @@ const Render = ({
     )
 }
 
-const UserdropDownMenu = ({ onLogout }) => {
+const UserdropDownMenu = ({ userAuth: { avatar, fullName }, onLogout }) => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
@@ -129,15 +134,15 @@ const UserdropDownMenu = ({ onLogout }) => {
         }
     }
     
-    // return focus to the button when we transitioned from !open -> open
-    const prevOpen = React.useRef(open);
-    React.useEffect(() => {
-        if (prevOpen.current === true && open === false) {
-        anchorRef.current.focus();
-        }
+    // // return focus to the button when we transitioned from !open -> open
+    // const prevOpen = React.useRef(open);
+    // React.useEffect(() => {
+    //     if (prevOpen.current === true && open === false) {
+    //     anchorRef.current.focus();
+    //     }
     
-        prevOpen.current = open;
-    }, [open])
+    //     prevOpen.current = open;
+    // }, [open])
 
     return(
         <div>
@@ -151,7 +156,7 @@ const UserdropDownMenu = ({ onLogout }) => {
                     width="36px"
                     height="36px"
                     circle
-                    src={faker.internet.avatar()}
+                    src={avatar}
                 />
             </Button>
             <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
@@ -166,6 +171,9 @@ const UserdropDownMenu = ({ onLogout }) => {
                                 autoFocusItem={open}
                                 onKeyDown={handleListKeyDown}
                             >
+                                <MenuItem>
+                                    <b>{fullName}</b>
+                                </MenuItem>
                                 <MenuItem>
                                     <Link
                                         className={classes.menuItem}

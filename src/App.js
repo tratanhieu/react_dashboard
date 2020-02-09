@@ -1,5 +1,5 @@
 import React from 'react'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import cookie from 'js-cookie'
 import './App.css'
@@ -23,13 +23,6 @@ import ChangePassword from './components/organisms/Setting/ChangePassword';
 import { Login } from './components/organisms/Login';
 import AuthRoute, { isAuthenticated } from './routes/AuthRoute';
 
-const routes = [
-	{
-		path: '',
-		component: <Login />,
-	}
-]
-
 class App extends React.Component {
 	componentDidCatch(error) {
 		console.log(error)
@@ -41,19 +34,29 @@ class App extends React.Component {
 				<Login />
 			</Route>
 			<AuthRoute exact path="/product">
-				<Product />
+				<Main>
+					<Product />
+				</Main>
 			</AuthRoute>
 			<AuthRoute path="/product/category">
-				<ProductCategory />
+				<Main>
+					<ProductCategory />
+				</Main>
 			</AuthRoute>
 			<AuthRoute path="/product/type_group">
-				<ProductTypeGroup />
+				<Main>
+					<ProductTypeGroup />
+				</Main>
 			</AuthRoute>
 			<AuthRoute path="/product/type">
-				<ProductType />
+				<Main>
+					<ProductType />
+				</Main>
 			</AuthRoute>
 			<AuthRoute path="/product/brand">
-				<ProductBrand />
+				<Main>
+					<ProductBrand />
+				</Main>
 			</AuthRoute>
 			<AuthRoute exact path="/user">
 				<Main>
@@ -66,16 +69,22 @@ class App extends React.Component {
 				</Main>
 			</AuthRoute>
 			<AuthRoute path="/sale">
-				<SaleManagement />
+				<Main>
+					<SaleManagement />
+				</Main>
 			</AuthRoute>
 			<AuthRoute exact path="/post">
-				<Post />
+				<Main>
+					<Post />
+				</Main>
 			</AuthRoute>
 			<AuthRoute path="/post/type">
-				<PostType />
+				<Main>
+					<PostType />
+				</Main>
 			</AuthRoute>
 			<AuthRoute exact path="/setting">
-				<Setting />
+				<Redirect to="/setting/profile" />
 			</AuthRoute>
 			<AuthRoute path="/setting/profile">
 				<Main>
@@ -92,7 +101,9 @@ class App extends React.Component {
 				</Main>
 			</AuthRoute>
 			<AuthRoute exact path="/">
-				<h2>Main</h2>
+				<Main>
+					<h2>Main</h2>
+				</Main>
 			</AuthRoute>
 		</Switch>
 	)
