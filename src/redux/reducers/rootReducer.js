@@ -42,6 +42,8 @@ const setFormLoading = loading => ({ type: SET_FORM_LOADING, loading })
 const SET_USER_AUTH = createAction("SET_USER_AUTH")
 export const setUserAuth = userAuth => ({ type: SET_USER_AUTH, userAuth })
 
+const HANDLE_FORM_ERRORS = createAction("HANDLE_FORM_ERRORS")
+
 export const doLogin = (params, callback) => dispatch => {
     dispatch(setFormLoading(true))
     return axios.post(PATH_API_LOGIN, params, {
@@ -55,7 +57,7 @@ export const doLogin = (params, callback) => dispatch => {
         dispatch(setUserAuth(response.data))
         callback()
     })
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .catch(error => dispatch(handleErrors(error, HANDLE_FORM_ERRORS)))
     .finally(() => dispatch(setFormLoading(false)))
 }
 
@@ -76,11 +78,11 @@ export const doLogout = callback => dispatch => {
     callback()
 }
 
-const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
-export const handleErrors = (errors = {}) => {
+export const handleErrors = (errors = {}, pageErrorHandle) => {
+    console.log(errors)
     if (errors.response) {
-        if (errors.response.data) {
-            return ({ type: HANDLE_ERRORS, errors })
+        if (errors.response.data && errors.response.data.formErrors) {
+            return ({ type: pageErrorHandle, ...errors.response.data })
         }
     }
     return ({ type: HANDLE_SYSTEM_ERROR })
@@ -104,13 +106,6 @@ export default function(state = initialState, action) {
                 systemErrors: {
                     message: SYSTEM_ERROR_MESSAGE,
                     detail: action.detail
-                }
-            }
-            case HANDLE_ERRORS: return {
-                ...state,
-                errors: {
-                    ...initialState.errors,
-                    ...action.errors
                 }
             }
             case RESET_SYSTEM_ERRORS: return {

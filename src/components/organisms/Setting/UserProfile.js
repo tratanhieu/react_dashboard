@@ -30,6 +30,7 @@ const Render = ({
     provinceList = [],
     districtList = [],
     wardList = [],
+    formSuccessMessage,
     errors: { formErrors },
     onChangeForm,
     onPositive
@@ -41,6 +42,7 @@ const Render = ({
         loading={formLoading}
         showNegativeButton={false}
         positiveLabel="Update"
+        formSuccess={formSuccessMessage}
         onPositive={onPositive}
     >
         <div style={{ display: 'flex' }}>
@@ -176,10 +178,10 @@ const UserProfile = () => {
                 ...selector.userProfileForm,
                 [name]: value
             }))
-            if (name === 'province') {
+            if (name === 'province' && value) {
                 dispatch(getDistrictList(value.provinceId))
             }
-            if (name === 'district') {
+            if (name === 'district' && value) {
                 dispatch(getWardList(value.provinceId, value.districtId))
             }
         },

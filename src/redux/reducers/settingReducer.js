@@ -1,10 +1,11 @@
 import axios from '../axios'
-import { handleErrors } from './rootReducer';
+import { handleErrors, resetSystemErrors } from './rootReducer';
 
 export const initialState = {
     formLoading: false,
     userProfileForm: {},
     changePasswordForm: {},
+    formSuccessMessage: '',
     errors: {
         formErrors: {},
         errorMessage: ''
@@ -14,6 +15,11 @@ export const initialState = {
 const PATH_API_USER = 'user'
 const PATH_API_PROVINCE = 'api/province'
 const createAction = action => `SETTING_${action}`
+
+const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
+
+const RESET_SETTING_FORM = createAction("RESET_SETTING_FORM")
+export const resetSettingForm = () => ({ type: RESET_SETTING_FORM })
 
 const SET_USER_PROFILE_FORM = createAction("SET_USER_PROFILE_FORM")
 export const setUserProfileForm = userProfileForm => ({ type: SET_USER_PROFILE_FORM, userProfileForm })
@@ -34,6 +40,8 @@ const setInitUserProfile = ({ userProfile, provinceList, districtList, wardList 
 })
 export const getUserProfile = () => dispatch => {
     dispatch(setFormLoading(true))
+    dispatch(modalFormSuccessMessage(""))
+    dispatch(resetSystemErrors())
     return axios.get(`${PATH_API_USER}/profile`)
     .then(response => {
         dispatch(setInitUserProfile(response.data))
@@ -101,6 +109,8 @@ export const doUpdateProfile = userProfileForm => dispatch => {
         address
     }
     dispatch(setFormLoading(true))
+    dispatch(modalFormSuccessMessage(""))
+    dispatch(resetSystemErrors())
     return axios.patch(`${PATH_API_USER}/profile`, params, {
         'Content-Type': 'application/json'
     })
@@ -111,7 +121,31 @@ export const doUpdateProfile = userProfileForm => dispatch => {
     .finally(() => dispatch(setFormLoading(false)))
 }
 
-const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
+export const doChangePassword = (changePasswordForm, callback) => dispatch => {
+    const {
+        oldPassword,
+        newPassword,
+        confirmPassword
+    } = changePasswordForm
+    let params = {
+        oldPassword,
+        newPassword,
+        confirmPassword
+    }
+    dispatch(setFormLoading(true))
+    dispatch(modalFormSuccessMessage(""))
+    dispatch(resetSystemErrors())
+    return axios.patch(`${PATH_API_USER}/change-password`, params, {
+        'Content-Type': 'application/json'
+    })
+    .then(() => {
+        dispatch(modalFormSuccessMessage("Update successfully!!"))
+        callback()
+    })
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(() => dispatch(setFormLoading(false)))
+}
+
 export default function(state = initialState, action) {
     try {
         switch (action.type) {
@@ -123,12 +157,15 @@ export default function(state = initialState, action) {
                 ...state,
                 errors: {
                     ...initialState.errors,
-                    ...action.errors
+                    formErrors: action.formErrors
                 }
+            }
+            case RESET_SETTING_FORM: return {
+                ...initialState
             }
             case MODAL_FORM_SUCCESS_MESSAGE: return {
                 ...state,
-                message: action.message
+                formSuccessMessage: action.message
             }
             case SET_INIT_USER_PROFILE: {
                 let userProfileForm = action.userProfile
@@ -145,7 +182,7 @@ export default function(state = initialState, action) {
                     provinceId: userProfileForm.provinceId
                 }
                 userProfileForm.ward = {
-                    provinceId: userProfileForm.wardId,
+                    wardId: userProfileForm.wardId,
                     name: wardListObject[userProfileForm.wardId],
                     provinceId: userProfileForm.provinceId,
                     districtId: userProfileForm.districtId
