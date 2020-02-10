@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Form } from "semantic-ui-react";
 import FormInputSlug from "../../../atoms/FormInputSlug";
 import ImageUploads from "../../../atoms/ImageUploads";
-import ModalModule from "../../../atoms/ModalModule";
+import ModalModule from "../../../molecules/ModalModule";
 
 
 import {

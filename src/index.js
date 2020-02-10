@@ -4,6 +4,8 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
 import { BrowserRouter as Router } from "react-router-dom"
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import DateFnsUtils from '@date-io/date-fns';
 
 import './index.css';
 import './atoms.scss';
@@ -18,7 +20,9 @@ const store = createStore(reducers, applyMiddleware(thunk))
 ReactDOM.render(
     <Provider store={store}>
         <Router>
-            <App />
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <App />
+            </MuiPickersUtilsProvider>
         </Router>
     </Provider>
 , document.getElementById('root'));

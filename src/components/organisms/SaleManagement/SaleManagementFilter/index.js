@@ -4,7 +4,7 @@ import { Form, Select, Button, Icon } from "semantic-ui-react";
 
 import Fieldset from "../../../atoms/Fieldset";
 import PageSearch from "../../../molecules/PageSearch";
-import FilterBar from "../../../molecules/FilterBar";
+import FilterStatus from "../../../molecules/FilterStatus";
 import { setFilters } from "../../../../redux/reducers/saleManagementReducer";
 
 const options = [
@@ -30,7 +30,7 @@ const listStatus = [
 const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
     <Form>
         <PageSearch defaultValue={filters.search} onSearch={onSearch} />
-        <FilterBar
+        <FilterStatus
             statusValue={filters.status}
             sortValue={filters.sort}
             listStatus={listStatus}

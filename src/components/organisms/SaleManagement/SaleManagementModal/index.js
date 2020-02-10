@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { Form } from "semantic-ui-react";
 import FormInput from "../../../atoms/FormInput";
-import ModalModule from "../../../atoms/ModalModule";
+import ModalModule from "../../../molecules/ModalModule";
 import DatePickerModule from "../../../atoms/DatePickerModule";
 
 import {
@@ -15,9 +15,7 @@ import {
 
 import {
   doSave,
-  closeModal,
-  setApplyStatus,
-  setCodeStatus
+  closeModal
 } from "../../../../redux/reducers/saleManagementReducer";
 
 const listApplyStatus = [

@@ -1,6 +1,5 @@
 import { REDUX_API_URL } from '../../constants/redux-actions'
 import axios from 'axios'
-import { ACTIVE } from '../../constants/entites';
 import { handleErrors, resetSystemErrors } from './rootReducer';
 
 // API
@@ -46,13 +45,13 @@ const MULTIPLE_EXECUTE_LOADING = createAction("MULTIPLE_EXECUTE_LOADING")
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
 
 const listLoading = loading => ({ type: LIST_LOADING, loading })
-const prepareData = ({ listData: productBrandList, totalPage, pageSize, page }) => ({
-    type: PREPARE_DATA,
-    productBrandList,
-    totalPage,
-    pageSize,
-    page
-})
+// const prepareData = ({ listData: productBrandList, totalPage, pageSize, page }) => ({
+//     type: PREPARE_DATA,
+//     productBrandList,
+//     totalPage,
+//     pageSize,
+//     page
+// })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })

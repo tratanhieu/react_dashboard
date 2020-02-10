@@ -3,7 +3,7 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux'
 import { Form } from "semantic-ui-react";
 
 import PageSearch from "../../../molecules/PageSearch";
-import FilterBar from "../../../molecules/FilterBar";
+import FilterStatus from "../../../molecules/FilterStatus";
 import { setFilters } from "../../../../redux/reducers/productTypeReducer";
 
 const sorts = [
@@ -23,7 +23,7 @@ const listStatus = [
 const Render = ({ filters, onSearch, onFilterByStatus, onChangeSortValue }) => (
     <Form>
         <PageSearch defaultValue={filters.search} onSearch={onSearch} />
-        <FilterBar
+        <FilterStatus
             statusValue={filters.status}
             sortValue={filters.sort}
             listStatus={listStatus}

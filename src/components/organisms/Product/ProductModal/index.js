@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Form, Button, Icon, Table, FormInput } from "semantic-ui-react";
 import FormSelect from "../../../atoms/FormSelect";
-import ModalModule from '../../../atoms/ModalModule';
+// import ModalModule from '../../../atoms/ModalModule';
 import Fieldset from "../../../atoms/Fieldset";
 import PropertyTableRow from "./PropertyTableRow";
 import ProductOptions from "./ProductOptions";
 
 import { closeModal } from '../../../../redux/reducers/productReducer';
 import { formErrorsHandle } from "../../../../commons/utils";
+import ModalModule from "../../../molecules/ModalModule";
 
 const options = [
     { key: "1", text: "Car", value: "car" },
