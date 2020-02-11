@@ -1,5 +1,8 @@
 export const ALL = ''
+<<<<<<< HEAD
 export const CUSTOM = 'CUSTOM'
+=======
+>>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
 export const ACTIVE = 'ACTIVE'
 export const HIDDEN = 'HIDDEN'
 export const DELETED = 'DELETED'

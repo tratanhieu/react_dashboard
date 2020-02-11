@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 // import React, { useState, useEffect } from 'react'
 // import { useSelector, useDispatch, shallowEqual } from "react-redux";
 // import { Label } from 'semantic-ui-react'
 // import { Image as Img} from "semantic-ui-react";
+=======
+import React, { useState, useEffect } from 'react'
+import { useDispatch } from "react-redux";
+import { Label } from 'semantic-ui-react'
+import { Image as Img} from "semantic-ui-react";
+>>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
 
 // import {
 //     TableModule,

@@ -33,3 +33,7 @@ body .ui.label, .ui.labels .label {
 body .ui.button, body .ui.buttons .button, body .ui input, body .ui.selection.dropdown {
     border-radius: 0 !important;
 }
+
+body .MuiFormLabel-asterisk, body .MuiInputLabel-asterisk {
+    color: red;
+}

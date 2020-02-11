@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Label } from 'semantic-ui-react'
-import { Image as Img} from "semantic-ui-react";
 import { formatDateTime } from "../../../../commons/utils";
 
 import {

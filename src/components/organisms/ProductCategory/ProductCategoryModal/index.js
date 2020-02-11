@@ -4,7 +4,7 @@ import { Form } from 'semantic-ui-react'
 
 import ToggleActive from '../../../atoms/ToggleActive';
 import { ACTIVE, HIDDEN } from '../../../../constants/entites';
-import ModalModule from '../../../atoms/ModalModule';
+import ModalModule from '../../../molecules/ModalModule';
 import {
     doSave, getCreateAction, closeModal, initialState 
 } from '../../../../redux/reducers/productCategoryReducer';

@@ -13,7 +13,7 @@ const Button = ({
     children,
     ...rest
 }) => {
-    return loading ? <LoadingButton content={content ? content : children} /> : (
+    return loading ? <LoadingButton content={content ? content : children} {...rest} /> : (
         <MaterialButton 
             color={color}
             style={color === 'change' ? { backgroundColor: '#f44336', color: '#ccc', ...style } : style }
@@ -26,10 +26,11 @@ const Button = ({
     )
 }
 
-const LoadingButton = ({ content }) => (
+const LoadingButton = ({ content, ...rest }) => (
     <MaterialButton
         disabled
         variant="contained"
+        {...rest}
     >
         <CircularProgress size={15} />&nbsp;&nbsp;{content}
     </MaterialButton>
