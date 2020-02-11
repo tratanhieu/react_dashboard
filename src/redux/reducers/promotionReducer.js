@@ -20,7 +20,7 @@ export const initialState = {
   filters: {
     status: ALL
   },
-  openModal: true,
+  openModal: false,
   promotionList: [
     {
       promotionId: "001",

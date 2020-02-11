@@ -29,7 +29,7 @@ const ImageUpload = ({
         const file = e.currentTarget.files[0]
         e.currentTarget.value = ""
         readFile(file, config, image => {
-            onChange('', { name, value: image })
+            onChange({ name, value: image })
             setLoadingProgressUp(90, 100, setLoadingProgress)
             setTimeout(function () {
                 setLoadingProgress(0)
@@ -60,7 +60,7 @@ const ImageUpload = ({
                 }}
             >
                 {source ? 
-                    <img style={{ width: '100%', height: '100%', objectFit, borderRadius: circle ? '50%' : '0' }} src={source} alt="post" /> :
+                    <img style={{ width: '100%', height: '100%', objectFit, borderRadius: circle ? '50%' : '0' }} src={source.value} alt="post" /> :
                     <span style={{ fontSize: '32px', alignSelf: 'center', display: 'flex' }}>
                         <span>{width.replace('px', '')}</span>
                         <span style={{ alignSelf: 'center', fontSize: '14px', padding: '8px' }}>x</span>
