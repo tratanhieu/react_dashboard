@@ -12,13 +12,9 @@ const useStyles = makeStyles(theme => ({
     bottom: {
         padding: "8px",
         paddingTop: "24px",
-<<<<<<< HEAD
-        borderTop: "1px solid rgba(0,0,0,0.12)"
-=======
         borderTop: "1px solid rgba(0,0,0,0.12)",
         display: 'flex',
         justifyContent: 'center'
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
     },
     title: {
         padding: "0px 8px"
@@ -47,12 +43,9 @@ export default function FormModule({
     maxWidth = '100%',
     positiveDisabled = false,
     style = {},
-<<<<<<< HEAD
-=======
     showNegativeButton = true,
     positiveLabel = "OK",
     negativeLabel = "Cancel",
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
     onPositive,
     onClose,
     onLoaded = false,
@@ -84,26 +77,15 @@ export default function FormModule({
                     disabled={positiveDisabled}
                     icon={<Check />}
                     onClick={onPositive}
-<<<<<<< HEAD
-                    content="Ok"
-                />
-                <Button
-=======
                     content={positiveLabel}
                 />
                 {showNegativeButton && <Button
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
                     icon={<Close />}
                     color="default"
                     disabled={loading}
                     onClick={onClose}
-<<<<<<< HEAD
-                    content="Cancel"
-                />
-=======
                     content={negativeLabel}
                 />}
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
             </div>
         </div>
     );

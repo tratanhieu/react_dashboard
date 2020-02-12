@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import React from 'react'
-import FormModule from '../../molecules/FormModule';
-import Input from '../../atoms/Input';
-
-const Render = () => (
-    <FormModule title="Change Password" maxWidth="320px" de style={{ paddingLeft: '16px', paddingRight: '16px' }}>
-=======
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
@@ -32,51 +24,37 @@ const Render = ({
         positiveLabel="Update"
         onPositive={onPositive}
     >
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
         <Input 
             required
             margin="dense"
             name="oldPassword"
             label="Old Password"
-<<<<<<< HEAD
-=======
             value={oldPassword}
             onChange={onChangeForm}
             error={formErrors.oldPassword}
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
         />
         <Input 
             required
             margin="dense"
             name="newPassword"
             label="New Password"
-<<<<<<< HEAD
-=======
             value={newPassword}
             onChange={onChangeForm}
             error={formErrors.newPassword}
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
         />
         <Input 
             required
             margin="dense"
             name="confirmPassword"
             label="Confirm New Password"
-<<<<<<< HEAD
-=======
             value={confirmPassword}
             onChange={onChangeForm}
             error={formErrors.confirmPassword}
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
         />
     </FormModule>
 )
 
 const ChangePassword = () => {
-<<<<<<< HEAD
-    const renderProps = {
-        ab: ''
-=======
     
     const selector = useSelector(({
         settingReducer: {
@@ -114,7 +92,6 @@ const ChangePassword = () => {
                 () => history.push(ROUTE_LOGIN)
             )
         )
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
     }
 
     return <Render {...renderProps} />

@@ -1,32 +1,10 @@
-<<<<<<< HEAD
-import React, { useState } from 'react'
-=======
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
 import FormModule from '../../molecules/FormModule';
 import ImageUpload from '../../atoms/ImageUpload'
 import FormGroup from '../../atoms/FormGroup';
 import Input from '../../atoms/Input';
 import SelectSearch from '../../atoms/SelectSearch';
-<<<<<<< HEAD
-
-const Render = ({
-    userProfile: { firstName, middleName, lastName, image },
-    onChangeForm
-}) => (
-    <FormModule title="User Profile" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
-        <div style={{ display: 'flex' }}>
-            <ImageUpload
-                name="image" 
-                width="180px"
-                height="180px"
-                circle
-                source={image}
-                onChange={onChangeForm} 
-            />
-            <div style={{ width: 'calc(100% - 180px - 32px)', paddingLeft: '32px', maxWidth: '600px' }}>
-=======
 import {
     setUserProfileForm,
     getUserProfile,
@@ -77,7 +55,6 @@ const Render = ({
                 onChange={onChangeForm} 
             />
             <div style={{ width: 'calc(100% - 180px - 32px)', paddingLeft: '32px' }}>
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
                 <FormGroup row>
                     <Input 
                         width="32%"
@@ -85,11 +62,8 @@ const Render = ({
                         margin="dense"
                         name="firstName"
                         label="First Name"
-<<<<<<< HEAD
-=======
                         value={firstName}
                         onChange={onChangeForm}
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
                     />
                     <Input
                         width="32%" 
@@ -97,11 +71,8 @@ const Render = ({
                         margin="dense"
                         name="middleName"
                         label="Middle Name"
-<<<<<<< HEAD
-=======
                         value={middleName}
                         onChange={onChangeForm}
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
                     />
                     <Input 
                         width="32%" 
@@ -109,11 +80,8 @@ const Render = ({
                         margin="dense"
                         name="lastName"
                         label="Last Name"
-<<<<<<< HEAD
-=======
                         value={lastName}
                         onChange={onChangeForm}
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
                     />
                 </FormGroup>
                 <FormGroup row>
@@ -122,14 +90,10 @@ const Render = ({
                         required
                         margin="dense"
                         name="phone"
-<<<<<<< HEAD
-                        label="Phone"
-=======
                         disabled={true}
                         label="Phone"
                         value={phone}
                         onChange={onChangeForm}
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
                     />
                     <Input 
                         width="49%"
@@ -137,11 +101,6 @@ const Render = ({
                         margin="dense"
                         name="email"
                         label="Email"
-<<<<<<< HEAD
-                    />
-                </FormGroup>
-                <SelectSearch label="Province" />
-=======
                         value={email}
                         onChange={onChangeForm}
                     />
@@ -170,26 +129,15 @@ const Render = ({
                     onChange={(_, value) => onChangeForm(_, { name: 'ward', value })}
                     error={formErrors.ward}
                 />
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
                 <Input
                     fullWidth
                     required
                     margin="dense"
-<<<<<<< HEAD
-                    multiline
-                    rows={3}
-                    label="Address" 
-                    name="address"
-                    // value={description}
-                    // onChange={onChangeForm}
-                    // error={formErrors.description}
-=======
                     label="Address" 
                     name="address"
                     value={address}
                     onChange={onChangeForm}
                     error={formErrors.address}
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
                 />
             </div>
         </div>
@@ -197,16 +145,6 @@ const Render = ({
 )
 
 const UserProfile = () => {
-<<<<<<< HEAD
-    const [userProfile, setUserProfile] = useState({})
-
-    const renderProps = {
-        userProfile,
-        onChangeForm: (_, { name, value }) => setUserProfile({
-            ...userProfile,
-            [name]: value
-        })
-=======
     const selector = useSelector(({
         settingReducer: {
             userProfileForm,
@@ -248,7 +186,6 @@ const UserProfile = () => {
             }
         },
         onPositive: () => dispatch(doUpdateProfile(selector.userProfileForm))
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
     }
 
     return <Render {...renderProps} />

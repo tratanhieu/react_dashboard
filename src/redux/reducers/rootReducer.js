@@ -11,13 +11,10 @@ export const initialState = {
         message: '',
         detail: ''
     },
-<<<<<<< HEAD
-=======
     errors: {
         formErrors: {},
         errorMessage: ''
     },
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
     systemPopup: {
         open: false,
         type: 'success',
@@ -115,8 +112,6 @@ export default function(state = initialState, action) {
                 ...state,
                 systemErrors: initialState.systemErrors
             }
-<<<<<<< HEAD
-=======
             case SET_USER_AUTH: return {
                 ...state,
                 userAuth: action.userAuth
@@ -125,7 +120,6 @@ export default function(state = initialState, action) {
                 ...state,
                 loginForm: action.loginForm
             }
->>>>>>> 8b7fdd8e6f537f6e1fe7c8e19b8bbcc8f7a1de62
             case SET_SYSTEM_POPUP: return {
                 ...state,
                 systemPopup: {
