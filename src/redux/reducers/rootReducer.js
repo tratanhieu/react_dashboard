@@ -44,24 +44,32 @@ export const setUserAuth = userAuth => ({ type: SET_USER_AUTH, userAuth })
 
 const HANDLE_FORM_ERRORS = createAction("HANDLE_FORM_ERRORS")
 
+const SET_FORM_SUCCESS_MESSAGE = createAction("SET_FORM_SUCCESS_MESSAGE")
+const setFormSuccessMessage = message => ({ type: SET_FORM_SUCCESS_MESSAGE, message })
+
 export const doLogin = (params, callback) => dispatch => {
     dispatch(setFormLoading(true))
+    dispatch(resetFormErrors())
+    dispatch(setFormSuccessMessage(""))
     return axios.post(PATH_API_LOGIN, params, {
         headers: {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => {
+    .then(async response => {
         cookie.set(USER_TOKEN, response.data.token)
         cookie.set(USER_AUTH, response.data)
-        dispatch(setUserAuth(response.data))
-        callback()
+        if (cookie.get(USER_AUTH)) {
+            dispatch(setUserAuth(response.data))
+            dispatch(setFormSuccessMessage("Login successfully"))
+            setTimeout(() => callback(), 3000)
+        }
     })
-    .catch(error => dispatch(handleErrors(error, HANDLE_FORM_ERRORS)))
+    .catch(error => dispatch(handleFormErrors(error)))
     .finally(() => dispatch(setFormLoading(false)))
 }
 
-export const doLogout = callback => dispatch => {
+export const doLogout = callback => async dispatch => {
     // return axios.post(PATH_API_LOGOUT, params, {
     //     headers: {
     //         'Content-Type': 'application/json'
@@ -74,7 +82,8 @@ export const doLogout = callback => dispatch => {
     // })
     // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
     // .finally(() => dispatch(setFormLoading(false)))
-    cookie.remove(USER_TOKEN)
+    await dispatch(setFormSuccessMessage(""))
+    await cookie.remove(USER_TOKEN)
     callback()
 }
 
@@ -88,9 +97,21 @@ export const handleErrors = (errors = {}, pageErrorHandle) => {
     return ({ type: HANDLE_SYSTEM_ERROR })
 }
 
+export const handleFormErrors = (errors = {}) => {
+    if (errors.response) {
+        if (errors.response.data && errors.response.data.errorMessage) {
+            return ({ type: HANDLE_FORM_ERRORS, ...errors.response.data })
+        }
+    }
+    return ({ type: HANDLE_FORM_ERRORS, errorMessage: SYSTEM_ERROR_MESSAGE })
+}
+
 export const openSystemPopup = (open, message, typePopup = 'success') => {
     return ({ type: SET_SYSTEM_POPUP, open, message, typePopup })
 }
+
+const RESET_FORM_ERRORS = createAction("RESET_FORM_ERRORS")
+const resetFormErrors = () => ({ type: RESET_FORM_ERRORS })
 
 export const resetSystemErrors = () => ({ type: RESET_SYSTEM_ERRORS })
 
@@ -101,12 +122,26 @@ export default function(state = initialState, action) {
                 ...state,
                 formLoading: action.loading
             }
+            case SET_FORM_SUCCESS_MESSAGE: return {
+                ...state,
+                formSuccessMessage: action.message
+            }
             case HANDLE_SYSTEM_ERROR: return {
                 ...state,
                 systemErrors: {
                     message: SYSTEM_ERROR_MESSAGE,
                     detail: action.detail
                 }
+            }
+            case HANDLE_FORM_ERRORS: return {
+                ...state,
+                errors: {
+                    errorMessage: action.errorMessage
+                }
+            }
+            case RESET_FORM_ERRORS: return {
+                ...state,
+                errors: initialState.errors
             }
             case RESET_SYSTEM_ERRORS: return {
                 ...state,

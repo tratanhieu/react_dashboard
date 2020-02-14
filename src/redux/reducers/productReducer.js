@@ -1,17 +1,13 @@
-import { REDUX_API_URL } from '../../constants/redux-actions'
-import axios from 'axios'
+import axios from '../axios'
 import { ACTIVE } from '../../constants/entites';
 import { handleErrors, resetSystemErrors } from './rootReducer';
 
-// API
-const URL_PATH = `${REDUX_API_URL}/product`
-
 const prefix = 'PRODUCT_'
 
-const initialState = {
+export const initialState = {
     loading: true,
     reload: false,
-    modalFormSuccessMessage: '',
+    formSuccessMessage: '',
     filters: {
         search: '',
         status: '',
@@ -20,16 +16,19 @@ const initialState = {
     multipleExecuteLoading: false,
     formLoading: false,
     openModal: false,
-    productList: [],
-    checkedItems: [],
-    totalPages: 0,
-    page: 1,
+    productList: [{
+        name: 'Abc'
+    }, {
+        name: 'Cde'
+    }],
+    postTypeList: [],
+    tagList: [],
     product: {
         status: ACTIVE
     },
     errors: {
-        name: '',
-        slugName: ''
+        formErrors: {},
+        errorMessage: ''
     }
 }
 
@@ -38,65 +37,44 @@ const createAction = action => `${prefix}${action}`
 const LIST_LOADING = createAction("LIST_LOADING")
 const RELOAD = createAction("RELOAD")
 const PREPARE_DATA = createAction("PREPARE_DATA")
+const INIT_FORM = createAction("INIT_FORM")
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS")
 const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING")
 const MODAL_FORM_GET_CREATE_ACTION = createAction("MODAL_FORM_GET_CREATE_ACTION")
 const MODAL_FORM_UPDATE_SUCCESS = createAction("MODAL_FORM_UPDATE_SUCESS")
-const SET_PRODUCT_CATEGORY = createAction("SET_PRODUCT_CATEGORY")
+const SET_PRODUCT = createAction("SET_PRODUCT")
 const CLOSE_MODAL = createAction("CLOSE_MODAL")
 const MULTIPLE_EXECUTE_LOADING = createAction("MULTIPLE_EXECUTE_LOADING")
 const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
+const SET_ERRORS = createAction("SET_ERRORS")
+
+// API
+const PATH_API = 'product'
 
 const listLoading = loading => ({ type: LIST_LOADING, loading })
-const prepareData = ({ listData: productList, totalPage, pageSize, page }) => ({
+// const setErrors = errors => ({ type: SET_ERRORS, errors })
+const prepareData = data => ({
     type: PREPARE_DATA,
-    productList,
-    totalPage,
-    pageSize,
-    page
+    postList: data
 })
+const setErrors = errors => ({ type: SET_ERRORS, errors })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
+const setInitForm = ({ postTypeList, tagList }) => ({ type: INIT_FORM, postTypeList, tagList })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
 
-const setproduct = (product, openModal) => ({ type: SET_PRODUCT_CATEGORY, product, openModal})
-
 const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
 
-const doCreate = product => async dispatch => {
-    const params = JSON.stringify(product)
-    axios.post(`${URL_PATH}/create`, params, {
-        timeout: 5000,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(_ => dispatch(modalFormSuccessMessage("Product Category is created successfully!!")))
-    .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(formLoading(false)))
-}
+export const setProduct = product => ({ type: SET_PRODUCT, product })
 
-const doUpdate = product => async dispatch => {
-    const params = JSON.stringify(product)
-    return axios.post(
-        `${URL_PATH}/${product.productId}/update`, params, { 
-            timeout: 5000,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-    ).then(_ => dispatch(modalFormSuccessMessage("Product Category is update successfully!!")))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(formLoading(false)))
-}
-
-const updateFilters = filters => ({ type: UPDATE_FILTERS, filters })
+export const closeModal = () => ({ type: CLOSE_MODAL })
 
 export const doMultipleExecute = (listId, status) => async dispatch =>{
     const params = { listId, status }
     dispatch(resetSystemErrors())
     dispatch(setMultipleExecuteLoading(true))
-    return axios.post(`${URL_PATH}/execute`, params, {
+    return axios.post(`${PATH_API}/execute`, params, {
         timeout: 5000,
         headers: {
             'Content-Type': 'application/json'
@@ -107,58 +85,123 @@ export const doMultipleExecute = (listId, status) => async dispatch =>{
     .finally(_ => dispatch(setMultipleExecuteLoading(false)))
 }
 
-export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
-    // console.log(filters, page)
-    dispatch(resetSystemErrors())
+export const fetchAll = () => async dispatch => {
+    // dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${URL_PATH}?search=${filters.search}&status=${filters.status}&`
-            + `sort=${filters.sort}&page=${page}`,
-        { timeout: 5000 }
-    )
-    .then(response => dispatch(prepareData(response.data, filters)))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(listLoading(false)))
+    // return axios.get(PATH_API, { timeout: 5000 })
+    //     .then(response => dispatch(prepareData(response.data)))
+    //     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    //     .finally(_ => dispatch(listLoading(false)))
+    dispatch(listLoading(false))
 }
 
-export const doSave = product => async dispatch => {
+export const doSave = post => async dispatch => {
+    console.log(post)
     dispatch(resetSystemErrors())
     dispatch(formLoading(true))
-    const { productId, name, slugName, status } = product
-
-    if (!productId) {
-        dispatch(doCreate({ name, slugName, status }))
-    } else {
-        dispatch(doUpdate({ productId, name, slugName, status }))
+    dispatch(modalFormSuccessMessage(""))
+    dispatch(setErrors(initialState.errors))
+    const { postId, name, slugName, image, description, postType, content, status } = post
+    const tags = post.tags ? post.tags.map(tag => tag.name) : []
+    const publishDate = post.publishDate ? post.publishDate.getTime() : undefined
+    const postTypeId = postType.postTypeId
+    if (!postTypeId) {
+        dispatch(setErrors({ postTypeId: 'Post type is not empty' }))
+        return;
     }
+    const postParams = { 
+        name,
+        slugName,
+        image,
+        description,
+        content,
+        tags,
+        publishDate,
+        postTypeId,
+        status
+    }
+    return !postId ?
+        dispatch(doCreate(postParams)) :
+        dispatch(doUpdate({ ...postParams, postId }))
 }
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
-export const getUpdateAction = productId => async dispatch => {
+
+export const initForm = () => dispatch => {
+    // dispatch(resetSystemErrors())
+    // dispatch(modalFormSuccessMessage(""))
+    // dispatch(formLoading(true))
+    // return axios.get(`${PATH_API}/create`)
+    // .then(response => {
+    //     dispatch(setInitForm(response.data))
+    // })
+    // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    // .finally(() => dispatch(formLoading(false)))
+}
+
+export const getUpdateAction = postId => async dispatch => {
     dispatch(resetSystemErrors())
     dispatch(listLoading(true))
-    return axios.get(`${URL_PATH}/${productId}`, {
+    return axios.get(`${PATH_API}/${postId}`, {
         timeout: 5000
-    }).then(response => dispatch(setproduct(response.data, true)))
+    }).then(response => dispatch(setProduct(response.data)))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(listLoading(false)))
+    .finally(() => dispatch(listLoading(false)))
 }
 
-export const setFilters = filters => async dispatch => {
-    dispatch(updateFilters(filters))
-    dispatch(fetchWithPaginationAndFilter(filters, 1))
+const doCreate = post => async dispatch => {
+    const params = JSON.stringify(post)
+    axios.post(`${PATH_API}`, params, {
+        timeout: 5000,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        dispatch(prepareData(response.data))
+        dispatch(modalFormSuccessMessage("Post is created success!!"))
+        dispatch(setProduct(initialState.post))
+    })
+    .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(_ => dispatch(formLoading(false)))
 }
 
-export const closeModal = () => ({ type: CLOSE_MODAL })
+const doUpdate = post => async dispatch => {
+    const params = JSON.stringify(post)
+    return axios.post(`${PATH_API}`, params, { 
+        timeout: 5000,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        dispatch(prepareData(response.data))
+        dispatch(modalFormSuccessMessage("Post is update success!!"))
+    })
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(_ => dispatch(formLoading(false)))
+}
 
+export const setFilters = filters => ({ type: UPDATE_FILTERS, filters })
 export const setCheckedItems = checkedItems => ({ type: SET_CHECKED_ITEMS, checkedItems })
 
 export default function(state = initialState, action) {
-    // console.log(action.type)
+    console.log(action.tags)
     try {
         switch (action.type) {
             case LIST_LOADING: return {
                 ...state,
                 loading: action.loading
+            }
+            case SET_ERRORS: return {
+                ...state,
+                errors: {
+                    ...initialState.errors,
+                    ...action.errors
+                }
+            }
+            case INIT_FORM: return {
+                ...state,
+                postTypeList: action.postTypeList,
+                tagList: action.tagList
             }
             case RELOAD: return {
                 ...state,
@@ -166,8 +209,7 @@ export default function(state = initialState, action) {
             }
             case MODAL_FORM_LOADING: return {
                 ...state,
-                formLoading: action.loading,
-                errors: action.loading ? initialState.errors : state.errors
+                formLoading: action.loading
             }
             case MULTIPLE_EXECUTE_LOADING: return {
                 ...state,
@@ -175,9 +217,7 @@ export default function(state = initialState, action) {
             }
             case PREPARE_DATA: return {
                 ...state,
-                productList: action.productList,
-                totalPages: action.totalPage,
-                page: action.page,
+                postList: action.postList,
                 loading: false,
                 reload: false
             }
@@ -191,7 +231,7 @@ export default function(state = initialState, action) {
             }
             case MODAL_FORM_GET_CREATE_ACTION: return {
                 ...state,
-                product: initialState.product,
+                post: initialState.post,
                 openModal: true,
                 modalFormSuccessMessage: initialState.modalFormSuccessMessage
             }
@@ -199,17 +239,15 @@ export default function(state = initialState, action) {
                 ...state,
                 modalFormSuccessMessage: action.message
             }
-            case SET_PRODUCT_CATEGORY: return {
+            case SET_PRODUCT: return {
                 ...state,
-                product: action.product,
-                openModal: action.openModal,
-                modalFormSuccessMessage: initialState.modalFormSuccessMessage
+                product: action.product
             }
             case CLOSE_MODAL: return {
                 ...state,
                 openModal: false,
                 listLoading: false,
-                product: initialState.product,
+                post: initialState.post,
                 formLoading: initialState.formLoading,
                 errors: initialState.errors,
             }

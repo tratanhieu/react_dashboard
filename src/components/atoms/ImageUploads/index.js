@@ -1,19 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { Image as Img, Input, Icon } from "semantic-ui-react";
-
-import styles from "./styles.module.css";
+import React, { useState } from "react";
+import styles from "./styles.module.scss";
+import { IconButton } from "@material-ui/core";
+import { Cancel, AddCircle } from "@material-ui/icons";
 
 const Render = ({
+    rootWitdh = "480px",
     width = "90px",
     height = "125px",
     objectFit = "cover",
-    images,
+    max,
+    loading,
+    dataSources,
+    files,
+    error,
     onAdd,
     onActive,
     onRemove
 }) => (
-    <div className={styles.root}>
-        {images.map((image, i) => (
+    <div className={styles.root} style={{ width: rootWitdh }}>
+        {dataSources.map((image, i) => (
         <div
             key={i}
             className={styles.imageItem}
@@ -23,7 +28,8 @@ const Render = ({
             backgroundColor: `#${image.active ? `45A163` : `fff`}`
             }}
         >
-            <Img
+            <img
+                alt=""
                 className={styles.image}
                 style={{ objectFit, opacity: image.active ? 1 : 0.5 }}
                 key={i}
@@ -31,31 +37,48 @@ const Render = ({
                 size="small"
                 onClick={_ => onActive(i)}
             />
-            <Icon
+            <IconButton
+                size="small"
+                color="secondary"
                 className={styles.closeIcon}
-                name="window close"
-                color="red"
-                onClick={_ => onRemove(i, image.active)}
-            />
+                onClick={() => onRemove(i, image.active)}
+            >
+                <Cancel />
+            </IconButton>
         </div>
         ))}
         <div
             className={styles.addArea}
-            style={{ width, height, lineHeight: `calc(${height} - 14px)` }}
+            style={{
+                display: dataSources.length === max ? 'none' : 'block',
+                width, height, lineHeight: `calc(${height} - 14px)`
+            }}
         >
-            <Input
+            <input
                 className={styles.inputFile}
                 type="file"
                 multiple
+                accept="image/*"
                 onChange={onAdd}
+                value={files}
             />
-            <Icon name="add circle" size="large" />
+            {loading > 0 && loading < 100 ? 
+                <button className={styles.loading}>
+                    <progress className={styles.loading} value={loading} max="100">{loading}</progress>
+                </button> :
+                <IconButton style={{ zIndex: -1 }}>
+                    <AddCircle />
+                </IconButton>
+            }
         </div>
+        {error && <span className={styles.error}>{error}</span>}
     </div>
 );
 
 const ImageUploads = ({
+    name = "images",
     dataSources = [],
+    max = 3,
     config = {
         width: 480,
         quality: 0.8
@@ -63,54 +86,59 @@ const ImageUploads = ({
     onChange,
     ...rest
 }) => {
-    const [images, setImages] = useState(dataSources);
-
-    useEffect(() => {
-        setImages(dataSources)
-    }, [dataSources])
+    const [files, setFiles] = useState('')
+    const [loading, setLoading] = useState(0)
+    const [error, setError] = useState('')
 
     const renderProps = {
         ...rest,
-        images,
-        onAdd: e => {
-        readFiles(e.currentTarget.files, config, image => {
-                images.push({
-                    active: images.length === 0,
-                    src: image
-                });
-                setImages([...images]);
-                onChange(images);
-            });
+        loading,
+        files,
+        max,
+        dataSources,
+        error,
+        onAdd: async e => {
+            setError("")
+            const files = e.currentTarget.files
+            if (files.length > (max - dataSources.length)) {
+                setError(`You only upload maximum ${max} photo`)
+                return
+            }
+            setFiles(e.currentTarget.value)
+            const images = await readFiles(files, config, dataSources, setLoading)
+            onChange("", { name, value: [...images] })
+            setFiles("")
+            setLoading(100)
         },
         onActive: index => {
-            const currentActive = images.findIndex(image => image.active === true);
-            images[currentActive] = {
-                ...images[currentActive],
+            setError("")
+            const currentActive = dataSources.findIndex(image => image.active === true);
+            dataSources[currentActive] = {
+                ...dataSources[currentActive],
                 active: false
             };
-            images[index] = {
-                ...images[index],
+            dataSources[index] = {
+                ...dataSources[index],
                 active: true
             };
-            setImages([...images]);
-            onChange(images);
+            onChange("", { name, value: [...dataSources] });
         },
         onRemove: (index, active) => {
-            images.splice(index, 1);
-            if (active && images.length > 0) {
-                images[0] = {
-                ...images[0],
+            setError("")
+            dataSources.splice(index, 1);
+            if (active && dataSources.length > 0) {
+                dataSources[0] = {
+                ...dataSources[0],
                 active: true
                 };
             }
-            setImages([...images]);
-            onChange(images);
+            onChange("", { name, value: [...dataSources] });
         }
     };
     return <Render {...renderProps} />;
 };
 
-const readFile = (file, config, callback) => {
+const readFile = (file, config) => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = event => {
@@ -123,15 +151,30 @@ const readFile = (file, config, callback) => {
             elem.height = img.height * scaleFactor;
             const ctx = elem.getContext("2d");
             ctx.drawImage(img, 0, 0, config.width, img.height * scaleFactor);
-            callback(elem.toDataURL("image/jpeg", config.quality));
+            resolve(elem.toDataURL("image/jpeg", config.quality));
         };
     };
-};
+})
 
-const readFiles = (files, config, callback) => {
+const readFiles = (
+    files,
+    config,
+    dataSources,
+    setLoading
+) => new Promise(async resolve => {
+    let images = dataSources
+    let loading = 0;
+    const loadingRound = 90 / files.length
     for (const file of files) {
-        readFile(file, config, image => callback(image));
+        const image = await readFile(file, config);
+        images = [...images, {
+            active: images.length === 0,
+            src: image
+        }]
+        loading += loadingRound
+        setLoading(loading)
     }
-};
+    resolve(images)
+})
 
 export default ImageUploads

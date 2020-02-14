@@ -28,7 +28,7 @@ const RichText = ({
                 plugins: [
                     'advlist autolink lists link charmap print preview anchor',
                     'searchreplace visualblocks code fullscreen',
-                    'insertdatetime media table paste powerpaste code help wordcount',
+                    'insertdatetime media table paste code help wordcount',
                     'image imagetools'
                 ],
                 toolbar: `undo redo | bold italic underline strikethrough | 

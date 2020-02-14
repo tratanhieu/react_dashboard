@@ -9,7 +9,6 @@ const Image = ({
     ...rest
 }) => (
     <img style={{
-        width: '100%', 
         width,
         height,
         border: '6px #f0f0f0 solid',
