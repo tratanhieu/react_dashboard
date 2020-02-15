@@ -4,10 +4,11 @@ import { IconButton } from "@material-ui/core";
 import { Cancel, AddCircle } from "@material-ui/icons";
 
 const Render = ({
-    rootWitdh = "480px",
-    width = "90px",
-    height = "125px",
+    rootWitdh = "100%",
+    width = "65px",
+    height = "90px",
     objectFit = "cover",
+    onlyView = false,
     max,
     loading,
     dataSources,
@@ -23,9 +24,9 @@ const Render = ({
             key={i}
             className={styles.imageItem}
             style={{
-            width,
-            height,
-            backgroundColor: `#${image.active ? `45A163` : `fff`}`
+                width,
+                height,
+                backgroundColor: `#${image.active ? `45A163` : `fff`}`
             }}
         >
             <img
@@ -35,19 +36,19 @@ const Render = ({
                 key={i}
                 src={image.src}
                 size="small"
-                onClick={_ => onActive(i)}
+                onClick={_ => !onlyView && onActive(i)}
             />
-            <IconButton
+            {!onlyView && <IconButton
                 size="small"
                 color="secondary"
                 className={styles.closeIcon}
                 onClick={() => onRemove(i, image.active)}
             >
                 <Cancel />
-            </IconButton>
+            </IconButton>}
         </div>
         ))}
-        <div
+        {!onlyView && <div
             className={styles.addArea}
             style={{
                 display: dataSources.length === max ? 'none' : 'block',
@@ -70,7 +71,7 @@ const Render = ({
                     <AddCircle />
                 </IconButton>
             }
-        </div>
+        </div>}
         {error && <span className={styles.error}>{error}</span>}
     </div>
 );
@@ -104,6 +105,7 @@ const ImageUploads = ({
                 setError(`You only upload maximum ${max} photo`)
                 return
             }
+            setLoading(10)
             setFiles(e.currentTarget.value)
             const images = await readFiles(files, config, dataSources, setLoading)
             onChange("", { name, value: [...images] })
@@ -163,7 +165,7 @@ const readFiles = (
     setLoading
 ) => new Promise(async resolve => {
     let images = dataSources
-    let loading = 0;
+    let loading = 10;
     const loadingRound = 90 / files.length
     for (const file of files) {
         const image = await readFile(file, config);
