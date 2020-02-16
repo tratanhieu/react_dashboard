@@ -37,7 +37,6 @@ const createAction = action => `${prefix}${action}`
 const LIST_LOADING = createAction("LIST_LOADING")
 const RELOAD = createAction("RELOAD")
 const PREPARE_DATA = createAction("PREPARE_DATA")
-const INIT_FORM = createAction("INIT_FORM")
 const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
 const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS")
 const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING")
@@ -51,6 +50,7 @@ const SET_ERRORS = createAction("SET_ERRORS")
 
 // API
 const PATH_API = 'product'
+const PRODUCT_CATEGORY_PATH = 'product/category'
 
 const listLoading = loading => ({ type: LIST_LOADING, loading })
 // const setErrors = errors => ({ type: SET_ERRORS, errors })
@@ -60,7 +60,6 @@ const prepareData = data => ({
 })
 const setErrors = errors => ({ type: SET_ERRORS, errors })
 const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
-const setInitForm = ({ postTypeList, tagList }) => ({ type: INIT_FORM, postTypeList, tagList })
 
 const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
 
@@ -69,21 +68,6 @@ const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, m
 export const setProduct = product => ({ type: SET_PRODUCT, product })
 
 export const closeModal = () => ({ type: CLOSE_MODAL })
-
-export const doMultipleExecute = (listId, status) => async dispatch =>{
-    const params = { listId, status }
-    dispatch(resetSystemErrors())
-    dispatch(setMultipleExecuteLoading(true))
-    return axios.post(`${PATH_API}/execute`, params, {
-        timeout: 5000,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(_ => dispatch(setCheckedItems([])))
-    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(setMultipleExecuteLoading(false)))
-}
 
 export const fetchAll = () => async dispatch => {
     // dispatch(resetSystemErrors())
@@ -127,16 +111,43 @@ export const doSave = post => async dispatch => {
 
 export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
 
+const INIT_FORM = createAction("INIT_FORM")
 export const initForm = () => dispatch => {
-    // dispatch(resetSystemErrors())
-    // dispatch(modalFormSuccessMessage(""))
-    // dispatch(formLoading(true))
-    // return axios.get(`${PATH_API}/create`)
-    // .then(response => {
-    //     dispatch(setInitForm(response.data))
-    // })
-    // .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    // .finally(() => dispatch(formLoading(false)))
+    dispatch(resetSystemErrors())
+    dispatch(modalFormSuccessMessage(""))
+    dispatch(formLoading(true))
+    return axios.get(`${PATH_API}/create`)
+    .then(response => {
+        dispatch(({ type: INIT_FORM, ...response.data }))
+    })
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(() => dispatch(formLoading(false)))
+}
+
+const SELECT_PRODUCT_TYPE_GROUP = createAction("SELECT_PRODUCT_TYPE_GROUP")
+export const onChangeProductCategory = productCategoryId => dispatch => {
+    dispatch(resetSystemErrors())
+    dispatch(modalFormSuccessMessage(""))
+    dispatch(formLoading(true))
+    return axios.get(`${PRODUCT_CATEGORY_PATH}/select/${productCategoryId}`)
+    .then(response => {
+        dispatch(({ type: SELECT_PRODUCT_TYPE_GROUP, productTypeGroupList: response.data }))
+    })
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(() => dispatch(formLoading(false)))
+}
+
+const SELECT_PRODUCT_TYPE = createAction("SELECT_PRODUCT_TYPE")
+export const onChangeProductTypeGroup = (productCategoryId, productTypeGroupId) => dispatch => {
+    dispatch(resetSystemErrors())
+    dispatch(modalFormSuccessMessage(""))
+    dispatch(formLoading(true))
+    return axios.get(`${PRODUCT_CATEGORY_PATH}/select/${productCategoryId}/${productTypeGroupId}`)
+    .then(response => {
+        dispatch(({ type: SELECT_PRODUCT_TYPE, productTypeList: response.data }))
+    })
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(() => dispatch(formLoading(false)))
 }
 
 export const getUpdateAction = postId => async dispatch => {
@@ -200,8 +211,20 @@ export default function(state = initialState, action) {
             }
             case INIT_FORM: return {
                 ...state,
-                postTypeList: action.postTypeList,
+                productCategoryList: action.productCategoryList,
+                productTypeGroupList: action.productTypeGroupList,
+                productTypeList: action.productTypeList,
+                productBrandList: action.productBrandList,
+                productUnitList: action.productUnitList,
                 tagList: action.tagList
+            }
+            case SELECT_PRODUCT_TYPE_GROUP: return {
+                ...state,
+                productTypeGroupList: action.productTypeGroupList
+            }
+            case SELECT_PRODUCT_TYPE: return {
+                ...state,
+                productTypeList: action.productTypeList
             }
             case RELOAD: return {
                 ...state,

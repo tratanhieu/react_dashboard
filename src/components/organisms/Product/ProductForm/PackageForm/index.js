@@ -22,7 +22,7 @@ const Render = ({
                 <TableCell>Images</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>
-                    <Button content="Add" onClick={onOpenCreate} />
+                    <Button onClick={onOpenCreate}>Add</Button>
                 </TableCell>
             </TableRow>
         </TableHead>

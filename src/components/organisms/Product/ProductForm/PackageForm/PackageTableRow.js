@@ -11,7 +11,8 @@ const Render = ({
     setEditble,
     onChangeForm,
     onSave,
-    onCancel
+    onCancel,
+    onRemove
 }) => (
     <TableRow>
         <TableCell width={30} align="center">{index + 1}</TableCell>
@@ -48,7 +49,7 @@ const Render = ({
                 {isEditable ? <CheckCircle onClick={() => onSave(index)} /> : <EditOutlined onClick={() => setEditble(true)}/>}
             </IconButton>
             <IconButton size="small">
-                <RemoveCircle onClick={onCancel} />
+                <RemoveCircle onClick={() => isEditable ? onCancel() : onRemove(index)} />
             </IconButton>
         </TableCell>
     </TableRow>
@@ -66,6 +67,11 @@ export default function PackageTableRow({
     const [packageState, setPackageState] = useState(data)
     const [isEditable, setEditble] = useState(isCreateForm)
 
+    const cancelEdit = () => {
+        setPackageState({ ...data })
+        setEditble(false)
+    }
+
     const renderProps = {
         ...rest,
         isEditable,
@@ -78,10 +84,8 @@ export default function PackageTableRow({
         onSave: index => isCreateForm ? 
             onCreate(packageState) :
             onUpdate(index, packageState, isEdit => setEditble(isEdit)),
-        onCancel: () => isCreateForm ? onCancelCreate() : () => {
-            setPackageState({ ...data })
-            setEditble(false)
-        }
+        onCancel: () => isCreateForm ? onCancelCreate() : cancelEdit(),
+        onRemove: index => onRemove(index)
     }
 
     return <Render {...renderProps} />

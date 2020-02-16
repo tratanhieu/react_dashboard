@@ -6,7 +6,7 @@ import ToggleActive from "components/atoms/ToggleActive";
 import FormModule from "components/molecules/FormModule";
 import SelectSearch from "components/atoms/SelectSearch";
 import TagsInput from "components/atoms/TagsInput";
-import { closeModal, initForm, doSave, setProduct } from 'redux/reducers/productReducer';
+import { closeModal, initForm, doSave, setProduct, onChangeProductCategory, onChangeProductTypeGroup } from 'redux/reducers/productReducer';
 import FormGroup from "components/atoms/FormGroup";
 import Fieldset from "components/atoms/Fieldset";
 import PackageForm from "components/organisms/Product/ProductForm/PackageForm";
@@ -16,12 +16,28 @@ const Render = ({
     init,
     formLoading,
     formSuccessMessage,
-    showPublishDate,
-    postTypeList,
+    productCategoryList,
+    productTypeGroupList,
+    productTypeList,
+    productBrandList,
+    productUnitList,
     tagList = [],
-    product: { name, slugName, publishDate, image, packages = [], tags = [], postType, description, content, status },
+    product: { 
+        name,
+        slugName,
+        netWeight,
+        packages = [],
+        tags = [],
+        productCategory,
+        productTypeGroup,
+        productType,
+        productBrand,
+        productUnit,
+        description,
+        content,
+        status
+    },
     errors: { formErrors },
-    setShowPublishDate,
     onLoaded,
     onChangeForm,
     onChangeContent,
@@ -32,7 +48,7 @@ const Render = ({
     <FormModule 
         title="Create Product"
         loading={formLoading}
-        positiveDisabled={!(name && description && content && postType && description && image)}
+        positiveDisabled={!(name)}
         formSuccess={formSuccessMessage}
         open={openModal}
         onPositive={onPositive}
@@ -55,44 +71,48 @@ const Render = ({
                     <SelectSearch
                         style={{ width: '32%' }}
                         required
+                        name="productCategory"
                         label="Product Category"
-                        options={postTypeList}
-                        value={postType}
+                        options={productCategoryList}
+                        value={productCategory}
                         getOptionLabel={option => option.name}
-                        onChange={(_, value) => onChangeForm(_, { name: 'postType', value: value })}
-                        error={formErrors.postTypeId}
+                        onChange={onChangeForm}
+                        error={formErrors.productCategoryId}
                     />
                     <SelectSearch
                         style={{ width: '32%' }}
                         required
-                        label="Product Group Type"
-                        options={postTypeList}
-                        value={postType}
+                        name="productTypeGroup"
+                        label="Product Type Group"
+                        options={productTypeGroupList}
+                        value={productTypeGroup}
                         getOptionLabel={option => option.name}
-                        onChange={(_, value) => onChangeForm(_, { name: 'postType', value: value })}
-                        error={formErrors.postTypeId}
+                        onChange={onChangeForm}
+                        error={formErrors.productTypeGroupId}
                     />
                     <SelectSearch
                         style={{ width: '32%' }}
                         required
+                        name="productType"
                         label="Product Type"
-                        options={postTypeList}
-                        value={postType}
+                        options={productTypeList}
+                        value={productType}
                         getOptionLabel={option => option.name}
-                        onChange={(_, value) => onChangeForm(_, { name: 'postType', value: value })}
-                        error={formErrors.postTypeId}
+                        onChange={onChangeForm}
+                        error={formErrors.productTypeId}
                     />
                 </FormGroup>
                 <FormGroup row>
                     <SelectSearch
                         style={{ width: '48%' }}
                         required
+                        name="productBrand"
                         label="Product Brand"
-                        options={postTypeList}
-                        value={postType}
+                        options={productBrandList}
+                        value={productBrand}
                         getOptionLabel={option => option.name}
-                        onChange={(_, value) => onChangeForm(_, { name: 'postType', value: value })}
-                        error={formErrors.postTypeId}
+                        onChange={onChangeForm}
+                        error={formErrors.productBrandId}
                     />
                     <div style={{ width: '48%', display: 'flex', justifyContent: 'space-between' }}>
                         <Input
@@ -102,19 +122,20 @@ const Render = ({
                             margin="dense"
                             name="netWeight"
                             fullWidth
-                            value={name}
+                            value={netWeight}
                             onChange={onChangeForm}
-                            error={formErrors.name}
+                            error={formErrors.netWeight}
                         />
                         <SelectSearch
                             style={{ width: '32%' }}
                             required
+                            name="productUnit"
                             label="Unit"
-                            options={postTypeList}
-                            value={postType}
+                            options={productUnitList}
+                            value={productUnit}
                             getOptionLabel={option => option.name}
-                            onChange={(_, value) => onChangeForm(_, { name: 'postType', value: value })}
-                            error={formErrors.postTypeId}
+                            onChange={onChangeForm}
+                            error={formErrors.productUnitId}
                         />
                     </div>
                 </FormGroup>
@@ -160,8 +181,27 @@ export default function ProductForm() {
     const [init, setInit] = useState(true)
 
     const selector = useSelector(({
-        productReducer: { formSuccessMessage, formLoading, product, errors } 
-    }) => ({ formLoading, formSuccessMessage, product, errors }), shallowEqual)
+        productReducer: {
+            formLoading,
+            formSuccessMessage,
+            product,
+            productCategoryList,
+            productTypeGroupList,
+            productTypeList,
+            productBrandList,
+            productUnitList,
+            errors } 
+    }) => ({
+        formLoading,
+        formSuccessMessage,
+        product,
+        productCategoryList,
+        productTypeGroupList,
+        productTypeList,
+        productBrandList,
+        productUnitList,
+        errors
+    }), shallowEqual)
 
     const dispatch = useDispatch()
 
@@ -178,10 +218,18 @@ export default function ProductForm() {
         init,
         ...selector,
         onLoaded: () => setInit(false),
-        onChangeForm: (_, { name, value }) => dispatch(setProduct({ 
-            ...selector.product,
-            [name]: value
-        })),
+        onChangeForm: (_, { name, value }) => {
+            dispatch(setProduct({ 
+                ...selector.product,
+                [name]: value
+            }))
+            if (value && name === 'productCategory') {
+                dispatch(onChangeProductCategory(value.productCategoryId))
+            }
+            if (value && name === 'productTypeGroup') {
+                dispatch(onChangeProductTypeGroup(value.productCategoryId, value.productTypeGroupId))
+            }
+        },
         onChangeContent: content => dispatch(setProduct({ ...selector.product, content })),
         // onPositive: () => dispatch(doSave(selector.product)),
         onChangePackagesForm: packages => dispatch(setProduct({ ...selector.product, packages })),

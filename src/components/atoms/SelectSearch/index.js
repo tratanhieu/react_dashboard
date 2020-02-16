@@ -2,7 +2,7 @@ import React from 'react'
 import { TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
-const SelectSearch = ({
+const Render = ({
     style = {},
     required = false,
     label = '',
@@ -21,5 +21,15 @@ const SelectSearch = ({
         {...rest}
     />
 )
+
+const SelectSearch = ({ name, onChange, ...rest }) => {
+
+    const renderProps = {
+        ...rest,
+        onChange: (_, value) => onChange(name, { name, value: value })
+    }
+
+    return <Render {...renderProps} />
+}
 
 export default SelectSearch
