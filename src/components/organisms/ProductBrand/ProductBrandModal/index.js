@@ -17,10 +17,7 @@ const Render = ({
   openModal,
   formLoading,
   modalFormSuccessMessage,
-  productBrand: { productBrandId, productBrandName, slugName, image, status },
-  modalStatus,
-  onChangeModalStatus,
-  productBrandGroupList,
+  productBrand: { productBrandId, name, slugName, image, status },
   errors: { formErrors },
   onChangeForm,
   onPositive,
@@ -31,43 +28,38 @@ const Render = ({
     open={openModal}
     loading={formLoading}
     modalSuccess={modalFormSuccessMessage}
-    minWidth="760px"
+    minWidth="320px"
     onPositive={onPositive}
     onClose={onClose}
   >
-    <FormGroup row>
-      <ImageUpload
-        source={image}
-        onChange={value => onChangeForm(_, { name: "image", value })}
-        error={formErrors.image}
+    <FormGroup>
+      <Input
+        required
+        label="Product Brand Name: "
+        name="name"
+        value={name}
+        onChange={onChangeForm}
+        disabled={!!productBrandId}
+        error={formErrors.name}
       />
-      <FormGroup style={{ width: "50%" }}>
-        <FormGroup>
-          <Input
-            required
-            label="Product Brand Name: "
-            name="productBrandName"
-            value={productBrandName}
-            onChange={onChangeForm}
-            disabled={!!productBrandId}
-            error={formErrors.productBrandName}
-          />
-        {productBrandId && <Input
-            label="SlugName"
-            required
-            name="slugName"
-            onChange={onChangeForm}
-            value={slugName}
-            error={formErrors.slugName}
-        />}
-          <ToggleActive
-            label="Status"
-            checked={status}
-            onChange={onChangeForm}
-          />
-        </FormGroup>
-      </FormGroup>
+      {productBrandId && (
+        <Input
+          label="SlugName"
+          required
+          name="slugName"
+          onChange={onChangeForm}
+          value={slugName}
+          error={formErrors.slugName}
+        />
+      )}
     </FormGroup>
+    <ToggleActive label="Status" checked={status} onChange={onChangeForm} />
+    <ImageUpload
+      source={image}
+      name="image"
+      onChange={onChangeForm}
+      error={formErrors.image}
+    />
   </ModalModule>
 );
 
@@ -94,7 +86,6 @@ const ProductBrandModal = () => {
     }),
     shallowEqual
   );
-
   const dispatch = useDispatch();
 
   const renderProps = {

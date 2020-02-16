@@ -154,7 +154,7 @@ export const setFilters = filters => ({ type: UPDATE_FILTERS, filters })
 export const closeModal = () => ({ type: CLOSE_MODAL })
 
 export default function(state = initialState, action) {
-    console.log(action.type, action)
+    // console.log(action.type, action)
     try {
         switch (action.type) {
             case LIST_LOADING: return { ...state, loading: action.loading }

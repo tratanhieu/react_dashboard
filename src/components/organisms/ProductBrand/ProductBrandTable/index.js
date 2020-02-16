@@ -21,17 +21,17 @@ const listStatus = [
 
 const headCells = [
   { id: "image", label: "Image" },
-  { id: "productBrandName", label: "Brand Name" },
+  { id: "name", label: "Brand Name" },
   { id: "slugName", label: "Slug Name" },
   { id: "status", label: "Status" }
 ];
 
-const TableRowModule = ({ image, productBrandName, slugName, status }) => (
+const TableRowModule = ({ image, name, slugName, status }) => (
   <>
     <TableCell>
       <Image style={{ maxWidth: "200px" }} src={image}></Image>
     </TableCell>
-    <TableCell>{productBrandName}</TableCell>
+    <TableCell>{name}</TableCell>
     <TableCell>{slugName}</TableCell>
     <TableCell>
       <StatusLabel {...DEFAULT_STATUS[status]} />
