@@ -1,43 +1,42 @@
 import React, { useEffect } from 'react'
-import { useSelector, useDispatch, shallowEqual } from 'react-redux'
+import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 
-import ProductCategoryTable from '../../organisms/ProductCategory/ProductCategoryTable';
 import ProductCategoryModal from '../../organisms/ProductCategory/ProductCategoryModal';
-import { fetchWithPaginationAndFilter } from '../../../redux/reducers/productCategoryReducer';
+import ProductCategoryTable from '../../organisms/ProductCategory/ProductCategoryTable';
+import { resetSystemErrors } from '../../../redux/reducers/rootReducer';
 import ContentHeader from '../../organisms/ContentHeader';
+import { fetchAll, getCreateAction } from '../../../redux/reducers/productCategoryReducer';
 
-const Render = ({ loading, reload, onOpenCreate, productCategoryList, page, totalPages, filters }) => (
+const Render = ({ createButtonLoading, onOpenCreate }) => (
     <>
-        <ContentHeader title="Product Category" onOpenCreate={onOpenCreate} />
-        <ProductCategoryTable
-            loading={loading}
-            reload={reload}
-            filters={filters}
-            defaultActivePage={page}
-            totalPages={totalPages}
-            dataSource={productCategoryList}
+        <ContentHeader
+            title="Product Category"
+            createButtonLoading={createButtonLoading} 
+            onOpenCreate={onOpenCreate}
         />
+        <ProductCategoryTable />
         <ProductCategoryModal />
     </>
 )
 
 const ProductCategory = () => {
     const selector = useSelector(({
-        productCategoryReducer: { productCategoryList, page, totalPages, filters, loading, reload } 
-    }) => ({ productCategoryList, loading, page, totalPages, filters, reload }), shallowEqual)
+        productCategoryReducer: { createButtonLoading } 
+    }) => ({ createButtonLoading }), shallowEqual)
 
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(fetchWithPaginationAndFilter(selector.filters, 1))
+        dispatch(resetSystemErrors())
+        dispatch(fetchAll())
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const renderProps = {
-        ...selector
+        ...selector,
+        onOpenCreate: () => dispatch(getCreateAction())
     }
 
     return <Render {...renderProps} />
 }
-
 export default ProductCategory

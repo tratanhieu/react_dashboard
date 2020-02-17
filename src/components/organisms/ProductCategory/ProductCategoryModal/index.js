@@ -1,107 +1,101 @@
-import React, { useState, useEffect } from 'react'
-import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import { Form } from 'semantic-ui-react'
-
-import ToggleActive from '../../../atoms/ToggleActive';
-import { ACTIVE, HIDDEN } from '../../../../constants/entites';
-import ModalModule from '../../../molecules/ModalModule';
+import React from "react";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import Input from "../../../atoms/Input";
 import {
-    doSave, getCreateAction, closeModal, initialState 
-} from '../../../../redux/reducers/productCategoryReducer';
-import FormInputSlug from '../../../atoms/FormInputSlug';
-import { formErrorsHandle, isFormError } from '../../../../commons/utils';
+  closeModal,
+  doSave,
+  setProductCategory,
+  setModalStatus
+} from "../../../../redux/reducers/productCategoryReducer";
+import _ from "lodash";
+import ModalModule from "../../../molecules/ModalModule";
+import ToggleActive from "../../../atoms/ToggleActive";
+import FormGroup from "../../../atoms/FormGroup";
 
-const Render = ({ 
-    productCategory: { productCategoryId, name, slugName, status },
-    error,
-    openModal, onClose, formLoading, modalFormSuccessMessage,
-    onPositive, onChangeName, onChangeStatus, onContinue, onChangeSlugValue,
-    errors = {},
-    ...rest
+const Render = ({
+  openModal,
+  formLoading,
+  modalFormSuccessMessage,
+  productCategory: { productCategoryId, name, slugName, image, status },
+  errors: { formErrors },
+  onChangeForm,
+  onPositive,
+  onClose
 }) => (
-    <ModalModule
-        size="mini"
-        title={ productCategoryId ? 'Update' : 'Create' }
-        open={openModal}
-        onClose={onClose}
-        actionDisable={isFormError(errors)}
-        modalSuccessMessage={modalFormSuccessMessage}
-        actionLoading={formLoading}
-        onPositive={onPositive}
-        onContinue={onContinue}
-        {...rest}
-    >
-        <Form loading={formLoading}>
-            <FormInputSlug
-                tabIndex={0}
-                fluid
-                type="text"
-                name="name"
-                label="Product Category Name: " 
-                required
-                defaultValue={name}
-                defaultSlugValue={slugName}
-                valueError={errors.name}
-                slugValueError={errors.slugName}
-                onChange={onChangeName}
-                onChangeSlugValue={onChangeSlugValue} />
-            <ToggleActive
-                tabIndex={2}
-                checked={status === ACTIVE} 
-                onChange={onChangeStatus} />
-        </Form>
-    </ModalModule>
-)
+  <ModalModule
+    title={
+      !productCategoryId ? "Create Product Category" : "Update Product Category"
+    }
+    open={openModal}
+    loading={formLoading}
+    modalSuccess={modalFormSuccessMessage}
+    minWidth="320px"
+    onPositive={onPositive}
+    onClose={onClose}
+  >
+    <FormGroup>
+      <Input
+        required
+        label="Product Category Name: "
+        name="name"
+        value={name}
+        onChange={onChangeForm}
+        disabled={!!productCategoryId}
+        error={formErrors.name}
+      />
+      {productCategoryId && (
+        <Input
+          label="SlugName"
+          required
+          name="slugName"
+          onChange={onChangeForm}
+          value={slugName}
+          error={formErrors.slugName}
+        />
+      )}
+      <ToggleActive label="Status" checked={status} onChange={onChangeForm} />
+    </FormGroup>
+  </ModalModule>
+);
 
 const ProductCategoryModal = () => {
-    const selector = useSelector(({
-        productCategoryReducer: { openModal, modalFormSuccessMessage, formLoading, productCategory, errors } 
-    }) => ({ openModal, formLoading, modalFormSuccessMessage, productCategory, errors }), shallowEqual)
-
-    const [productCategory, setProductCategory] = useState({ ...initialState.productCategory })
-    const [errors, setErrors] = useState({ ...initialState.errors })
-
-    const dispatch = useDispatch()
-
-    useEffect(() => {
-        setProductCategory({ ...selector.productCategory })
-    }, [selector.productCategory, selector.openModal, selector.modalFormSuccessMessage])
-
-    useEffect(() => {
-        setErrors({ ...selector.errors })
-    }, [selector.errors])
-
-    const renderProps = {
-        ...selector,
-        errors,
+  const selector = useSelector(
+    ({
+      productCategoryReducer: {
+        openModal,
+        modalFormSuccessMessage,
+        formLoading,
         productCategory,
-        onChangeName: (_, input, error) => {
-            setProductCategory({ 
-                ...productCategory,
-                [input.name]: input.value
-            })
-            if (!error) {
-                delete errors['slugName']
-            }
-            setErrors({ ...formErrorsHandle(errors, input.name, error) })
-        },
-        onChangeSlugValue: (slugName, error) => {
-            setProductCategory({ 
-                ...productCategory,
-                slugName
-            })
-            setErrors({ ...formErrorsHandle(errors, 'slugName', error) })
-        },
-        onChangeStatus: status => setProductCategory({ 
-            ...productCategory,
-            status: status ? ACTIVE : HIDDEN
-        }),
-        onPositive: _ => dispatch(doSave(productCategory)),
-        onContinue: _ => dispatch(getCreateAction()),
-        onClose: _ => dispatch(closeModal())
-    }
+        modalStatus,
+        productCategoryGroupList,
+        errors
+      }
+    }) => ({
+      openModal,
+      modalFormSuccessMessage,
+      formLoading,
+      productCategory,
+      modalStatus,
+      productCategoryGroupList,
+      errors
+    }),
+    shallowEqual
+  );
+  const dispatch = useDispatch();
 
-    return <Render {...renderProps} />
-}
+  const renderProps = {
+    ...selector,
+    onChangeForm: (_, { name, value }) =>
+      dispatch(
+        setProductCategory({ ...selector.productCategory, [name]: value })
+      ),
+    onChangeModalStatus: (_, { name, value }) =>
+      dispatch(setModalStatus({ ...selector.modalStatus, [name]: value })),
+    onPositive: () => dispatch(doSave(selector.productCategory)),
+    onClose: () => dispatch(closeModal())
+  };
 
-export default ProductCategoryModal
+  return <Render {...renderProps} />;
+};
+
+export default ProductCategoryModal;

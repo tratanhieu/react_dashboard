@@ -1,16 +1,25 @@
-import React from 'react'
-import { useDispatch } from 'react-redux'
-
+import React from "react";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import { DEFAULT_STATUS } from "../../../../constants/entites";
 import Slug from '../../../atoms/Slug';
-
-import { DEFAULT_STATUS } from '../../../../constants/entites'
 // REDUX
-import {
-    fetchWithPaginationAndFilter, getUpdateAction
-} from '../../../../redux/reducers/productCategoryReducer';
+import FilterStatus from "../../../molecules/FilterStatus";
+import { TableCell, Chip } from "@material-ui/core";
+import TableModule from "../../../molecules/TableModule";
 import { formatDateTime } from '../../../../commons/utils';
-import TableModule from '../../../molecules/TableModule';
-import { TableCell, Chip } from '@material-ui/core';
+import StatusLabel from "../../../atoms/StatusLabel";
+import Image from "../../../atoms/Image";
+import {
+  getUpdateAction,
+  doDelete
+} from "../../../../redux/reducers/productCategoryReducer";
+
+const listStatus = [
+  { key: "", label: "All" },
+  { key: "ACTIVE", label: "Active" },
+  { key: "HIDDEN", label: "Hidden" },
+  { key: "DELETE", label: "Delete" }
+];
 
 const headCells = [
     { id: "name", label: "Name" },
@@ -36,35 +45,41 @@ const TableRowModule = ({ name, slugName, createDate, updateDate, status }) => (
     </>
 );
 
-const Render = ({
-    dataSource, loading, totalPages, defaultActivePage, checkAllItem,
-    onChange, onDelete, onChangePage, onCheckItem, onCheckAllItem
-}) => {
+const Render = ({ productCategoryList, loading, onOpenUpdate, onDelete }) => (
+  <TableModule
+    selectKey="productCategoryId"
+    loading={loading}
+    headCells={headCells}
+    dataSources={productCategoryList}
+    row={TableRowModule}
+    onOpenUpdate={onOpenUpdate}
+    onDelete={onDelete}
+  >
+    <FilterStatus listStatus={listStatus} onChangeFilter />
+  </TableModule>
+);
 
-    return (
-        <TableModule
-            headCells={headCells}
-            dataSources={dataSource}
-            row={TableRowModule}
-        />
-    )
+export default function ProductCategoryTable() {
+  const selector = useSelector(
+    ({
+      productCategoryReducer: {
+        productCategoryList,
+        page,
+        totalPage: totalPages,
+        filters,
+        loading
+      }
+    }) => ({ productCategoryList, loading, page, totalPages, filters }),
+    shallowEqual
+  );
+
+  const dispatch = useDispatch();
+
+  const renderProps = {
+    ...selector,
+    onOpenUpdate: productCategoryId => dispatch(getUpdateAction(productCategoryId)),
+    onDelete: productCategoryId => dispatch(doDelete(productCategoryId))
+  };
+
+  return <Render {...renderProps} />;
 }
-
-const ProductCategoryTable = ({ loading, reload,
-    dataSource = [], filters = {}, defaultActivePage, totalPages }) => {
-
-    const dispatch = useDispatch();
-
-    const renderProps = {
-        dataSource,
-        loading,
-        defaultActivePage,
-        totalPages,
-        onChangePage: pageValue => dispatch(fetchWithPaginationAndFilter(filters, pageValue)),
-        onChange: productCategoryId => dispatch(getUpdateAction(productCategoryId))
-    }
-
-    return <Render {...renderProps} />
-}
-
-export default ProductCategoryTable
