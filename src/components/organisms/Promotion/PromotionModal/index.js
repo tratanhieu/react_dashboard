@@ -71,6 +71,7 @@ const Render = ({
     loading={formLoading}
     modalSuccess={modalFormSuccessMessage}
     minWidth="650px"
+    maxWidth="md"
     onPositive={onPositive}
     onClose={onClose}
   >
