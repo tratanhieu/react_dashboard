@@ -5,13 +5,10 @@ import {
   closeModal,
   doSave,
   setProductTypeGroup,
-  setModalStatus
 } from "../../../../redux/reducers/productTypeGroupReducer";
 import ModalModule from "../../../molecules/ModalModule";
 import ToggleActive from "../../../atoms/ToggleActive";
-import TableCell from "@material-ui/core/TableCell";
 import SelectSearch from "../../../atoms/SelectSearch";
-import { ALL, CUSTOM } from "../../../../constants/entites";
 
 const Render = ({
   openModal,
@@ -25,14 +22,7 @@ const Render = ({
     updateDate,
     status
   },
-  loading,
   categoryList,
-  modalStatus,
-  onChangeCodeStatus,
-  onChangeApplyStatus,
-  onChangeCode,
-  onAddCode,
-  onRemoveCode,
   errors: { formErrors },
   onChangeForm,
   onPositive,
@@ -40,7 +30,7 @@ const Render = ({
 }) => (
   <ModalModule
     title={
-      productTypeGroupId ? "Update ProductTypeGroup" : "Create ProductTypeGroup"
+      productTypeGroupId ? "Update Product Type Group" : "Create Product Type Group"
     }
     open={openModal}
     loading={formLoading}
@@ -51,8 +41,8 @@ const Render = ({
   >
     <Input
       required
-      label="ProductTypeGroup Name: "
-      name="ProductTypeGroupName"
+      label="Product Type Group Name: "
+      name="productTypeGroupName"
       value={name}
       onChange={onChangeForm}
       disabled={!!productTypeGroupId}
