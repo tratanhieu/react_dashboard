@@ -25,7 +25,7 @@ const headCells = [
     { id: "name", label: "Name" },
     { id: "createDate", label: "Create Date" },
     { id: "updateDate", label: "Update Date" },
-    { id: "status", label: "Create Date" }
+    { id: "status", label: "Status" }
 ];
 
 const TableRowModule = ({ name, slugName, createDate, updateDate, status }) => (
