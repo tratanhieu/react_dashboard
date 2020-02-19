@@ -4,14 +4,11 @@ import Input from "../../../atoms/Input";
 import {
   closeModal,
   doSave,
-  setProductType,
-  setModalStatus
+  setProductType
 } from "../../../../redux/reducers/productTypeReducer";
 import ModalModule from "../../../molecules/ModalModule";
 import ToggleActive from "../../../atoms/ToggleActive";
-import TableCell from "@material-ui/core/TableCell";
 import SelectSearch from "../../../atoms/SelectSearch";
-import { ALL, CUSTOM } from "../../../../constants/entites";
 
 const Render = ({
   openModal,
@@ -25,14 +22,7 @@ const Render = ({
     updateDate,
     status
   },
-  loading,
   typeGroupList,
-  modalStatus,
-  onChangeCodeStatus,
-  onChangeApplyStatus,
-  onChangeCode,
-  onAddCode,
-  onRemoveCode,
   errors: { formErrors },
   onChangeForm,
   onPositive,
@@ -40,7 +30,7 @@ const Render = ({
 }) => (
   <ModalModule
     title={
-      productTypeId ? "Update ProductType" : "Create ProductType"
+      productTypeId ? "Update Product Type" : "Create Product Type"
     }
     open={openModal}
     loading={formLoading}
