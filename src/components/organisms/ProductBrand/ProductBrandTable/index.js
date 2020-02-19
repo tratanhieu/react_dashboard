@@ -6,7 +6,9 @@ import FilterStatus from "../../../molecules/FilterStatus";
 import { TableCell } from "@material-ui/core";
 import TableModule from "../../../molecules/TableModule";
 import StatusLabel from "../../../atoms/StatusLabel";
+import { formatDateTime } from "../../../../commons/utils";
 import Image from "../../../atoms/Image";
+import Slug from "../../../atoms/Slug";
 import {
   getUpdateAction,
   doDelete
@@ -22,17 +24,29 @@ const listStatus = [
 const headCells = [
   { id: "image", label: "Image" },
   { id: "name", label: "Brand Name" },
-  { id: "slugName", label: "Slug Name" },
+  { id: "createDate", label: "Create Date" },
+  { id: "updateDate", label: "Update Date" },
   { id: "status", label: "Status" }
 ];
 
-const TableRowModule = ({ image, name, slugName, status }) => (
+const TableRowModule = ({
+  image,
+  name,
+  slugName,
+  createDate,
+  updateDate,
+  status
+}) => (
   <>
     <TableCell>
       <Image style={{ maxWidth: "200px" }} src={image}></Image>
     </TableCell>
-    <TableCell>{name}</TableCell>
-    <TableCell>{slugName}</TableCell>
+    <TableCell>
+      {name}
+      <Slug>{slugName}</Slug>
+    </TableCell>
+    <TableCell>{formatDateTime(createDate)}</TableCell>
+    <TableCell>{formatDateTime(updateDate)}</TableCell>
     <TableCell>
       <StatusLabel {...DEFAULT_STATUS[status]} />
     </TableCell>
