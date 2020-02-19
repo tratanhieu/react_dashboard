@@ -1,85 +1,116 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { Form } from "semantic-ui-react";
-import FormInputSlug from "../../../atoms/FormInputSlug";
-import ImageUploads from "../../../atoms/ImageUploads";
-import ModalModule from "../../../molecules/ModalModule";
-
-
+import React from "react";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import Input from "../../../atoms/Input";
 import {
-    doSave, closeModal 
-} from '../../../../redux/reducers/productTypeReducer';
+  closeModal,
+  doSave,
+  setProductType,
+  setModalStatus
+} from "../../../../redux/reducers/productTypeReducer";
+import ModalModule from "../../../molecules/ModalModule";
+import ToggleActive from "../../../atoms/ToggleActive";
+import TableCell from "@material-ui/core/TableCell";
+import SelectSearch from "../../../atoms/SelectSearch";
+import { ALL, CUSTOM } from "../../../../constants/entites";
 
 const Render = ({
-    openModal,
-    productBrand: { productBrandId, name, slugName, image = [], status },
-    onPositive,
-    onClose,
-    onChangeName,
-    onChangeImage,
-    onChangeStatus,
-    ...rest
+  openModal,
+  formLoading,
+  modalFormSuccessMessage,
+  productType: {
+    productTypeId,
+    name,
+    typeGroupName,
+    createDate,
+    updateDate,
+    status
+  },
+  loading,
+  typeGroupList,
+  modalStatus,
+  onChangeCodeStatus,
+  onChangeApplyStatus,
+  onChangeCode,
+  onAddCode,
+  onRemoveCode,
+  errors: { formErrors },
+  onChangeForm,
+  onPositive,
+  onClose
 }) => (
-    <ModalModule
-        size="mini"
-        title={productBrandId ? 'Create' : 'Update'}
-        open={openModal}
-        onClose={onClose}
-        onPositive={onPositive}
-        {...rest}>
-        <Form>
-            <FormInputSlug
-                label="Name"
-                defaultValue={name}
-                defaultSlugValue={slugName}
-                placeholder="Enter name..."
-                onChange={onChangeName}
-            />
-            <ImageUploads dataSources={image} onChange={onChangeImage} />
-            <Form.Checkbox
-                label="Active"
-                checked={status}
-                onChange={onChangeStatus}
-            />
-        </Form>
-    </ModalModule>
+  <ModalModule
+    title={
+      productTypeId ? "Update ProductType" : "Create ProductType"
+    }
+    open={openModal}
+    loading={formLoading}
+    modalSuccess={modalFormSuccessMessage}
+    minWidth="320px"
+    onPositive={onPositive}
+    onClose={onClose}
+  >
+    <Input
+      required
+      label="Product Type Name: "
+      name="productTypeName"
+      value={name}
+      onChange={onChangeForm}
+      disabled={!!productTypeId}
+      error={formErrors.name}
+    />
+
+    <SelectSearch
+      style={{ display: "block" }}
+      label="Type Group"
+      options={typeGroupList}
+      value={typeGroupName}
+      getOptionLabel={option => option.typeGroupName}
+      onChange={(_, value) => onChangeForm(_, { name: "typeGroupName", value })}
+      error={formErrors.userGroup}
+    />
+    <ToggleActive label="Active" checked={status} onChange={onChangeForm} />
+  </ModalModule>
 );
 
-const ProductTypeModal = ({ onPositive, ...rest }) => {
-    const selector = useSelector(({
-        productTypeReducer: { openModal, modalFormSuccessMessage, formLoading, productBrand, errors } 
-    }) => ({ openModal, formLoading, modalFormSuccessMessage, productBrand, errors }), shallowEqual)
+const ProductTypeModal = () => {
+  const selector = useSelector(
+    ({
+      productTypeReducer: {
+        openModal,
+        modalFormSuccessMessage,
+        formLoading,
+        modalStatus,
+        productType,
+        loading,
+        typeGroupList,
+        errors
+      }
+    }) => ({
+      openModal,
+      modalFormSuccessMessage,
+      formLoading,
+      modalStatus,
+      productType,
+      loading,
+      typeGroupList,
+      errors
+    }),
+    shallowEqual
+  );
 
-    const [productBrand, setProductBrand] = useState({
-        name: "",
-        slugName: "",
-        image: [],
-        status: true
-    })
+  const dispatch = useDispatch();
 
-    const dispatch = useDispatch()
+  const renderProps = {
+    ...selector,
+    onChangeForm: (_, { name, value }) =>
+      dispatch(
+        setProductType({ ...selector.productType, [name]: value })
+      ),
+    onPositive: () => dispatch(doSave(selector.productType)),
+    onClose: () => dispatch(closeModal())
+  };
 
-    const renderProps = {
-        ...rest,
-        ...selector,
-        productBrand,
-        onChangeName: (_, input) => setProductBrand({
-            ...productBrand,
-            name: input.value
-        }),
-        onChangeImage: (_, images) => setProductBrand({
-            ...productBrand,
-            image: images
-        }),
-        onChangeStatus: (_, checkbox) => setProductBrand({
-            ...productBrand,
-            status: checkbox.checked
-        }),
-        onPositive: _ => dispatch(doSave(productBrand)),
-        onClose: _ => dispatch(closeModal())
-    }
-
-    return <Render {...renderProps} />
+  return <Render {...renderProps} />;
 };
 
 export default ProductTypeModal;

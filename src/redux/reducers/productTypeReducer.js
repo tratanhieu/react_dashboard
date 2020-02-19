@@ -1,234 +1,316 @@
-import { REDUX_API_URL } from '../../constants/redux-actions'
-import axios from 'axios'
-import { ACTIVE } from '../../constants/entites';
-import { handleErrors, resetSystemErrors } from './rootReducer';
+import axios from "../axios";
+import { REDUX_API_URL } from "../../constants/redux-actions";
+import { ACTIVE } from "../../constants/entites";
+import {
+  handleErrors,
+  resetSystemErrors,
+  openSystemPopup
+} from "./rootReducer";
 
+const prefix = "PRODUCT_TYPE_";
 // API
-const URL_PATH = `${REDUX_API_URL}/product/type`
+const PATH_API = `product/type`;
+const createAction = action => `${prefix}${action}`;
 
-const prefix = 'PRODUCT_TYPE_'
+export const initialState = {
+  loading: true,
+  createButtonLoading: false,
+  formLoading: false,
+  modalFormSuccessMessage: "",
+  filters: {},
+  openModal: false,
+  productTypeList: [],
+  productType: {
+    status: ACTIVE
+  },
+  modalStatus: {
+    slugBasedOnName: true
+  },
+  errors: {
+    formErrors: {},
+    errorMessage: ""
+  }
+};
 
-const initialState = {
-    loading: true,
-    reload: false,
-    modalFormSuccessMessage: '',
-    filters: {
-        search: '',
-        status: '',
-        sort: 'createDate,DESC'
-    },
-    multipleExecuteLoading: false,
-    formLoading: false,
-    openModal: false,
-    productTypeList: [],
-    checkedItems: [],
-    totalPages: 0,
-    page: 1,
-    productBrand: {
-        status: ACTIVE
-    },
-    errors: {
-        name: '',
-        slugName: ''
-    }
-}
+const LIST_LOADING = createAction("LIST_LOADING");
+const OPEN_MODAL = createAction("OPEN_MODAL");
+const CREATE_BUTTON_LOADING = createAction("CREATE_BUTTON_LOADING");
+const RELOAD = createAction("RELOAD");
+const PREPARE_DATA = createAction("PREPARE_DATA");
+const UPDATE_FILTERS = createAction("UPDATE_FILTERS");
+const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING");
+const MODAL_FORM_GET_CREATE_ACTION = createAction(
+  "MODAL_FORM_GET_CREATE_ACTION"
+);
+const MODAL_FORM_UPDATE_SUCCESS = createAction("MODAL_FORM_UPDATE_SUCESS");
+const SET_PRODUCT_TYPE = createAction("SET_PRODUCT_TYPE");
+const SET_MODAL_STATUS = createAction("SET_MODAL_STATUS");
+const CLOSE_MODAL = createAction("CLOSE_MODAL");
+const SET_UPDATE_PRODUCT_TYPE_MODAL = createAction(
+  "SET_UPDATE_PRODUCT_TYPE_MODAL"
+);
+const HANDLE_ERRORS = createAction("HANDLE_ERRORS");
+const SET_ERRORS = createAction("SET_ERRORS");
 
-const createAction = action => `${prefix}${action}`
+const listLoading = loading => ({ type: LIST_LOADING, loading });
+const createButtonLoading = loading => ({
+  type: CREATE_BUTTON_LOADING,
+  loading
+});
+const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading });
+const prepareData = data => ({
+  type: PREPARE_DATA,
+  productTypeList: data
+});
+const setOpenModal = openModal => ({ type: OPEN_MODAL, openModal });
+const setErrors = errors => ({ type: SET_ERRORS, errors });
+const modalFormSuccessMessage = message => ({
+  type: MODAL_FORM_UPDATE_SUCCESS,
+  message
+});
 
-const LIST_LOADING = createAction("LIST_LOADING")
-const RELOAD = createAction("RELOAD")
-const PREPARE_DATA = createAction("PREPARE_DATA")
-const UPDATE_FILTERS = createAction("UPDATE_FILTERS")
-const SET_CHECKED_ITEMS = createAction("SET_CHECKED_ITEMS")
-const MODAL_FORM_LOADING = createAction("MODAL_FORM_LOADING")
-const MODAL_FORM_GET_CREATE_ACTION = createAction("MODAL_FORM_GET_CREATE_ACTION")
-const MODAL_FORM_UPDATE_SUCCESS = createAction("MODAL_FORM_UPDATE_SUCESS")
-const SET_PRODUCT_CATEGORY = createAction("SET_PRODUCT_CATEGORY")
-const CLOSE_MODAL = createAction("CLOSE_MODAL")
-const MULTIPLE_EXECUTE_LOADING = createAction("MULTIPLE_EXECUTE_LOADING")
-const HANDLE_ERRORS = createAction("HANDLE_ERRORS")
+export const setProductType = productType => ({
+  type: SET_PRODUCT_TYPE,
+  productType
+});
 
-const listLoading = loading => ({ type: LIST_LOADING, loading })
-const prepareData = ({ listData: productTypeList, totalPage, pageSize, page }) => ({
-    type: PREPARE_DATA,
-    productTypeList,
-    totalPage,
-    pageSize,
-    page
-})
-const formLoading = loading => ({ type: MODAL_FORM_LOADING, loading })
+export const setModalStatus = modalStatus => ({
+  type: SET_MODAL_STATUS,
+  modalStatus
+});
 
-const setMultipleExecuteLoading = loading => ({ type: MULTIPLE_EXECUTE_LOADING, loading })
+export const closeModal = () => ({ type: CLOSE_MODAL });
 
-const setproductBrand = (productBrand, openModal) => ({ type: SET_PRODUCT_CATEGORY, productBrand, openModal})
-
-const modalFormSuccessMessage = message => ({ type: MODAL_FORM_UPDATE_SUCCESS, message })
-
-const doCreate = productBrand => async dispatch => {
-    const params = JSON.stringify(productBrand)
-    axios.post(`${URL_PATH}/create`, params, {
-        timeout: 5000,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(_ => dispatch(modalFormSuccessMessage("Product Category is created successfully!!")))
-    .catch(error =>dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(formLoading(false)))
-}
-
-const doUpdate = productBrand => async dispatch => {
-    const params = JSON.stringify(productBrand)
-    return axios.post(
-        `${URL_PATH}/${productBrand.productBrandId}/update`, params, { 
-            timeout: 5000,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-    ).then(_ => dispatch(modalFormSuccessMessage("Product Category is update successfully!!")))
+export const fetchAll = () => async dispatch => {
+  dispatch(resetSystemErrors());
+  dispatch(listLoading(true));
+  return axios
+    .get(PATH_API)
+    .then(response => dispatch(prepareData(response.data)))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(formLoading(false)))
-}
+    .finally(() => dispatch(listLoading(false)));
+};
 
-const updateFilters = filters => ({ type: UPDATE_FILTERS, filters })
-
-export const doMultipleExecute = (listId, status) => async dispatch =>{
-    const params = { listId, status }
-    dispatch(resetSystemErrors())
-    dispatch(setMultipleExecuteLoading(true))
-    return axios.post(`${URL_PATH}/execute`, params, {
-        timeout: 5000,
-        headers: {
-            'Content-Type': 'application/json'
-        }
+export const doSave = productType => async dispatch => {
+  dispatch(resetSystemErrors());
+  dispatch(formLoading(true));
+  const {
+    productTypeId,
+    firstName,
+    middleName,
+    lastName,
+    email,
+    phone,
+    productTypeGroup,
+    status
+  } = productType;
+  const productTypeGroupId = productTypeGroup.productTypeGroupId;
+  const params = {
+    firstName,
+    middleName,
+    lastName,
+    email,
+    phone,
+    productTypeGroupId,
+    status
+  };
+  if (!productTypeId) {
+    dispatch(doCreate(params));
+  } else {
+    dispatch(doUpdate({ ...params, productTypeId }));
+  }
+};
+export const getCreateAction = () => dispatch => {
+  dispatch(resetSystemErrors());
+  dispatch(modalFormSuccessMessage(""));
+  dispatch(createButtonLoading(true));
+  return axios
+    .get(`${PATH_API}/create`)
+    .then(({ data: { productTypeGroupList = [], provinceList = [] } }) => {
+      dispatch({
+        type: MODAL_FORM_GET_CREATE_ACTION,
+        productTypeGroupList,
+        provinceList
+      });
     })
-    .then(_ => dispatch(setCheckedItems([])))
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(setMultipleExecuteLoading(false)))
-}
+    .finally(() => dispatch(createButtonLoading(false)));
+};
 
-export const fetchWithPaginationAndFilter = (filters, page) => async dispatch => {
-    // console.log(filters, page)
-    dispatch(resetSystemErrors())
-    dispatch(listLoading(true))
-    return axios.get(`${URL_PATH}?search=${filters.search}&status=${filters.status}&`
-            + `sort=${filters.sort}&page=${page}`,
-        { timeout: 5000 }
-    )
-    .then(response => dispatch(prepareData(response.data, filters)))
+export const getUpdateAction = productTypeId => async dispatch => {
+  dispatch(resetSystemErrors());
+  dispatch(modalFormSuccessMessage(""));
+  dispatch(listLoading(true));
+  axios
+    .get(`${PATH_API}/update/${productTypeId}`)
+    .then(response => {
+      dispatch({
+        type: SET_UPDATE_PRODUCT_TYPE_MODAL,
+        productType: response.data.productType,
+        productTypeGroupList: response.data.productTypeGroupList
+      });
+      dispatch(setOpenModal(true));
+    })
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(listLoading(false)))
-}
+    .finally(() => dispatch(listLoading(false)));
+};
 
-export const doSave = productBrand => async dispatch => {
-    dispatch(resetSystemErrors())
-    dispatch(formLoading(true))
-    const { productBrandId, name, slugName, status } = productBrand
-
-    if (!productBrandId) {
-        dispatch(doCreate({ name, slugName, status }))
-    } else {
-        dispatch(doUpdate({ productBrandId, name, slugName, status }))
-    }
-}
-
-export const getCreateAction = () => ({ type: MODAL_FORM_GET_CREATE_ACTION })
-export const getUpdateAction = productBrandId => async dispatch => {
-    dispatch(resetSystemErrors())
-    dispatch(listLoading(true))
-    return axios.get(`${URL_PATH}/${productBrandId}`, {
-        timeout: 5000
-    }).then(response => dispatch(setproductBrand(response.data, true)))
+const doCreate = productType => async dispatch => {
+  const params = JSON.stringify(productType);
+  axios
+    .post(PATH_API, params, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(response => {
+      dispatch(prepareData(response.data));
+      dispatch(
+        modalFormSuccessMessage("ProductType is created successfully!!")
+      );
+      dispatch(setProductType(initialState.productType));
+    })
     .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
-    .finally(_ => dispatch(listLoading(false)))
-}
+    .finally(() => dispatch(formLoading(false)));
+};
 
-export const setFilters = filters => async dispatch => {
-    dispatch(updateFilters(filters))
-    dispatch(fetchWithPaginationAndFilter(filters, 1))
-}
+const doUpdate = productType => async dispatch => {
+  const params = JSON.stringify(productType);
+  return axios
+    .patch(PATH_API, params, {
+      timeout: 5000,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(response => {
+      dispatch(prepareData(response.data));
+      dispatch(
+        modalFormSuccessMessage("ProductType is update successfully!!")
+      );
+    })
+    .catch(error => dispatch(handleErrors(error, HANDLE_ERRORS)))
+    .finally(() => dispatch(formLoading(false)));
+};
 
-export const closeModal = () => ({ type: CLOSE_MODAL })
+export const doDelete = productTypeId => async dispatch => {
+  dispatch(resetSystemErrors());
+  dispatch(listLoading(true));
+  dispatch(setErrors(initialState.errors));
+  return axios
+    .delete(`${PATH_API}/${productTypeId}`)
+    .then(response => {
+      dispatch(prepareData(response.data));
+      dispatch(
+        openSystemPopup(
+          true,
+          `Delete ProductType #${productTypeId} success!!`
+        )
+      );
+    })
+    .catch(errors => dispatch(handleErrors(errors, HANDLE_ERRORS)))
+    .finally(() => dispatch(listLoading(false)));
+};
 
-export const setCheckedItems = checkedItems => ({ type: SET_CHECKED_ITEMS, checkedItems })
+export const setFilters = filters => ({ type: UPDATE_FILTERS, filters });
 
 export default function(state = initialState, action) {
-    // console.log(action.type)
-    try {
-        switch (action.type) {
-            case LIST_LOADING: return {
-                ...state,
-                loading: action.loading
-            }
-            case RELOAD: return {
-                ...state,
-                reload: true
-            }
-            case MODAL_FORM_LOADING: return {
-                ...state,
-                formLoading: action.loading,
-                errors: action.loading ? initialState.errors : state.errors
-            }
-            case MULTIPLE_EXECUTE_LOADING: return {
-                ...state,
-                multipleExecuteLoading: action.loading
-            }
-            case PREPARE_DATA: return {
-                ...state,
-                productTypeList: action.productTypeList,
-                totalPages: action.totalPage,
-                page: action.page,
-                loading: false,
-                reload: false
-            }
-            case UPDATE_FILTERS: return {
-                ...state,
-                filters: action.filters
-            }
-            case SET_CHECKED_ITEMS: return {
-                ...state,
-                checkedItems: action.checkedItems
-            }
-            case MODAL_FORM_GET_CREATE_ACTION: return {
-                ...state,
-                productBrand: initialState.productBrand,
-                openModal: true,
-                modalFormSuccessMessage: initialState.modalFormSuccessMessage
-            }
-            case MODAL_FORM_UPDATE_SUCCESS: return {
-                ...state,
-                modalFormSuccessMessage: action.message
-            }
-            case SET_PRODUCT_CATEGORY: return {
-                ...state,
-                productBrand: action.productBrand,
-                openModal: action.openModal,
-                modalFormSuccessMessage: initialState.modalFormSuccessMessage
-            }
-            case CLOSE_MODAL: return {
-                ...state,
-                openModal: false,
-                listLoading: false,
-                productBrand: initialState.productBrand,
-                formLoading: initialState.formLoading,
-                errors: initialState.errors,
-            }
-            case HANDLE_ERRORS: return {
-                ...state,
-                errors: {
-                    ...state.errors,
-                    ...action.errors.response.data
-                }
-            }
-            default: return {
-                ...state
-            }
-        }
-    } catch (error) {
-        console.log(error)
-    } finally {
-        
+  // console.log(action.type)
+  try {
+    switch (action.type) {
+      case LIST_LOADING:
+        return { ...state, loading: action.loading };
+      case CREATE_BUTTON_LOADING:
+        return { ...state, createButtonLoading: action.loading };
+      case RELOAD:
+        return { ...state, reload: true };
+      case MODAL_FORM_UPDATE_SUCCESS:
+        return { ...state, modalFormSuccessMessage: action.message };
+      case OPEN_MODAL:
+        return { ...state, openModal: action.openModal };
+      case MODAL_FORM_LOADING:
+        return {
+          ...state,
+          formLoading: action.loading,
+          errors: action.loading ? initialState.errors : state.errors
+        };
+      case PREPARE_DATA:
+        return {
+          ...state,
+          productTypeList: action.productTypeList,
+          loading: false
+        };
+      case UPDATE_FILTERS:
+        return {
+          ...state,
+          filters: action.filters
+        };
+      case MODAL_FORM_GET_CREATE_ACTION:
+        return {
+          ...state,
+          productType: initialState.productType,
+          productTypeGroupList: action.productTypeGroupList,
+          openModal: true,
+          modalFormSuccessMessage: initialState.modalFormSuccessMessage
+        };
+      case SET_PRODUCT_TYPE:
+        return {
+          ...state,
+          productType: action.productType,
+          modalFormSuccessMessage: initialState.modalFormSuccessMessage
+        };
+      case SET_MODAL_STATUS:
+        return {
+          ...state,
+          modalStatus: action.modalStatus,
+          modalFormSuccessMessage: initialState.modalFormSuccessMessage
+        };
+      case SET_UPDATE_PRODUCT_TYPE_MODAL:
+        return {
+          ...state,
+          productType: {
+            ...action.productType,
+            productTypeGroup: action.productTypeGroupList.find(
+              item =>
+                item.productTypeGroupId ===
+                action.productType.productTypeGroupId
+            )
+          },
+          productTypeGroupList: action.productTypeGroupList,
+          modalFormSuccessMessage: initialState.modalFormSuccessMessage
+        };
+      case CLOSE_MODAL:
+        return {
+          ...state,
+          openModal: false,
+          listLoading: false,
+          productType: initialState.productType,
+          formLoading: initialState.formLoading,
+          errors: initialState.errors
+        };
+      case SET_ERRORS:
+        return {
+          ...state,
+          errors: {
+            ...initialState.errors,
+            ...action.errors
+          }
+        };
+      case HANDLE_ERRORS:
+        return {
+          ...state,
+          errors: {
+            ...state.errors,
+            ...action.errors.response.data
+          }
+        };
+      default:
+        return { ...state };
     }
+  } catch (error) {
+    console.log(error);
+  } finally {
+  }
 
-    return state;
+  return state;
 }
