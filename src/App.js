@@ -10,6 +10,7 @@ import ProductCategory from './components/pages/ProductCategory'
 import Main from './components/templates/layouts/Main';
 import User from './components/pages/User';
 import ProductBrand from './components/pages/ProductBrand';
+import Provider from './components/pages/Provider';
 import UserGroup from './components/pages/UserGroup';
 import ProductTypeGroup from './components/pages/ProductTypeGroup';
 import ProductType from './components/pages/ProductType';
@@ -56,6 +57,11 @@ class App extends React.Component {
 			<AuthRoute path="/product/brand">
 				<Main>
 					<ProductBrand />
+				</Main>
+			</AuthRoute>
+			<AuthRoute path="/product/provider">
+				<Main>
+					<Provider />
 				</Main>
 			</AuthRoute>
 			<AuthRoute exact path="/user">

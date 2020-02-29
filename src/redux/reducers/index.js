@@ -10,6 +10,7 @@ import userGroupReducer from './userGroupReducer'
 import promotionReducer from './promotionReducer'
 import postReducer from './postReducer'
 import postTypeReducer from './postTypeReducer'
+import providerReducer from './providerReducer'
 import settingReducer from './settingReducer'
 
 export default combineReducers({
@@ -24,5 +25,6 @@ export default combineReducers({
     promotionReducer,
     postReducer,
     postTypeReducer,
+    providerReducer,
     settingReducer
 });
