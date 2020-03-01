@@ -1,6 +1,6 @@
 import React from 'react'
 import { Switch, FormGroup, FormControlLabel } from '@material-ui/core';
-import { ACTIVE, HIDDEN } from '../../../constants/entites';
+import { ACTIVE, SUSPENSION } from '../../../constants/entites';
 
 const ToggleActive = ({
     color = "primary",
@@ -18,7 +18,7 @@ const ToggleActive = ({
                     color={color}
                     onChange={event => {
                         const { currentTarget: { name, checked } } = event
-                        onChange(event, { name, value: checked ? ACTIVE : HIDDEN }) 
+                        onChange(event, { name, value: checked ? ACTIVE : SUSPENSION }) 
                     }}
                     {...rest}
                 />

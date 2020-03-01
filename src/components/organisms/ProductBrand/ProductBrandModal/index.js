@@ -12,6 +12,7 @@ import ModalModule from "../../../molecules/ModalModule";
 import ImageUpload from "../../../atoms/ImageUpload";
 import ToggleActive from "../../../atoms/ToggleActive";
 import FormGroup from "../../../atoms/FormGroup";
+import { toDataURL } from "../../../../commons/utils";
 
 const Render = ({
   openModal,
@@ -39,7 +40,7 @@ const Render = ({
         name="name"
         value={name}
         onChange={onChangeForm}
-        disabled={!!productBrandId}
+        // disabled={!!productBrandId}
         error={formErrors.name}
       />
       {productBrandId && (
@@ -97,8 +98,6 @@ const ProductBrandModal = () => {
     onPositive: () => dispatch(doSave(selector.productBrand)),
     onClose: () => dispatch(closeModal())
   };
-
   return <Render {...renderProps} />;
 };
-
 export default ProductBrandModal;

@@ -276,7 +276,7 @@ export default function TableModule({
             <Paper className={classes.paper}>
                 <EnhancedTableToolbar
                     numSelected={selected.length}
-                    // onDelete={() => onDelete(selected)}
+                    onDelete={() => onDelete(selected)}
                 />
                 <TableContainer>
                     <Table

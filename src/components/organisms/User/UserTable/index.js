@@ -11,7 +11,7 @@ import { getUpdateAction, doDelete } from '../../../../redux/reducers/userReduce
 const listStatus = [
     { key: "", label: "All" },
     { key: "ACTIVE", label: "Active" },
-    { key: "HIDDEN", label: "Hidden" },
+    { key: "SUSPENSION", label: "Hidden" },
     { key: "DELETE", label: "Delete" }
 ]
 

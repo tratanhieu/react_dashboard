@@ -2,14 +2,14 @@ import React from 'react'
 import { useSelector, shallowEqual, useDispatch } from 'react-redux'
 import { Button, Icon } from 'semantic-ui-react'
 import Fieldset from '../../../atoms/Fieldset'
-import { ACTIVE, HIDDEN, DELETED } from '../../../../constants/entites';
+import { ACTIVE, SUSPENSION, STOP } from '../../../../constants/entites';
 import MultipleExecute from '../../../molecules/MultipleExecute';
 import { doMultipleExecute } from '../../../../redux/reducers/productTypeGroupReducer';
 
 const options = [
     { key: ACTIVE, text: "Display", value: ACTIVE },
-    { key: HIDDEN, text: "Hidden", value: HIDDEN },
-    { key: DELETED, text: "Delete", value: DELETED }
+    { key: SUSPENSION, text: "Hidden", value: SUSPENSION },
+    { key: STOP, text: "Delete", value: STOP }
 ];
 
 const Render = ({ multipleExecuteLoading, checkedItems = [], onExecuteMultiple }) => (

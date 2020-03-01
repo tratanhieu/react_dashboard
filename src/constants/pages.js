@@ -11,11 +11,11 @@ export const DEFAULT_ACTIONS = [
     {
         key: "2",
         text: "Ẩn",
-        value: "HIDDEN"
+        value: "SUSPENSION"
     },
     {
         key: "3",
         text: "Xoá",
-        value: "DELETED"
+        value: "STOP"
     }
 ];

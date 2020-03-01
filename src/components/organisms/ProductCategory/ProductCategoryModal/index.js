@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { Form } from 'semantic-ui-react'
 
 import ToggleActive from '../../../atoms/ToggleActive';
-import { ACTIVE, HIDDEN } from '../../../../constants/entites';
+import { ACTIVE, SUSPENSION } from '../../../../constants/entites';
 import ModalModule from '../../../molecules/ModalModule';
 import {
     doSave, getCreateAction, closeModal, initialState 
@@ -94,7 +94,7 @@ const ProductCategoryModal = () => {
         },
         onChangeStatus: status => setProductCategory({ 
             ...productCategory,
-            status: status ? ACTIVE : HIDDEN
+            status: status ? ACTIVE : SUSPENSION
         }),
         onPositive: _ => dispatch(doSave(productCategory)),
         onContinue: _ => dispatch(getCreateAction()),

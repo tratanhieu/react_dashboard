@@ -1,8 +1,7 @@
 export const ALL = ''
 export const CUSTOM = 'CUSTOM'
 export const ACTIVE = 'ACTIVE'
-export const HIDDEN = 'HIDDEN'
-export const DELETED = 'DELETED'
+export const SUSPENSION = 'SUSPENSION'
 export const UNAVAILABLE = 'UNAVAILABLE'
 export const AVAILABLE = 'AVAILABLE'
 export const STOP = 'STOP'
@@ -12,11 +11,11 @@ export const DEFAULT_STATUS = {
         color: 'green',
         text: 'Hiển thị'
     },
-    HIDDEN: {
+    SUSPENSION: {
         color: 'grey',
         text: 'Đã ẩn'
     },
-    DELETED: {
+    STOP: {
         color: 'red',
         text: 'Đã xóa'
     }

@@ -3,7 +3,7 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import TableCell from "@material-ui/core/TableCell";
 import TableModule from "../../../molecules/TableModule";
 
-import { DEFAULT_STATUS, ALL, ACTIVE, HIDDEN } from '../../../../constants/entites'
+import { DEFAULT_STATUS, ALL, ACTIVE, SUSPENSION } from '../../../../constants/entites'
 import { formatDateTime } from '../../../../commons/utils'
 // REDUX
 import Slug from '../../../atoms/Slug';
@@ -37,7 +37,7 @@ const TableRowModule = ({ name, slugName, totalPost, createDate, updateDate, sta
 const LIST_STATUS = [
     { key: ALL, label: "All" },
     { key: ACTIVE, label: "Active" },
-    { key: HIDDEN, label: "Hidden" }
+    { key: SUSPENSION, label: "Hidden" }
 ]
 
 const Render = ({
